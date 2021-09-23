@@ -1,19 +1,17 @@
 #pragma once
-#include "Token.h"
 #include "Regexes.h"
+#include "Token.h"
 
-#include <vector>
-#include <regex>
 #include <filesystem>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <ranges>
+#include <regex>
+#include <vector>
 
 namespace cool {
 
-
 namespace lexer {
-
 
 class Lexer {
 public:
@@ -22,9 +20,10 @@ public:
         std::string line;
         std::string cool_string_appendix;
 
-        for (unsigned line_number = 1; std::getline(source_file, line); ++line_number) {
+        for (unsigned line_number = 1; std::getline(source_file, line);
+             ++line_number) {
             if (!cool_string_appendix.empty()) {
-                line = std::move(cool_string_appendix) + '\n' + std::move(line); 
+                line = std::move(cool_string_appendix) + '\n' + std::move(line);
             }
             cool_string_appendix = this->parse_multiline(line, line_number);
         }
@@ -35,52 +34,53 @@ public:
     }
 
 private:
-
-    std::string parse_multiline(std::string& multiline, unsigned line_number) noexcept {
+    std::string parse_multiline(
+        std::string& multiline, unsigned line_number) noexcept {
         std::string cool_string_appendix;
 
-        while (true) { 
+        while (true) {
             trim_multiline(multiline, cool_string_appendix);
             consume_line(multiline, line_number);
             if (cool_string_appendix.empty()) {
                 return {};
-            } 
+            }
             if (cool_string_appendix[0] == '"') {
-                if (!extract_cool_string(cool_string_appendix, line_number, multiline)) {
+                if (!extract_cool_string(
+                        cool_string_appendix, line_number, multiline)) {
                     return cool_string_appendix;
                 }
             } else {
-                if (!extract_multiline_comment(cool_string_appendix, multiline)) {
+                if (!extract_multiline_comment(
+                        cool_string_appendix, multiline)) {
                     return cool_string_appendix;
                 }
             }
         }
     }
 
-    // 
+    //
     // Trims multiline until first quote or comment
-    // 
-    void trim_multiline(std::string& multiline, std::string& cool_string_appendix) noexcept {
+    //
+    void trim_multiline(
+        std::string& multiline, std::string& cool_string_appendix) noexcept {
         auto quote_it = std::ranges::find(std::as_const(multiline), '"');
-        auto one_line_comment_it = std::ranges::adjacent_find(std::as_const(multiline), 
-                [](char a, char b) {
-                    return a == '-' && b == '-';
-                }
-        );
+        auto one_line_comment_it =
+            std::ranges::adjacent_find(std::as_const(multiline),
+                [](char a, char b) { return a == '-' && b == '-'; });
 
-        auto multi_line_comment_it = std::ranges::adjacent_find(std::as_const(multiline), 
-                [](char a, char b) {
-                    return a == '(' && b == '*';
-                }
-        );
+        auto multi_line_comment_it =
+            std::ranges::adjacent_find(std::as_const(multiline),
+                [](char a, char b) { return a == '(' && b == '*'; });
 
-        auto min_it = std::min({quote_it, one_line_comment_it, multi_line_comment_it});
+        auto min_it =
+            std::min({quote_it, one_line_comment_it, multi_line_comment_it});
 
         if (min_it != multiline.cend()) {
             if (min_it != one_line_comment_it) {
                 cool_string_appendix = std::string(min_it, multiline.cend());
             }
-            multiline.resize(static_cast<size_t>(std::distance(multiline.cbegin(), min_it)));
+            multiline.resize(
+                static_cast<size_t>(std::distance(multiline.cbegin(), min_it)));
         }
     }
 
@@ -102,17 +102,15 @@ private:
     // Attempts to extract string literal from appendix
     // and stores the rest of the multiline in cleaned_line
     //
-    bool extract_cool_string(std::string& cool_string_appendix, unsigned line_number, std::string& cleaned_line) noexcept {
-        auto result_it = std::ranges::adjacent_find(std::as_const(cool_string_appendix),
-                [](char curr, char next) { return curr != '\\' && next == '"'; }
-        );
+    bool extract_cool_string(std::string& cool_string_appendix,
+        unsigned line_number, std::string& cleaned_line) noexcept {
+        auto result_it = std::ranges::adjacent_find(
+            std::as_const(cool_string_appendix),
+            [](char curr, char next) { return curr != '\\' && next == '"'; });
 
         if (result_it != cool_string_appendix.cend()) {
-            Token token = {
-                line_number,
-                TokenType::String, 
-                { cool_string_appendix.cbegin(), result_it + 2 }
-            };
+            Token token = {line_number, TokenType::String,
+                {cool_string_appendix.cbegin(), result_it + 2}};
 
             cleaned_line = {result_it + 2, cool_string_appendix.cend()};
             cool_string_appendix.clear();
@@ -126,7 +124,8 @@ private:
     // Attempts to extract multiline comment from appendix
     // and stores the rest of the multiline in cleaned_line
     //
-    bool extract_multiline_comment(std::string& cool_string_appendix, std::string& cleaned_line) const noexcept {
+    bool extract_multiline_comment(std::string& cool_string_appendix,
+        std::string& cleaned_line) const noexcept {
         auto result_it = find_multiline_comment_end(cool_string_appendix);
 
         if (result_it != cool_string_appendix.cend()) {
@@ -137,21 +136,21 @@ private:
         return false;
     }
 
-    // 
+    //
     // Finds iterator to first non-comment piece of code
     //
-    std::string::const_iterator find_multiline_comment_end(const std::string& cool_string_appendix) const noexcept {
+    std::string::const_iterator find_multiline_comment_end(
+        const std::string& cool_string_appendix) const noexcept {
         int stack_size = 1;
 
         std::string::const_iterator result_it = cool_string_appendix.cbegin();
         while (stack_size) {
-            result_it = std::ranges::adjacent_find(result_it + 1, cool_string_appendix.cend(),
-                    [](char curr, char next) { return 
-                        (curr == '(' && next == '*') ||
-                        (curr == '*' && next == ')');
-                    }
-            );
-            
+            result_it = std::ranges::adjacent_find(result_it + 1,
+                cool_string_appendix.cend(), [](char curr, char next) {
+                    return (curr == '(' && next == '*') ||
+                           (curr == '*' && next == ')');
+                });
+
             if (result_it == cool_string_appendix.cend()) {
                 return result_it;
             } else {
@@ -167,20 +166,15 @@ private:
 
     //
     // Converts space-comment-quote-free string to tokens
-    // 
+    //
     void parse_buffer(std::string_view buffer, unsigned line_number) noexcept {
         while (!buffer.empty()) {
             std::cmatch token_match;
 
-            if (!this->check_default_patterns(token_match, buffer, line_number)) {
-                Token token = {
-                    line_number,
-                    TokenType::Error, 
-                    std::string{
-                        buffer.cbegin(), 
-                        buffer.cend()
-                    }
-                };
+            if (!this->check_default_patterns(
+                    token_match, buffer, line_number)) {
+                Token token = {line_number, TokenType::Error,
+                    std::string{buffer.cbegin(), buffer.cend()}};
 
                 result.push_back(std::move(token));
                 break;
@@ -188,37 +182,38 @@ private:
         }
     }
 
-    // 
+    //
     // Applies prioritised regex check to buffer and
     // shrinks it by matched value
     // Returns false if it couldn't match any of the patterns
     //
-    [[nodiscard]] bool check_default_patterns(std::cmatch& token_match, std::string_view& buffer, unsigned line_number) noexcept {
+    [[nodiscard]] bool check_default_patterns(std::cmatch& token_match,
+        std::string_view& buffer, unsigned line_number) noexcept {
         for (auto& [token_regex, token_type] : token_type_regexes) {
-            if (std::regex_match(buffer.cbegin(), buffer.cend(), token_match, token_regex)) {
-                Token token = {
-                    line_number,
-                    token_type, 
-                    std::string{
-                        buffer.cbegin(), 
-                        buffer.cbegin() + token_match[1].length()
-                    }
-                };
+            if (std::regex_match(
+                    buffer.cbegin(), buffer.cend(), token_match, token_regex)) {
+                Token token = {line_number, token_type,
+                    std::string{buffer.cbegin(),
+                        buffer.cbegin() + token_match[1].length()}};
 
                 switch (token_type) {
                 case TokenType::BoolConst: {
-                    std::transform(token.lexeme.begin(), token.lexeme.end(), token.lexeme.begin(), ::tolower);
+                    std::transform(token.lexeme.begin(), token.lexeme.end(),
+                        token.lexeme.begin(), ::tolower);
                     break;
                 }
                 case TokenType::Keyword: {
-                    std::transform(token.lexeme.begin(), token.lexeme.end(), token.lexeme.begin(), ::toupper);
+                    std::transform(token.lexeme.begin(), token.lexeme.end(),
+                        token.lexeme.begin(), ::toupper);
                     break;
                 }
-                default: break;
+                default:
+                    break;
                 }
 
                 result.push_back(std::move(token));
-                buffer.remove_prefix(static_cast<size_t>(token_match[1].length()));
+                buffer.remove_prefix(
+                    static_cast<size_t>(token_match[1].length()));
                 return true;
             }
         }
@@ -228,8 +223,6 @@ private:
     std::vector<Token> result;
 };
 
-
 } // namespace lexer
-
 
 } // namespace cool
