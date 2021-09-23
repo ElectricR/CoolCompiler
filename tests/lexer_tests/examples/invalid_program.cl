@@ -11,6 +11,8 @@ tRUE
 "This \" \
 is OK" 
 (*--
-
 )(*(*(**)*)*)*) class
 (**)klass(**)cool
+" \
+\
+  if \

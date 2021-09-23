@@ -439,14 +439,14 @@ TEST_F(LexerSmokeTest, TestStringNested) {
 
 
 TEST_F(LexerSmokeTest, TestStringMultiline) {
-    fill("\"A \n B\"");
+    fill("\"A \\\n B\"");
 
     cool::lexer::Lexer lexer(TEMP_TEST_NAME);
 
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::String, "\"A \n B\"" }
+        { 1, cool::lexer::TokenType::String, "\"A \\\n B\"" }
     };
 
     EXPECT_EQ(result, expected);
@@ -552,6 +552,55 @@ TEST_F(LexerSmokeTest, TestError) {
 
     std::vector<cool::lexer::Token> expected = {
         { 1, cool::lexer::TokenType::Error, "[]" }
+    };
+
+    EXPECT_EQ(result, expected);
+}
+
+
+TEST_F(LexerSmokeTest, TestErrorEOFComment) {
+    fill("class (* \n if");
+
+    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+
+    auto result = lexer.get_result();
+
+    std::vector<cool::lexer::Token> expected = {
+        { 1, cool::lexer::TokenType::Keyword, "CLASS" },
+        { 2, cool::lexer::TokenType::Error, "EOF in comment" }
+    };
+
+    EXPECT_EQ(result, expected);
+}
+
+
+TEST_F(LexerSmokeTest, TestErrorUnterminatedString) {
+    fill("class \" \n if");
+
+    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+
+    auto result = lexer.get_result();
+
+    std::vector<cool::lexer::Token> expected = {
+        { 1, cool::lexer::TokenType::Keyword, "CLASS" },
+        { 1, cool::lexer::TokenType::Error, "Unterminated string constant" },
+        { 2, cool::lexer::TokenType::Keyword, "IF" },
+    };
+
+    EXPECT_EQ(result, expected);
+}
+
+
+TEST_F(LexerSmokeTest, TestErrorEOFString) {
+    fill("class \" \\\n if\\");
+
+    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+
+    auto result = lexer.get_result();
+
+    std::vector<cool::lexer::Token> expected = {
+        { 1, cool::lexer::TokenType::Keyword, "CLASS" },
+        { 2, cool::lexer::TokenType::Error, "EOF in string constant" },
     };
 
     EXPECT_EQ(result, expected);

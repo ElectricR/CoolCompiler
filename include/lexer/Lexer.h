@@ -19,13 +19,17 @@ public:
         std::ifstream source_file{source_file_path};
         std::string line;
         std::string cool_string_appendix;
+        unsigned line_number = 1;
 
-        for (unsigned line_number = 1; std::getline(source_file, line);
-             ++line_number) {
+        while (std::getline(source_file, line)) {
             if (!cool_string_appendix.empty()) {
                 line = std::move(cool_string_appendix) + '\n' + std::move(line);
             }
             cool_string_appendix = this->parse_multiline(line, line_number);
+            ++line_number;
+        }
+        if (!cool_string_appendix.empty()) {
+            add_eof_error(cool_string_appendix, line_number);
         }
     }
 
@@ -101,6 +105,7 @@ private:
     //
     // Attempts to extract string literal from appendix
     // and stores the rest of the multiline in cleaned_line
+    // Adds an error if it couldn't extract string and '\' wasn't found
     //
     bool extract_cool_string(std::string& cool_string_appendix,
         unsigned line_number, std::string& cleaned_line) noexcept {
@@ -117,6 +122,14 @@ private:
             result.push_back(std::move(token));
             return true;
         }
+        if (cool_string_appendix.back() != '\\') {
+            Token token = {line_number, TokenType::Error,
+                "Unterminated string constant"};
+            cool_string_appendix.clear();
+            result.push_back(std::move(token));
+            return true;
+        }
+
         return false;
     }
 
@@ -162,6 +175,19 @@ private:
             }
         }
         return result_it + 2;
+    }
+    
+    void add_eof_error(const std::string& cool_string_appendix, unsigned line_number) noexcept {
+        std::string cause;
+        if (cool_string_appendix.front() == '(') {
+            cause = "comment";
+        } else {
+            cause = "string constant";
+        }
+
+        Token token = {line_number, TokenType::Error,
+            "EOF in " + cause};
+        result.push_back(std::move(token));
     }
 
     //
