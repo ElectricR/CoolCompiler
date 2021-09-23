@@ -9,6 +9,7 @@ class LexerTest(unittest.TestCase):
         my_proc = subprocess.Popen(["./lexer", *file_name], stdout=subprocess.PIPE)
         my_out = my_proc.communicate()[0]
         self.assertEqual(reference_out.decode("UTF-8"), my_out.decode("UTF-8"))
+        self.assertEqual(reference_proc.returncode, my_proc.returncode)
 
 
     def test_stack(self):
