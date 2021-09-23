@@ -453,6 +453,54 @@ TEST_F(LexerSmokeTest, TestStringMultiline) {
 }
 
 
+TEST_F(LexerSmokeTest, TestCommentOneLine) {
+    fill("A -- this is comment\nB");
+
+    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+
+    auto result = lexer.get_result();
+
+    std::vector<cool::lexer::Token> expected = {
+        { 1, cool::lexer::TokenType::TypeIdentifier, "A" },
+        { 2, cool::lexer::TokenType::TypeIdentifier, "B" }
+    };
+
+    EXPECT_EQ(result, expected);
+}
+
+
+TEST_F(LexerSmokeTest, TestCommentMultiline) {
+    fill("A (* this is comment\nB*)C");
+
+    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+
+    auto result = lexer.get_result();
+
+    std::vector<cool::lexer::Token> expected = {
+        { 1, cool::lexer::TokenType::TypeIdentifier, "A" },
+        { 2, cool::lexer::TokenType::TypeIdentifier, "C" }
+    };
+
+    EXPECT_EQ(result, expected);
+}
+
+
+TEST_F(LexerSmokeTest, TestCommentMultilineNested) {
+    fill("A (* this (* is com\n*)ment\nB*)C");
+
+    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+
+    auto result = lexer.get_result();
+
+    std::vector<cool::lexer::Token> expected = {
+        { 1, cool::lexer::TokenType::TypeIdentifier, "A" },
+        { 2, cool::lexer::TokenType::TypeIdentifier, "C" }
+    };
+
+    EXPECT_EQ(result, expected);
+}
+
+
 TEST_F(LexerSmokeTest, TestComplexIF) {
     fill("if(true){123}");
 

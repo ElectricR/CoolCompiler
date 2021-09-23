@@ -17,10 +17,18 @@ class LexerTest(unittest.TestCase):
     def test_invalid(self):
         self.check("./tests/lexer_tests/examples/invalid_program.cl")
 
-    @unittest.skip
     def test_atoi(self):
         self.check("./examples/atoi.cl")
 
     def test_hello_world(self):
         self.check("./reference/examples/hello_world.cl")
+
+    def test_cool(self):
+        self.check("./reference/examples/cool.cl")
+
+    def test_io(self):
+        self.check("./reference/examples/io.cl")
+
+    def test_new_complex(self):
+        self.check("./reference/examples/new_complex.cl")
 

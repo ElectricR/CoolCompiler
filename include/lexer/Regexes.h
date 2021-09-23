@@ -55,6 +55,7 @@ static inline std::vector<std::pair<std::regex, TokenType>> token_type_regexes {
     {std::regex(R"((\/)(.*))"), TokenType::SpecialNotation},
     {std::regex(R"((\.)(.*))"), TokenType::SpecialNotation},
     {std::regex(R"((\,)(.*))"), TokenType::SpecialNotation},
+    {std::regex(R"((\~)(.*))"), TokenType::SpecialNotation},
 };
 
 
