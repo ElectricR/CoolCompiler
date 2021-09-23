@@ -5,7 +5,7 @@ lexer_test:
 	python3 -m unittest tests/lexer_tests/lexer_end_to_end_test.py
 
 build: googletest compile_commands.json
-	cmake -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+	cmake -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_CXX_COMPILER=clang++
 	cd build/; make -j4
 
 googletest:
