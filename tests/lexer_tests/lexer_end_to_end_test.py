@@ -36,3 +36,6 @@ class LexerTest(unittest.TestCase):
     def test_multiple_files(self):
         self.check("./reference/examples/new_complex.cl", "./reference/examples/io.cl", "./reference/examples/hello_world.cl")
 
+    def test_oneliner(self):
+        self.check("./tests/lexer_tests/examples/stack_machine_oneliner.cl")
+
