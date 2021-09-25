@@ -188,12 +188,17 @@ private:
         std::string cause;
 
         if (cool_string_appendix.front() == '(') {
-            cause = "comment";
+            cause = "EOF in comment";
         } else {
-            cause = "string constant";
+            cause = "EOF in string constant";
         }
 
-        result.emplace_back(line_number, TokenType::Error, "EOF in " + cause);
+        Token token = {
+            line_number,
+            TokenType::Error,
+            std::move(cause),
+        };
+        result.push_back(std::move(token));
     }
 
     //
@@ -204,8 +209,12 @@ private:
             std::cmatch token_match;
 
             if (!check_default_patterns(token_match, buffer, line_number)) {
-                result.emplace_back(line_number, TokenType::Error,
-                    std::string{buffer.cbegin(), buffer.cend()});
+                Token token = {
+                    line_number,
+                    TokenType::Error,
+                    std::string{buffer.cbegin(), buffer.cend()},
+                };
+                result.push_back(std::move(token));
                 break;
             }
         }
