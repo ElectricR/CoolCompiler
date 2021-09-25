@@ -61,8 +61,8 @@ void print_lexer_result(auto result) {
             break;
         }
         case cool::lexer::TokenType::Error: {
-            std::cout << '#' << token.line_number << " ERROR \"" << token.lexeme << '"'
-                      << std::endl;
+            std::cout << '#' << token.line_number << " ERROR \"" << token.lexeme
+                      << '"' << std::endl;
             break;
         }
         }

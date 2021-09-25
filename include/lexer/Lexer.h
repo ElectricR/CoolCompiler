@@ -21,12 +21,11 @@ public:
         std::string cool_string_appendix;
         unsigned line_number = 1;
 
-        while (std::getline(source_file, line)) {
+        for (; std::getline(source_file, line); ++line_number) {
             if (!cool_string_appendix.empty()) {
                 line = std::move(cool_string_appendix) + '\n' + std::move(line);
             }
-            cool_string_appendix = this->parse_multiline(line, line_number);
-            ++line_number;
+            cool_string_appendix = parse_multiline(line, line_number);
         }
         if (!cool_string_appendix.empty()) {
             add_eof_error(cool_string_appendix, line_number);
@@ -107,15 +106,18 @@ private:
     // and stores the rest of the multiline in cleaned_line
     // Adds an error if it couldn't extract string and '\' wasn't found
     //
-    bool extract_cool_string(std::string& cool_string_appendix,
+    [[nodiscard]] bool extract_cool_string(std::string& cool_string_appendix,
         unsigned line_number, std::string& cleaned_line) noexcept {
         auto result_it = std::ranges::adjacent_find(
             std::as_const(cool_string_appendix),
             [](char curr, char next) { return curr != '\\' && next == '"'; });
 
         if (result_it != cool_string_appendix.cend()) {
-            Token token = {line_number, TokenType::String,
-                {cool_string_appendix.cbegin(), result_it + 2}};
+            Token token = {
+                line_number,
+                TokenType::String,
+                {cool_string_appendix.cbegin(), result_it + 2},
+            };
 
             cleaned_line = {result_it + 2, cool_string_appendix.cend()};
             cool_string_appendix.clear();
@@ -123,8 +125,11 @@ private:
             return true;
         }
         if (cool_string_appendix.back() != '\\') {
-            Token token = {line_number, TokenType::Error,
-                "Unterminated string constant"};
+            Token token = {
+                line_number,
+                TokenType::Error,
+                "Unterminated string constant",
+            };
             cool_string_appendix.clear();
             result.push_back(std::move(token));
             return true;
@@ -137,7 +142,8 @@ private:
     // Attempts to extract multiline comment from appendix
     // and stores the rest of the multiline in cleaned_line
     //
-    bool extract_multiline_comment(std::string& cool_string_appendix,
+    [[nodiscard]] bool extract_multiline_comment(
+        std::string& cool_string_appendix,
         std::string& cleaned_line) const noexcept {
         auto result_it = find_multiline_comment_end(cool_string_appendix);
 
@@ -152,7 +158,7 @@ private:
     //
     // Finds iterator to first non-comment piece of code
     //
-    std::string::const_iterator find_multiline_comment_end(
+    [[nodiscard]] std::string::const_iterator find_multiline_comment_end(
         const std::string& cool_string_appendix) const noexcept {
         int stack_size = 1;
 
@@ -176,18 +182,18 @@ private:
         }
         return result_it + 2;
     }
-    
-    void add_eof_error(const std::string& cool_string_appendix, unsigned line_number) noexcept {
+
+    void add_eof_error(const std::string& cool_string_appendix,
+        unsigned line_number) noexcept {
         std::string cause;
+
         if (cool_string_appendix.front() == '(') {
             cause = "comment";
         } else {
             cause = "string constant";
         }
 
-        Token token = {line_number, TokenType::Error,
-            "EOF in " + cause};
-        result.push_back(std::move(token));
+        result.emplace_back(line_number, TokenType::Error, "EOF in " + cause);
     }
 
     //
@@ -197,12 +203,9 @@ private:
         while (!buffer.empty()) {
             std::cmatch token_match;
 
-            if (!this->check_default_patterns(
-                    token_match, buffer, line_number)) {
-                Token token = {line_number, TokenType::Error,
-                    std::string{buffer.cbegin(), buffer.cend()}};
-
-                result.push_back(std::move(token));
+            if (!check_default_patterns(token_match, buffer, line_number)) {
+                result.emplace_back(line_number, TokenType::Error,
+                    std::string{buffer.cbegin(), buffer.cend()});
                 break;
             }
         }
@@ -218,9 +221,14 @@ private:
         for (auto& [token_regex, token_type] : token_type_regexes) {
             if (std::regex_match(
                     buffer.cbegin(), buffer.cend(), token_match, token_regex)) {
-                Token token = {line_number, token_type,
-                    std::string{buffer.cbegin(),
-                        buffer.cbegin() + token_match[1].length()}};
+                Token token = {
+                    line_number,
+                    token_type,
+                    std::string{
+                        buffer.cbegin(),
+                        buffer.cbegin() + token_match[1].length(),
+                    },
+                };
 
                 switch (token_type) {
                 case TokenType::BoolConst: {
