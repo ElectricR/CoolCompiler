@@ -1,6 +1,6 @@
 test: lexer_test
 
-lexer_test:
+lexer_test: build
 	./lexer_smoke_test
 	python3 -m unittest tests/lexer_tests/lexer_end_to_end_test.py
 
