@@ -1,27 +1,11 @@
 #include "../../include/lexer/Lexer.h"
 #include <gtest/gtest.h>
 
-const char* TEMP_TEST_NAME = "__test";
 
-class LexerSmokeTest:
-    public ::testing::Test
-{
-protected:
-    void TearDown() override {
-        std::filesystem::remove(TEMP_TEST_NAME);
-    }
+TEST(LexerSmokeTest, TestEmpty) {
+    std::stringstream input("");
 
-    void fill(const char* content) {
-        std::ofstream file{TEMP_TEST_NAME};
-        file << content;
-    }
-};
-
-
-TEST_F(LexerSmokeTest, TestEmpty) {
-    fill("");
-
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -31,10 +15,10 @@ TEST_F(LexerSmokeTest, TestEmpty) {
 }
 
 
-TEST_F(LexerSmokeTest, TestSpace) {
-    fill("   ");
+TEST(LexerSmokeTest, TestSpace) {
+    std::stringstream input("   ");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -44,10 +28,10 @@ TEST_F(LexerSmokeTest, TestSpace) {
 }
 
 
-TEST_F(LexerSmokeTest, TestClass) {
-    fill("cLaSs");
+TEST(LexerSmokeTest, TestClass) {
+    std::stringstream input("cLaSs");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -59,10 +43,10 @@ TEST_F(LexerSmokeTest, TestClass) {
 }
 
 
-TEST_F(LexerSmokeTest, TestELSE) {
-    fill("elSe");
+TEST(LexerSmokeTest, TestELSE) {
+    std::stringstream input("elSe");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -74,10 +58,10 @@ TEST_F(LexerSmokeTest, TestELSE) {
 }
 
 
-TEST_F(LexerSmokeTest, TestFALSE) {
-    fill("faLse");
+TEST(LexerSmokeTest, TestFALSE) {
+    std::stringstream input("faLse");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -89,10 +73,10 @@ TEST_F(LexerSmokeTest, TestFALSE) {
 }
 
 
-TEST_F(LexerSmokeTest, TestFI) {
-    fill("fI");
+TEST(LexerSmokeTest, TestFI) {
+    std::stringstream input("fI");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -104,10 +88,10 @@ TEST_F(LexerSmokeTest, TestFI) {
 }
 
 
-TEST_F(LexerSmokeTest, TestIF) {
-    fill("iF");
+TEST(LexerSmokeTest, TestIF) {
+    std::stringstream input("iF");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -119,10 +103,10 @@ TEST_F(LexerSmokeTest, TestIF) {
 }
 
 
-TEST_F(LexerSmokeTest, TestIN) {
-    fill("iN");
+TEST(LexerSmokeTest, TestIN) {
+    std::stringstream input("iN");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -134,10 +118,10 @@ TEST_F(LexerSmokeTest, TestIN) {
 }
 
 
-TEST_F(LexerSmokeTest, TestINHERITS) {
-    fill("InHeriTs");
+TEST(LexerSmokeTest, TestINHERITS) {
+    std::stringstream input("InHeriTs");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -149,10 +133,10 @@ TEST_F(LexerSmokeTest, TestINHERITS) {
 }
 
 
-TEST_F(LexerSmokeTest, TestISVOID) {
-    fill("iSvOid");
+TEST(LexerSmokeTest, TestISVOID) {
+    std::stringstream input("iSvOid");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -164,10 +148,10 @@ TEST_F(LexerSmokeTest, TestISVOID) {
 }
 
 
-TEST_F(LexerSmokeTest, TestLET) {
-    fill("LeT");
+TEST(LexerSmokeTest, TestLET) {
+    std::stringstream input("LeT");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -179,10 +163,10 @@ TEST_F(LexerSmokeTest, TestLET) {
 }
 
 
-TEST_F(LexerSmokeTest, TestLOOP) {
-    fill("LoOP");
+TEST(LexerSmokeTest, TestLOOP) {
+    std::stringstream input("LoOP");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -194,10 +178,10 @@ TEST_F(LexerSmokeTest, TestLOOP) {
 }
 
 
-TEST_F(LexerSmokeTest, TestPOOL) {
-    fill("PoOL");
+TEST(LexerSmokeTest, TestPOOL) {
+    std::stringstream input("PoOL");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -209,10 +193,10 @@ TEST_F(LexerSmokeTest, TestPOOL) {
 }
 
 
-TEST_F(LexerSmokeTest, TestTHEN) {
-    fill("ThEn");
+TEST(LexerSmokeTest, TestTHEN) {
+    std::stringstream input("ThEn");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -224,10 +208,10 @@ TEST_F(LexerSmokeTest, TestTHEN) {
 }
 
 
-TEST_F(LexerSmokeTest, TestWHILE) {
-    fill("WHIlE");
+TEST(LexerSmokeTest, TestWHILE) {
+    std::stringstream input("WHIlE");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -239,10 +223,10 @@ TEST_F(LexerSmokeTest, TestWHILE) {
 }
 
 
-TEST_F(LexerSmokeTest, TestCASE) {
-    fill("casE");
+TEST(LexerSmokeTest, TestCASE) {
+    std::stringstream input("casE");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -254,10 +238,10 @@ TEST_F(LexerSmokeTest, TestCASE) {
 }
 
 
-TEST_F(LexerSmokeTest, TestESAC) {
-    fill("EsAC");
+TEST(LexerSmokeTest, TestESAC) {
+    std::stringstream input("EsAC");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -269,10 +253,10 @@ TEST_F(LexerSmokeTest, TestESAC) {
 }
 
 
-TEST_F(LexerSmokeTest, TestNEW) {
-    fill("NEw");
+TEST(LexerSmokeTest, TestNEW) {
+    std::stringstream input("NEw");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -284,10 +268,10 @@ TEST_F(LexerSmokeTest, TestNEW) {
 }
 
 
-TEST_F(LexerSmokeTest, TestOF) {
-    fill("OF");
+TEST(LexerSmokeTest, TestOF) {
+    std::stringstream input("OF");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -299,10 +283,10 @@ TEST_F(LexerSmokeTest, TestOF) {
 }
 
 
-TEST_F(LexerSmokeTest, TestNOT) {
-    fill("nOt");
+TEST(LexerSmokeTest, TestNOT) {
+    std::stringstream input("nOt");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -314,10 +298,10 @@ TEST_F(LexerSmokeTest, TestNOT) {
 }
 
 
-TEST_F(LexerSmokeTest, TestTRUE) {
-    fill("trUe");
+TEST(LexerSmokeTest, TestTRUE) {
+    std::stringstream input("trUe");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -329,10 +313,10 @@ TEST_F(LexerSmokeTest, TestTRUE) {
 }
 
 
-TEST_F(LexerSmokeTest, TestBadTrue) {
-    fill("True");
+TEST(LexerSmokeTest, TestBadTrue) {
+    std::stringstream input("True");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -344,10 +328,10 @@ TEST_F(LexerSmokeTest, TestBadTrue) {
 }
 
 
-TEST_F(LexerSmokeTest, TestTwoIF) {
-    fill("if if");
+TEST(LexerSmokeTest, TestTwoIF) {
+    std::stringstream input("if if");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -360,10 +344,10 @@ TEST_F(LexerSmokeTest, TestTwoIF) {
 }
 
 
-TEST_F(LexerSmokeTest, TestObjectID) {
-    fill("if123");
+TEST(LexerSmokeTest, TestObjectID) {
+    std::stringstream input("if123");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -375,10 +359,10 @@ TEST_F(LexerSmokeTest, TestObjectID) {
 }
 
 
-TEST_F(LexerSmokeTest, TestTypeID) {
-    fill("Stack");
+TEST(LexerSmokeTest, TestTypeID) {
+    std::stringstream input("Stack");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -390,10 +374,10 @@ TEST_F(LexerSmokeTest, TestTypeID) {
 }
 
 
-TEST_F(LexerSmokeTest, TestStringSimple) {
-    fill("\"42\"");
+TEST(LexerSmokeTest, TestStringSimple) {
+    std::stringstream input("\"42\"");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -405,10 +389,10 @@ TEST_F(LexerSmokeTest, TestStringSimple) {
 }
 
 
-TEST_F(LexerSmokeTest, TestStringTricky) {
-    fill("\"1\\\"2\\\"3\"");
+TEST(LexerSmokeTest, TestStringTricky) {
+    std::stringstream input("\"1\\\"2\\\"3\"");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -420,10 +404,10 @@ TEST_F(LexerSmokeTest, TestStringTricky) {
 }
 
 
-TEST_F(LexerSmokeTest, TestStringNested) {
-    fill("a=\"42\";");
+TEST(LexerSmokeTest, TestStringNested) {
+    std::stringstream input("a=\"42\";");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -438,10 +422,10 @@ TEST_F(LexerSmokeTest, TestStringNested) {
 }
 
 
-TEST_F(LexerSmokeTest, TestStringMultiline) {
-    fill("\"A \\\n B\"");
+TEST(LexerSmokeTest, TestStringMultiline) {
+    std::stringstream input("\"A \\\n B\"");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -453,10 +437,10 @@ TEST_F(LexerSmokeTest, TestStringMultiline) {
 }
 
 
-TEST_F(LexerSmokeTest, TestCommentOneLine) {
-    fill("A -- this is comment\nB");
+TEST(LexerSmokeTest, TestCommentOneLine) {
+    std::stringstream input("A -- this is comment\nB");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -469,26 +453,10 @@ TEST_F(LexerSmokeTest, TestCommentOneLine) {
 }
 
 
-TEST_F(LexerSmokeTest, TestCommentMultiline) {
-    fill("A (* this is comment\nB*)C");
+TEST(LexerSmokeTest, TestCommentMultiline) {
+    std::stringstream input("A (* this is comment\nB*)C");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
-
-    auto result = lexer.get_result();
-
-    std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::TypeIdentifier, "A" },
-        { 2, cool::lexer::TokenType::TypeIdentifier, "C" }
-    };
-
-    EXPECT_EQ(result, expected);
-}
-
-
-TEST_F(LexerSmokeTest, TestCommentMultilineNested) {
-    fill("A (* this (* is com\n*)ment\nB*)C");
-
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -501,10 +469,26 @@ TEST_F(LexerSmokeTest, TestCommentMultilineNested) {
 }
 
 
-TEST_F(LexerSmokeTest, TestComplexIF) {
-    fill("if(true){123}");
+TEST(LexerSmokeTest, TestCommentMultilineNested) {
+    std::stringstream input("A (* this (* is com\n*)ment\nB*)C");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
+
+    auto result = lexer.get_result();
+
+    std::vector<cool::lexer::Token> expected = {
+        { 1, cool::lexer::TokenType::TypeIdentifier, "A" },
+        { 2, cool::lexer::TokenType::TypeIdentifier, "C" }
+    };
+
+    EXPECT_EQ(result, expected);
+}
+
+
+TEST(LexerSmokeTest, TestComplexIF) {
+    std::stringstream input("if(true){123}");
+
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -522,10 +506,10 @@ TEST_F(LexerSmokeTest, TestComplexIF) {
 }
 
 
-TEST_F(LexerSmokeTest, TestComplexSpacedIF) {
-    fill("if ( true ) { 123 } ");
+TEST(LexerSmokeTest, TestComplexSpacedIF) {
+    std::stringstream input("if ( true ) { 123 } ");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -543,10 +527,10 @@ TEST_F(LexerSmokeTest, TestComplexSpacedIF) {
 }
 
 
-TEST_F(LexerSmokeTest, TestError) {
-    fill("[]");
+TEST(LexerSmokeTest, TestError) {
+    std::stringstream input("[]");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -558,10 +542,10 @@ TEST_F(LexerSmokeTest, TestError) {
 }
 
 
-TEST_F(LexerSmokeTest, TestErrorEOFComment) {
-    fill("class (* \n if");
+TEST(LexerSmokeTest, TestErrorEOFComment) {
+    std::stringstream input("class (* \n if");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -574,10 +558,10 @@ TEST_F(LexerSmokeTest, TestErrorEOFComment) {
 }
 
 
-TEST_F(LexerSmokeTest, TestErrorUnterminatedString) {
-    fill("class \" \n if");
+TEST(LexerSmokeTest, TestErrorUnterminatedString) {
+    std::stringstream input("class \" \n if");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 
@@ -591,10 +575,10 @@ TEST_F(LexerSmokeTest, TestErrorUnterminatedString) {
 }
 
 
-TEST_F(LexerSmokeTest, TestErrorEOFString) {
-    fill("class \" \\\n if\\");
+TEST(LexerSmokeTest, TestErrorEOFString) {
+    std::stringstream input("class \" \\\n if\\");
 
-    cool::lexer::Lexer lexer(TEMP_TEST_NAME);
+    cool::lexer::Lexer lexer(input);
 
     auto result = lexer.get_result();
 

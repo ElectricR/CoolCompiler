@@ -2,7 +2,6 @@
 #include "Regexes.h"
 #include "Token.h"
 
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <ranges>
@@ -15,8 +14,7 @@ namespace lexer {
 
 class Lexer {
 public:
-    Lexer(const std::filesystem::path& source_file_path) {
-        std::ifstream source_file{source_file_path};
+    Lexer(std::istream& source_file) {
         std::string line;
         std::string cool_string_appendix;
         unsigned line_number = 1;

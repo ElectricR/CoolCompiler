@@ -71,7 +71,8 @@ void print_lexer_result(auto result) {
 
 int main(int argc, char* argv[]) {
     for (int i = 1; i != argc; ++i) {
-        cool::lexer::Lexer lexer(argv[i]);
+        std::ifstream input(argv[i]);
+        cool::lexer::Lexer lexer(input);
         std::cout << "#name \"" << argv[i] << '\"' << std::endl;
         print_lexer_result(lexer.get_result());
     }
