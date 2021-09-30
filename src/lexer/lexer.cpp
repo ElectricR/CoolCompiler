@@ -1,5 +1,5 @@
-#include "../../include/lexer/Lexer.h"
-#include "../../include/lexer/Token.h"
+#include "lexer/Lexer.h"
+#include "lexer/Token.h"
 
 #include <iterator>
 
