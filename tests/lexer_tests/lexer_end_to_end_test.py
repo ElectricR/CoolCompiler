@@ -1,8 +1,10 @@
 import unittest
 import subprocess
+import os
 
 class LexerTest(unittest.TestCase):
     def check(self, *file_name):
+        print(f"Checking {file_name}...")
         reference_proc = subprocess.Popen(["./reference/bin/lexer", *file_name], stdout=subprocess.PIPE)
         reference_out = reference_proc.communicate()[0]
 
@@ -14,9 +16,6 @@ class LexerTest(unittest.TestCase):
 
     def test_stack(self):
         self.check("./examples/stack_machine.cl")
-
-    def test_invalid(self):
-        self.check("./tests/lexer_tests/examples/invalid_program.cl")
 
     def test_atoi(self):
         self.check("./examples/atoi.cl")
@@ -36,6 +35,6 @@ class LexerTest(unittest.TestCase):
     def test_multiple_files(self):
         self.check("./reference/examples/new_complex.cl", "./reference/examples/io.cl", "./reference/examples/hello_world.cl")
 
-    def test_oneliner(self):
-        self.check("./tests/lexer_tests/examples/stack_machine_oneliner.cl")
-
+    def test_with_reference_tests(self):
+        for file_name in os.listdir("tests/lexer_tests/examples"):
+            self.check(f"tests/lexer_tests/examples/{file_name}")

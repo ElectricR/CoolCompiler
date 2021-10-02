@@ -374,6 +374,21 @@ TEST(LexerSmokeTest, TestTypeID) {
 }
 
 
+TEST(LexerSmokeTest, TestStringEmpty) {
+    std::stringstream input("\"\"");
+
+    cool::lexer::Lexer lexer(input);
+
+    auto result = lexer.get_result();
+
+    std::vector<cool::lexer::Token> expected = {
+        { 1, cool::lexer::TokenType::String, "" }
+    };
+
+    EXPECT_EQ(result, expected);
+}
+
+
 TEST(LexerSmokeTest, TestStringSimple) {
     std::stringstream input("\"42\"");
 
@@ -382,7 +397,7 @@ TEST(LexerSmokeTest, TestStringSimple) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::String, "\"42\"" }
+        { 1, cool::lexer::TokenType::String, "42" }
     };
 
     EXPECT_EQ(result, expected);
@@ -397,7 +412,7 @@ TEST(LexerSmokeTest, TestStringTricky) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::String, "\"1\\\"2\\\"3\"" }
+        { 1, cool::lexer::TokenType::String, "1\"2\"3" }
     };
 
     EXPECT_EQ(result, expected);
@@ -414,7 +429,7 @@ TEST(LexerSmokeTest, TestStringNested) {
     std::vector<cool::lexer::Token> expected = {
         { 1, cool::lexer::TokenType::ObjectIdentifier, "a" },
         { 1, cool::lexer::TokenType::SpecialNotation, "=" },
-        { 1, cool::lexer::TokenType::String, "\"42\"" },
+        { 1, cool::lexer::TokenType::String, "42" },
         { 1, cool::lexer::TokenType::SpecialNotation, ";" }
     };
 
@@ -430,7 +445,7 @@ TEST(LexerSmokeTest, TestStringMultiline) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::String, "\"A \\\n B\"" }
+        { 1, cool::lexer::TokenType::String, "A \n B" }
     };
 
     EXPECT_EQ(result, expected);

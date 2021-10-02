@@ -56,8 +56,13 @@ const static inline std::vector<std::pair<std::regex, TokenType>>
         {std::regex(R"((\.)(.*))"), TokenType::SpecialNotation},
         {std::regex(R"((\,)(.*))"), TokenType::SpecialNotation},
         {std::regex(R"((\~)(.*))"), TokenType::SpecialNotation},
+        {std::regex(R"((\@)(.*))"), TokenType::SpecialNotation},
     };
 
+const static inline std::vector<std::pair<std::regex, std::string_view>>
+    error_regexes{
+        {std::regex(R"((\*\))(.*))"), "Unmatched *)"},
+    };
 } // namespace lexer
 
 } // namespace cool
