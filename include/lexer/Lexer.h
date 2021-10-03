@@ -1,7 +1,6 @@
 #pragma once
 #include "Regexes.h"
 #include "Token.h"
-#include "utils.h"
 
 #include <fstream>
 #include <iostream>
