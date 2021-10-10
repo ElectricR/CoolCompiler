@@ -1,7 +1,6 @@
 #include "lexer/Lexer.h"
 #include <gtest/gtest.h>
 
-
 TEST(LexerSmokeTest, TestEmpty) {
     std::stringstream input("");
 
@@ -13,7 +12,6 @@ TEST(LexerSmokeTest, TestEmpty) {
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestSpace) {
     std::stringstream input("   ");
@@ -27,7 +25,6 @@ TEST(LexerSmokeTest, TestSpace) {
     EXPECT_EQ(result, expected);
 }
 
-
 TEST(LexerSmokeTest, TestClass) {
     std::stringstream input("cLaSs");
 
@@ -36,12 +33,10 @@ TEST(LexerSmokeTest, TestClass) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "CLASS" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "CLASS"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestELSE) {
     std::stringstream input("elSe");
@@ -51,12 +46,10 @@ TEST(LexerSmokeTest, TestELSE) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "ELSE" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "ELSE"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestFALSE) {
     std::stringstream input("faLse");
@@ -66,12 +59,10 @@ TEST(LexerSmokeTest, TestFALSE) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::BoolConst, "false" }
-    };
+        {1, cool::lexer::TokenType::BoolConst, "false"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestFI) {
     std::stringstream input("fI");
@@ -81,12 +72,10 @@ TEST(LexerSmokeTest, TestFI) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "FI" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "FI"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestIF) {
     std::stringstream input("iF");
@@ -96,12 +85,10 @@ TEST(LexerSmokeTest, TestIF) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "IF" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "IF"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestIN) {
     std::stringstream input("iN");
@@ -111,12 +98,10 @@ TEST(LexerSmokeTest, TestIN) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "IN" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "IN"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestINHERITS) {
     std::stringstream input("InHeriTs");
@@ -126,12 +111,10 @@ TEST(LexerSmokeTest, TestINHERITS) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "INHERITS" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "INHERITS"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestISVOID) {
     std::stringstream input("iSvOid");
@@ -141,12 +124,10 @@ TEST(LexerSmokeTest, TestISVOID) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "ISVOID" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "ISVOID"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestLET) {
     std::stringstream input("LeT");
@@ -156,12 +137,10 @@ TEST(LexerSmokeTest, TestLET) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "LET" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "LET"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestLOOP) {
     std::stringstream input("LoOP");
@@ -171,12 +150,10 @@ TEST(LexerSmokeTest, TestLOOP) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "LOOP" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "LOOP"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestPOOL) {
     std::stringstream input("PoOL");
@@ -186,12 +163,10 @@ TEST(LexerSmokeTest, TestPOOL) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "POOL" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "POOL"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestTHEN) {
     std::stringstream input("ThEn");
@@ -201,12 +176,10 @@ TEST(LexerSmokeTest, TestTHEN) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "THEN" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "THEN"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestWHILE) {
     std::stringstream input("WHIlE");
@@ -216,12 +189,10 @@ TEST(LexerSmokeTest, TestWHILE) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "WHILE" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "WHILE"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestCASE) {
     std::stringstream input("casE");
@@ -231,12 +202,10 @@ TEST(LexerSmokeTest, TestCASE) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "CASE" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "CASE"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestESAC) {
     std::stringstream input("EsAC");
@@ -246,12 +215,10 @@ TEST(LexerSmokeTest, TestESAC) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "ESAC" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "ESAC"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestNEW) {
     std::stringstream input("NEw");
@@ -261,12 +228,10 @@ TEST(LexerSmokeTest, TestNEW) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "NEW" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "NEW"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestOF) {
     std::stringstream input("OF");
@@ -276,12 +241,10 @@ TEST(LexerSmokeTest, TestOF) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "OF" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "OF"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestNOT) {
     std::stringstream input("nOt");
@@ -291,12 +254,10 @@ TEST(LexerSmokeTest, TestNOT) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "NOT" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "NOT"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestTRUE) {
     std::stringstream input("trUe");
@@ -306,12 +267,10 @@ TEST(LexerSmokeTest, TestTRUE) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::BoolConst, "true" }
-    };
+        {1, cool::lexer::TokenType::BoolConst, "true"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestBadTrue) {
     std::stringstream input("True");
@@ -321,12 +280,10 @@ TEST(LexerSmokeTest, TestBadTrue) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::TypeIdentifier, "True" }
-    };
+        {1, cool::lexer::TokenType::TypeIdentifier, "True"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestTwoIF) {
     std::stringstream input("if if");
@@ -336,13 +293,12 @@ TEST(LexerSmokeTest, TestTwoIF) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "IF" },
-        { 1, cool::lexer::TokenType::Keyword, "IF" },
+        {1, cool::lexer::TokenType::Keyword, "IF"},
+        {1, cool::lexer::TokenType::Keyword, "IF"},
     };
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestObjectID) {
     std::stringstream input("if123");
@@ -352,12 +308,10 @@ TEST(LexerSmokeTest, TestObjectID) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::ObjectIdentifier, "if123" }
-    };
+        {1, cool::lexer::TokenType::ObjectIdentifier, "if123"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestTypeID) {
     std::stringstream input("Stack");
@@ -367,12 +321,10 @@ TEST(LexerSmokeTest, TestTypeID) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::TypeIdentifier, "Stack" }
-    };
+        {1, cool::lexer::TokenType::TypeIdentifier, "Stack"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestStringEmpty) {
     std::stringstream input("\"\"");
@@ -382,12 +334,10 @@ TEST(LexerSmokeTest, TestStringEmpty) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::String, "" }
-    };
+        {1, cool::lexer::TokenType::String, ""}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestStringSimple) {
     std::stringstream input("\"42\"");
@@ -397,12 +347,10 @@ TEST(LexerSmokeTest, TestStringSimple) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::String, "42" }
-    };
+        {1, cool::lexer::TokenType::String, "42"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestStringTricky) {
     std::stringstream input("\"1\\\"2\\\"3\"");
@@ -412,12 +360,10 @@ TEST(LexerSmokeTest, TestStringTricky) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::String, "1\"2\"3" }
-    };
+        {1, cool::lexer::TokenType::String, "1\"2\"3"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestStringNested) {
     std::stringstream input("a=\"42\";");
@@ -427,15 +373,13 @@ TEST(LexerSmokeTest, TestStringNested) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::ObjectIdentifier, "a" },
-        { 1, cool::lexer::TokenType::SpecialNotation, "=" },
-        { 1, cool::lexer::TokenType::String, "42" },
-        { 1, cool::lexer::TokenType::SpecialNotation, ";" }
-    };
+        {1, cool::lexer::TokenType::ObjectIdentifier, "a"},
+        {1, cool::lexer::TokenType::SpecialNotation, "="},
+        {1, cool::lexer::TokenType::String, "42"},
+        {1, cool::lexer::TokenType::SpecialNotation, ";"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestStringMultiline) {
     std::stringstream input("\"A \\\n B\"");
@@ -445,12 +389,10 @@ TEST(LexerSmokeTest, TestStringMultiline) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::String, "A \n B" }
-    };
+        {1, cool::lexer::TokenType::String, "A \n B"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestCommentOneLine) {
     std::stringstream input("A -- this is comment\nB");
@@ -460,13 +402,11 @@ TEST(LexerSmokeTest, TestCommentOneLine) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::TypeIdentifier, "A" },
-        { 2, cool::lexer::TokenType::TypeIdentifier, "B" }
-    };
+        {1, cool::lexer::TokenType::TypeIdentifier, "A"},
+        {2, cool::lexer::TokenType::TypeIdentifier, "B"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestCommentMultiline) {
     std::stringstream input("A (* this is comment\nB*)C");
@@ -476,13 +416,11 @@ TEST(LexerSmokeTest, TestCommentMultiline) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::TypeIdentifier, "A" },
-        { 2, cool::lexer::TokenType::TypeIdentifier, "C" }
-    };
+        {1, cool::lexer::TokenType::TypeIdentifier, "A"},
+        {2, cool::lexer::TokenType::TypeIdentifier, "C"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestCommentMultilineNested) {
     std::stringstream input("A (* this (* is com\n*)ment\nB*)C");
@@ -492,13 +430,11 @@ TEST(LexerSmokeTest, TestCommentMultilineNested) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::TypeIdentifier, "A" },
-        { 2, cool::lexer::TokenType::TypeIdentifier, "C" }
-    };
+        {1, cool::lexer::TokenType::TypeIdentifier, "A"},
+        {2, cool::lexer::TokenType::TypeIdentifier, "C"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestComplexIF) {
     std::stringstream input("if(true){123}");
@@ -508,18 +444,17 @@ TEST(LexerSmokeTest, TestComplexIF) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "IF" },
-        { 1, cool::lexer::TokenType::SpecialNotation, "(" },
-        { 1, cool::lexer::TokenType::BoolConst, "true" },
-        { 1, cool::lexer::TokenType::SpecialNotation, ")" },
-        { 1, cool::lexer::TokenType::SpecialNotation, "{" },
-        { 1, cool::lexer::TokenType::Integer, "123" },
-        { 1, cool::lexer::TokenType::SpecialNotation, "}" },
+        {1, cool::lexer::TokenType::Keyword, "IF"},
+        {1, cool::lexer::TokenType::SpecialNotation, "("},
+        {1, cool::lexer::TokenType::BoolConst, "true"},
+        {1, cool::lexer::TokenType::SpecialNotation, ")"},
+        {1, cool::lexer::TokenType::SpecialNotation, "{"},
+        {1, cool::lexer::TokenType::Integer, "123"},
+        {1, cool::lexer::TokenType::SpecialNotation, "}"},
     };
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestComplexSpacedIF) {
     std::stringstream input("if ( true ) { 123 } ");
@@ -529,18 +464,17 @@ TEST(LexerSmokeTest, TestComplexSpacedIF) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "IF" },
-        { 1, cool::lexer::TokenType::SpecialNotation, "(" },
-        { 1, cool::lexer::TokenType::BoolConst, "true" },
-        { 1, cool::lexer::TokenType::SpecialNotation, ")" },
-        { 1, cool::lexer::TokenType::SpecialNotation, "{" },
-        { 1, cool::lexer::TokenType::Integer, "123" },
-        { 1, cool::lexer::TokenType::SpecialNotation, "}" },
+        {1, cool::lexer::TokenType::Keyword, "IF"},
+        {1, cool::lexer::TokenType::SpecialNotation, "("},
+        {1, cool::lexer::TokenType::BoolConst, "true"},
+        {1, cool::lexer::TokenType::SpecialNotation, ")"},
+        {1, cool::lexer::TokenType::SpecialNotation, "{"},
+        {1, cool::lexer::TokenType::Integer, "123"},
+        {1, cool::lexer::TokenType::SpecialNotation, "}"},
     };
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestError) {
     std::stringstream input("[]");
@@ -550,12 +484,10 @@ TEST(LexerSmokeTest, TestError) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Error, "[]" }
-    };
+        {1, cool::lexer::TokenType::Error, "[]"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestErrorEOFComment) {
     std::stringstream input("class (* \n if");
@@ -565,13 +497,11 @@ TEST(LexerSmokeTest, TestErrorEOFComment) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "CLASS" },
-        { 2, cool::lexer::TokenType::Error, "EOF in comment" }
-    };
+        {1, cool::lexer::TokenType::Keyword, "CLASS"},
+        {2, cool::lexer::TokenType::Error, "EOF in comment"}};
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestErrorUnterminatedString) {
     std::stringstream input("class \" \n if");
@@ -581,14 +511,13 @@ TEST(LexerSmokeTest, TestErrorUnterminatedString) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "CLASS" },
-        { 1, cool::lexer::TokenType::Error, "Unterminated string constant" },
-        { 2, cool::lexer::TokenType::Keyword, "IF" },
+        {1, cool::lexer::TokenType::Keyword, "CLASS"},
+        {1, cool::lexer::TokenType::Error, "Unterminated string constant"},
+        {2, cool::lexer::TokenType::Keyword, "IF"},
     };
 
     EXPECT_EQ(result, expected);
 }
-
 
 TEST(LexerSmokeTest, TestErrorEOFString) {
     std::stringstream input("class \" \\\n if\\");
@@ -598,10 +527,9 @@ TEST(LexerSmokeTest, TestErrorEOFString) {
     auto result = lexer.get_result();
 
     std::vector<cool::lexer::Token> expected = {
-        { 1, cool::lexer::TokenType::Keyword, "CLASS" },
-        { 2, cool::lexer::TokenType::Error, "EOF in string constant" },
+        {1, cool::lexer::TokenType::Keyword, "CLASS"},
+        {2, cool::lexer::TokenType::Error, "EOF in string constant"},
     };
 
     EXPECT_EQ(result, expected);
 }
-
