@@ -6,8 +6,8 @@
 #include <iostream>
 #include <ranges>
 #include <regex>
-#include <vector>
 #include <unordered_set>
+#include <vector>
 
 namespace cool::lexer {
 
@@ -105,31 +105,36 @@ private:
     //
     [[nodiscard]] bool consume_cool_string(std::string& cool_string_appendix,
         unsigned line_number, std::string& cleaned_line) noexcept {
-        auto [is_extracted, is_slash_terminated, null_character_found, extracted_string, cleaned_line_start] = extract_cool_string(cool_string_appendix);
+        auto [is_extracted, is_slash_terminated, null_character_found,
+            extracted_string, cleaned_line_start] =
+            extract_cool_string(cool_string_appendix);
 
         if (is_extracted) {
             if (extracted_string.size() > 1024) {
-                result.push_back(Token {line_number, TokenType::Error, "String constant too long"});
+                result.push_back(Token{
+                    line_number, TokenType::Error, "String constant too long"});
             } else if (null_character_found) {
-                result.push_back(Token {
+                result.push_back(Token{
                     line_number,
                     TokenType::Error,
                     {"String contains null character."},
                 });
             } else {
-                result.push_back(Token {
+                result.push_back(Token{
                     line_number,
                     TokenType::String,
                     {std::move(extracted_string)},
                 });
             }
 
-            cleaned_line = {cool_string_appendix.cbegin() + static_cast<long>(cleaned_line_start), cool_string_appendix.cend()};
+            cleaned_line = {cool_string_appendix.cbegin() +
+                                static_cast<long>(cleaned_line_start),
+                cool_string_appendix.cend()};
             cool_string_appendix.clear();
             return true;
         } else {
             if (!is_slash_terminated) {
-                result.push_back(Token {
+                result.push_back(Token{
                     line_number + 1,
                     TokenType::Error,
                     "Unterminated string constant",
@@ -148,7 +153,8 @@ private:
     // String is the extracted_string itself
     // Last value is the beginning of cleaned_line
     //
-    [[nodiscard]] std::tuple<bool, bool, bool, std::string, size_t> extract_cool_string(std::string_view cool_string_appendix) const noexcept {
+    [[nodiscard]] std::tuple<bool, bool, bool, std::string, size_t>
+    extract_cool_string(std::string_view cool_string_appendix) const noexcept {
         std::string extracted_string;
         size_t last_escaped_char_index = 0;
         bool null_character_found = false;
@@ -178,8 +184,10 @@ private:
                         break;
                     }
                 }
-            } else if (cool_string_appendix[i] == '"' && i != last_escaped_char_index) {
-                return {true, true, null_character_found, std::move(extracted_string), i + 1};
+            } else if (cool_string_appendix[i] == '"' &&
+                       i != last_escaped_char_index) {
+                return {true, true, null_character_found,
+                    std::move(extracted_string), i + 1};
             } else {
                 if (cool_string_appendix[i] == '\0') {
                     null_character_found = true;
@@ -188,12 +196,17 @@ private:
                 }
             }
         }
-        if (cool_string_appendix.back() == '\\' && cool_string_appendix.size() - 1 != last_escaped_char_index) {
-            return {false, true, null_character_found, std::move(extracted_string), cool_string_appendix.size()}; 
-        } else if (cool_string_appendix.back() == '"' && cool_string_appendix.size() - 1 != last_escaped_char_index) {
-            return {true, true, null_character_found, std::move(extracted_string), cool_string_appendix.size()};
+        if (cool_string_appendix.back() == '\\' &&
+            cool_string_appendix.size() - 1 != last_escaped_char_index) {
+            return {false, true, null_character_found,
+                std::move(extracted_string), cool_string_appendix.size()};
+        } else if (cool_string_appendix.back() == '"' &&
+                   cool_string_appendix.size() - 1 != last_escaped_char_index) {
+            return {true, true, null_character_found,
+                std::move(extracted_string), cool_string_appendix.size()};
         }
-        return {false, false, null_character_found, std::move(extracted_string), cool_string_appendix.size()}; 
+        return {false, false, null_character_found, std::move(extracted_string),
+            cool_string_appendix.size()};
     }
 
     //
@@ -331,7 +344,8 @@ private:
         for (auto& [error_regex, error_msg] : error_regexes) {
             if (std::regex_match(
                     buffer.cbegin(), buffer.cend(), error_match, error_regex)) {
-                result.push_back(Token{line_number, TokenType::Error, {error_msg.cbegin(), error_msg.cend()}});
+                result.push_back(Token{line_number, TokenType::Error,
+                    {error_msg.cbegin(), error_msg.cend()}});
 
                 buffer.remove_prefix(
                     static_cast<size_t>(error_match[1].length()));
