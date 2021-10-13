@@ -37,7 +37,6 @@ TEST(ParserSmokeTest, BasicInheritedEmptyClass) {
     cool::parser::Parser parser(lexer);
 
     cool::parser::symbol::Program correct = {{{"Main", {"IO"}, {}}}};
-        
 
     ASSERT_EQ(parser.get_result().value(), correct);
 }
@@ -50,7 +49,7 @@ TEST(ParserSmokeTest, MemberFunctionTest) {
     cool::parser::Parser parser(lexer);
 
     cool::parser::symbol::Program correct = {{{
-        
+
         "Main",
         {},
         {{cool::parser::symbol::MethodFeature{
@@ -770,7 +769,10 @@ TEST(ParserSmokeTest, SimpleTildeExpressionTest) {
             "Object",
             std::make_shared<cool::parser::symbol::Expression>(
                 cool::parser::symbol::Expression{{
-                    cool::parser::symbol::TildeExpression{std::make_shared<cool::parser::symbol::Expression>(cool::parser::symbol::Expression{cool::parser::symbol::IntExpression{2}})},
+                    cool::parser::symbol::TildeExpression{
+                        std::make_shared<cool::parser::symbol::Expression>(
+                            cool::parser::symbol::Expression{
+                                cool::parser::symbol::IntExpression{2}})},
                 }}),
         }}},
     }}};
@@ -794,7 +796,15 @@ TEST(ParserSmokeTest, DoubleTildeExpressionTest) {
             "Object",
             std::make_shared<cool::parser::symbol::Expression>(
                 cool::parser::symbol::Expression{{
-                    cool::parser::symbol::TildeExpression{std::make_shared<cool::parser::symbol::Expression>(cool::parser::symbol::Expression{cool::parser::symbol::TildeExpression{std::make_shared<cool::parser::symbol::Expression>(cool::parser::symbol::Expression{cool::parser::symbol::IntExpression{2}})}})},
+                    cool::parser::symbol::TildeExpression{
+                        std::make_shared<cool::parser::symbol::Expression>(
+                            cool::parser::symbol::Expression{
+                                cool::parser::symbol::TildeExpression{
+                                    std::make_shared<
+                                        cool::parser::symbol::Expression>(
+                                        cool::parser::symbol::Expression{
+                                            cool::parser::symbol::IntExpression{
+                                                2}})}})},
                 }}),
         }}},
     }}};
@@ -803,7 +813,8 @@ TEST(ParserSmokeTest, DoubleTildeExpressionTest) {
 }
 
 TEST(ParserSmokeTest, SimpleIsVoidExpressionTest) {
-    std::stringstream test_string{"class Main { foo() : Object { isvoid 2 }; };"};
+    std::stringstream test_string{
+        "class Main { foo() : Object { isvoid 2 }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -818,7 +829,10 @@ TEST(ParserSmokeTest, SimpleIsVoidExpressionTest) {
             "Object",
             std::make_shared<cool::parser::symbol::Expression>(
                 cool::parser::symbol::Expression{{
-                    cool::parser::symbol::IsVoidExpression{std::make_shared<cool::parser::symbol::Expression>(cool::parser::symbol::Expression{cool::parser::symbol::IntExpression{2}})},
+                    cool::parser::symbol::IsVoidExpression{
+                        std::make_shared<cool::parser::symbol::Expression>(
+                            cool::parser::symbol::Expression{
+                                cool::parser::symbol::IntExpression{2}})},
                 }}),
         }}},
     }}};
@@ -842,7 +856,10 @@ TEST(ParserSmokeTest, SimpleNotExpressionTest) {
             "Object",
             std::make_shared<cool::parser::symbol::Expression>(
                 cool::parser::symbol::Expression{{
-                    cool::parser::symbol::NotExpression{std::make_shared<cool::parser::symbol::Expression>(cool::parser::symbol::Expression{cool::parser::symbol::IntExpression{2}})},
+                    cool::parser::symbol::NotExpression{
+                        std::make_shared<cool::parser::symbol::Expression>(
+                            cool::parser::symbol::Expression{
+                                cool::parser::symbol::IntExpression{2}})},
                 }}),
         }}},
     }}};
@@ -875,7 +892,8 @@ TEST(ParserSmokeTest, SimpleNewExpressionTest) {
 }
 
 TEST(ParserSmokeTest, SimpleLetExpressionTest) {
-    std::stringstream test_string{"class Main { foo() : Object { let a : Int <- 2, b : Int <- 1 in 2 + 2 }; };"};
+    std::stringstream test_string{"class Main { foo() : Object { let a : Int "
+                                  "<- 2, b : Int <- 1 in 2 + 2 }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -888,23 +906,31 @@ TEST(ParserSmokeTest, SimpleLetExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::parser::symbol::Expression>(
-                cool::parser::symbol::Expression{{
-                    cool::parser::symbol::LetExpression{{{
-                    "a", "Int", {std::make_shared<cool::parser::symbol::Expression>(cool::parser::symbol::Expression{cool::parser::symbol::IntExpression{2}})}},{"b", "Int", {std::make_shared<cool::parser::symbol::Expression>(cool::parser::symbol::Expression{cool::parser::symbol::IntExpression{1}})}},},{
-                    std::make_shared<cool::parser::symbol::Expression>(
-                            cool::parser::symbol::Expression{
-                            cool::parser::symbol::PlusExpression{{
+            std::make_shared<cool::parser::symbol::
+                    Expression>(cool::parser::symbol::Expression{{
+                cool::parser::symbol::LetExpression{
+                    {
+                        {"a", "Int",
                             {std::make_shared<cool::parser::symbol::Expression>(
-                                    cool::parser::symbol::Expression{cool::parser::symbol::IntExpression{2}}
-                                    )
-                            },{
-                            std::make_shared<cool::parser::symbol::Expression>(
-                                    cool::parser::symbol::Expression{
-                                    cool::parser::symbol::IntExpression{2}
-                                    })},
-                            }}})},},
-                }}),
+                                cool::parser::symbol::Expression{
+                                    cool::parser::symbol::IntExpression{2}})}},
+                        {"b", "Int",
+                            {std::make_shared<cool::parser::symbol::Expression>(
+                                cool::parser::symbol::Expression{
+                                    cool::parser::symbol::IntExpression{1}})}},
+                    },
+                    {std::make_shared<cool::parser::symbol::
+                            Expression>(cool::parser::symbol::Expression{
+                        cool::parser::symbol::PlusExpression{{
+                            {std::make_shared<cool::parser::symbol::Expression>(
+                                cool::parser::symbol::Expression{
+                                    cool::parser::symbol::IntExpression{2}})},
+                            {std::make_shared<cool::parser::symbol::Expression>(
+                                cool::parser::symbol::Expression{
+                                    cool::parser::symbol::IntExpression{2}})},
+                        }}})},
+                },
+            }}),
         }}},
     }}};
 
@@ -912,7 +938,8 @@ TEST(ParserSmokeTest, SimpleLetExpressionTest) {
 }
 
 TEST(ParserSmokeTest, SimpleAssignExpressionTest) {
-    std::stringstream test_string{"class Main { foo() : Object { a <- 2 + 2}; };"};
+    std::stringstream test_string{
+        "class Main { foo() : Object { a <- 2 + 2}; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -932,9 +959,17 @@ TEST(ParserSmokeTest, SimpleAssignExpressionTest) {
                         {std::make_shared<cool::parser::symbol::Expression>(
                             cool::parser::symbol::Expression{
                                 cool::parser::symbol::PlusExpression{{
-                                    {std::make_shared<cool::parser::symbol::Expression>(cool::parser::symbol::Expression{cool::parser::symbol::IntExpression{2}})},
-                                    {std::make_shared<cool::parser::symbol::Expression>(cool::parser::symbol::Expression{cool::parser::symbol::IntExpression{2}})},
-                                    }}})},
+                                    {std::make_shared<
+                                        cool::parser::symbol::Expression>(
+                                        cool::parser::symbol::Expression{
+                                            cool::parser::symbol::IntExpression{
+                                                2}})},
+                                    {std::make_shared<
+                                        cool::parser::symbol::Expression>(
+                                        cool::parser::symbol::Expression{
+                                            cool::parser::symbol::IntExpression{
+                                                2}})},
+                                }}})},
                     },
                 }}),
         }}},
@@ -944,7 +979,8 @@ TEST(ParserSmokeTest, SimpleAssignExpressionTest) {
 }
 
 TEST(ParserSmokeTest, SimpleFunctionExpressionTest) {
-    std::stringstream test_string{"class Main { foo() : Object { bar(1, 42) }; };"};
+    std::stringstream test_string{
+        "class Main { foo() : Object { bar(1, 42) }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -962,8 +998,12 @@ TEST(ParserSmokeTest, SimpleFunctionExpressionTest) {
                     cool::parser::symbol::FunctionExpression{
                         "bar",
                         {
-                            {std::make_shared<cool::parser::symbol::Expression>(cool::parser::symbol::Expression{cool::parser::symbol::IntExpression{1}})},
-                            {std::make_shared<cool::parser::symbol::Expression>(cool::parser::symbol::Expression{cool::parser::symbol::IntExpression{42}})},
+                            {std::make_shared<cool::parser::symbol::Expression>(
+                                cool::parser::symbol::Expression{
+                                    cool::parser::symbol::IntExpression{1}})},
+                            {std::make_shared<cool::parser::symbol::Expression>(
+                                cool::parser::symbol::Expression{
+                                    cool::parser::symbol::IntExpression{42}})},
                         },
                     },
                 }}),

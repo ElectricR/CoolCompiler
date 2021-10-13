@@ -1,17 +1,16 @@
 #include "parser/Parser.h"
 #include "utils.h"
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+#include <string>
 #include <string_view>
 #include <type_traits>
-#include <string>
 
-template<class T>
+template <class T>
 concept Binary = std::is_base_of_v<cool::parser::symbol::BinaryExpression, T>;
 
-template<Binary T>
-std::string get_binary_name(const T&) {
+template <Binary T> std::string get_binary_name(const T&) {
     if constexpr (std::is_same_v<T, cool::parser::symbol::PlusExpression>) {
         return "_plus";
     } else if (std::is_same_v<T, cool::parser::symbol::MinusExpression>) {
@@ -26,14 +25,16 @@ std::string get_binary_name(const T&) {
         return "_lt";
     } else if (std::is_same_v<T, cool::parser::symbol::EqualExpression>) {
         return "_eq";
-    } else {return "";}
+    } else {
+        return "";
+    }
 }
 
-template<class T>
+template <class T>
 concept Boolean = std::is_base_of_v<cool::parser::symbol::BoolExpression, T>;
 
-template<class... Ts> struct Overloaded : Ts... { using Ts::operator()...; };
-template<class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
+template <class... Ts> struct Overloaded : Ts... { using Ts::operator()...; };
+template <class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
 
 void print_expression(const auto& expr, int shift) {
     std::visit(
@@ -155,8 +156,7 @@ void print_expression(const auto& expr, int shift) {
                 std::cout << std::setw(shift) << ""
                           << ": _no_type" << std::endl;
             },
-            [shift](
-                const cool::parser::symbol::IsVoidExpression& expression) {
+            [shift](const cool::parser::symbol::IsVoidExpression& expression) {
                 std::cout << std::setw(shift) << ""
                           << "#" << expression.line_number << std::endl;
                 std::cout << std::setw(shift) << ""
@@ -242,8 +242,8 @@ void print_expression(const auto& expr, int shift) {
                               << "_let" << std::endl;
                     shift_2 += 2;
 
-                    std::cout << std::setw(shift_2) << ""
-                              << let_entry.object_id << std::endl;
+                    std::cout << std::setw(shift_2) << "" << let_entry.object_id
+                              << std::endl;
                     std::cout << std::setw(shift_2) << "" << let_entry.type_id
                               << std::endl;
                     if (let_entry.assign_expression) {
@@ -259,7 +259,8 @@ void print_expression(const auto& expr, int shift) {
                     }
                 }
                 print_expression(*expression.expression, shift_2);
-                for (size_t i = 0; i != expression.let_expressions.size(); ++i) {
+                for (size_t i = 0; i != expression.let_expressions.size();
+                     ++i) {
                     shift_2 -= 2;
                     std::cout << std::setw(shift_2) << ""
                               << ": _no_type" << std::endl;
@@ -283,54 +284,75 @@ void print_expression(const auto& expr, int shift) {
 void print_feature(const auto& feat, int shift) {
     std::visit(Overloaded{
                    [shift](const cool::parser::symbol::MethodFeature& feature) {
-    std::cout << std::setw(shift) << "" << "#" << feature.line_number << std::endl;
-    std::cout << std::setw(shift) << "" << "_method" << std::endl;
-    std::cout << std::setw(shift + 2) << "" << feature.object_id << std::endl;
-    for (auto& formal : feature.formals) {
-        std::cout << std::setw(shift+2) << "" << "#" << formal.line_number << std::endl;
-        std::cout << std::setw(shift+2) << "" << "_formal" << std::endl;
-        std::cout << std::setw(shift+4) << "" << formal.object_id << std::endl;
-        std::cout << std::setw(shift+4) << "" << formal.type_id << std::endl;
-    }
-    std::cout << std::setw(shift + 2) << "" << feature.type_id << std::endl;
-    print_expression(*feature.value, shift + 2);
+                       std::cout << std::setw(shift) << ""
+                                 << "#" << feature.line_number << std::endl;
+                       std::cout << std::setw(shift) << ""
+                                 << "_method" << std::endl;
+                       std::cout << std::setw(shift + 2) << ""
+                                 << feature.object_id << std::endl;
+                       for (auto& formal : feature.formals) {
+                           std::cout << std::setw(shift + 2) << ""
+                                     << "#" << formal.line_number << std::endl;
+                           std::cout << std::setw(shift + 2) << ""
+                                     << "_formal" << std::endl;
+                           std::cout << std::setw(shift + 4) << ""
+                                     << formal.object_id << std::endl;
+                           std::cout << std::setw(shift + 4) << ""
+                                     << formal.type_id << std::endl;
+                       }
+                       std::cout << std::setw(shift + 2) << ""
+                                 << feature.type_id << std::endl;
+                       print_expression(*feature.value, shift + 2);
                    },
                    [shift](const cool::parser::symbol::FieldFeature& feature) {
-    std::cout << std::setw(shift) << "" << "#" << feature.line_number << std::endl;
-    std::cout << std::setw(shift) << "" << "_attr" << std::endl;
-    std::cout << std::setw(shift + 2) << "" << feature.object_id << std::endl;
-    std::cout << std::setw(shift + 2) << "" << feature.type_id << std::endl;
-    if (!feature.value) {
-    std::cout << std::setw(shift + 2) << "" << "#0" <<  std::endl;
-    std::cout << std::setw(shift + 2) << "" << "_no_expr" << std::endl;
-    std::cout << std::setw(shift + 2) << "" << ": _no_type" << std::endl;
-    } else {
-    print_expression(*feature.value.value(), shift + 2);
-    }
+                       std::cout << std::setw(shift) << ""
+                                 << "#" << feature.line_number << std::endl;
+                       std::cout << std::setw(shift) << ""
+                                 << "_attr" << std::endl;
+                       std::cout << std::setw(shift + 2) << ""
+                                 << feature.object_id << std::endl;
+                       std::cout << std::setw(shift + 2) << ""
+                                 << feature.type_id << std::endl;
+                       if (!feature.value) {
+                           std::cout << std::setw(shift + 2) << ""
+                                     << "#0" << std::endl;
+                           std::cout << std::setw(shift + 2) << ""
+                                     << "_no_expr" << std::endl;
+                           std::cout << std::setw(shift + 2) << ""
+                                     << ": _no_type" << std::endl;
+                       } else {
+                           print_expression(*feature.value.value(), shift + 2);
+                       }
                    },
                },
         feat.feature);
 }
 
-void print_class(const cool::parser::symbol::Class& class_, int shift, std::string_view path) {
-    std::cout << std::setw(shift) << "" << "#" << class_.line_number << std::endl;
-    std::cout << std::setw(shift) << "" << "_class" << std::endl;
+void print_class(const cool::parser::symbol::Class& class_, int shift,
+    std::string_view path) {
+    std::cout << std::setw(shift) << ""
+              << "#" << class_.line_number << std::endl;
+    std::cout << std::setw(shift) << ""
+              << "_class" << std::endl;
     shift += 2;
     std::cout << std::setw(shift) << "" << class_.type_id << std::endl;
     if (class_.inherits) {
-        std::cout << std::setw(shift) << "" << class_.inherits.value() << std::endl;
+        std::cout << std::setw(shift) << "" << class_.inherits.value()
+                  << std::endl;
     } else {
-        std::cout << std::setw(shift) << "" << "Object" << std::endl;
+        std::cout << std::setw(shift) << ""
+                  << "Object" << std::endl;
     }
     std::cout << std::setw(shift) << "" << '"' << path << '"' << std::endl;
     std::cout << std::setw(shift) << "" << '(' << std::endl;
-    for (const auto &feature : class_.features) {
+    for (const auto& feature : class_.features) {
         print_feature(feature, shift);
     }
     std::cout << std::setw(shift) << "" << ')' << std::endl;
 }
 
-void print_program(const cool::parser::symbol::Program& program, std::string_view path, bool printed_program) noexcept {
+void print_program(const cool::parser::symbol::Program& program,
+    std::string_view path, bool printed_program) noexcept {
     if (!printed_program) {
         std::cout << "#";
         std::cout << program.classes[0].line_number << std::endl;

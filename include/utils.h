@@ -1,8 +1,8 @@
 #pragma once
-#include <numeric>
-#include <string_view>
-#include <ranges>
 #include <iostream>
+#include <numeric>
+#include <ranges>
+#include <string_view>
 
 namespace util {
 
