@@ -7,6 +7,7 @@
 #include <iostream>
 #include <memory>
 #include <optional>
+#include <sstream>
 
 namespace cool::parser {
 
@@ -62,6 +63,10 @@ public:
         return result;
     }
 
+    [[nodiscard]] const std::stringstream& get_error() const noexcept {
+        return error;
+    }
+
 private:
     [[nodiscard]] std::optional<symbol::Program> parse_program() noexcept {
         symbol::Program program;
@@ -111,7 +116,7 @@ private:
                 return class_;
             }
             if (token_it.is_exhausted()) {
-                std::cerr << "Expected \"}\"." << std::endl;
+                error << "Expected \"}\"." << std::endl;
                 return {};
             }
             auto feature = parse_feature();
@@ -160,7 +165,7 @@ private:
                 break;
             }
             if (token_it.is_exhausted()) {
-                std::cerr << "Expected \"}\"." << std::endl;
+                error << "Expected \"}\"." << std::endl;
                 return {};
             }
             if (found_formal) {
@@ -260,38 +265,53 @@ private:
     [[nodiscard]] std::optional<std::shared_ptr<symbol::Expression>>
     parse_expression_lvl_6() noexcept {
         auto left_expression = parse_expression_lvl_5();
-        auto less_token =
-            extract_token(lexer::TokenType::SpecialNotation, "<", false);
-        if (less_token) {
-            auto right_expression = parse_expression_lvl_6();
-            if (right_expression) {
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{symbol::LessExpression{{
-                        left_expression.value(), right_expression.value(), less_token.value().line_number}}});
-            }
+        if (!left_expression) {
             return {};
         }
-        auto LE_token =
-            extract_token(lexer::TokenType::LE, "", false);
-        if (LE_token) {
-            auto right_expression = parse_expression_lvl_6();
-            if (right_expression) {
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{symbol::LEExpression{{
-                        left_expression.value(), right_expression.value(), LE_token.value().line_number}}});
+        while (true) {
+            bool token_found = false;
+            auto less_token =
+                extract_token(lexer::TokenType::SpecialNotation, "<", false);
+            if (less_token) {
+                auto right_expression = parse_expression_lvl_6();
+                if (right_expression) {
+                    token_found = true;
+                    left_expression = std::make_shared<symbol::Expression>(
+                        symbol::Expression{symbol::LessExpression{{
+                            left_expression.value(), right_expression.value(), less_token.value().line_number}}});
+                    continue;
+                }
+                return {};
             }
-            return {};
-        }
-        auto equal_token =
-            extract_token(lexer::TokenType::SpecialNotation, "=", false);
-        if (equal_token) {
-            auto right_expression = parse_expression_lvl_6();
-            if (right_expression) {
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{symbol::EqualExpression{{
-                        left_expression.value(), right_expression.value(), equal_token.value().line_number}}});
+            auto LE_token =
+                extract_token(lexer::TokenType::LE, "", false);
+            if (LE_token) {
+                auto right_expression = parse_expression_lvl_6();
+                if (right_expression) {
+                    token_found = true;
+                    left_expression = std::make_shared<symbol::Expression>(
+                        symbol::Expression{symbol::LEExpression{{
+                            left_expression.value(), right_expression.value(), LE_token.value().line_number}}});
+                    continue;
+                }
+                return {};
             }
-            return {};
+            auto equal_token =
+                extract_token(lexer::TokenType::SpecialNotation, "=", false);
+            if (equal_token) {
+                auto right_expression = parse_expression_lvl_6();
+                if (right_expression) {
+                    token_found = true;
+                    left_expression = std::make_shared<symbol::Expression>(
+                        symbol::Expression{symbol::EqualExpression{{
+                            left_expression.value(), right_expression.value(), equal_token.value().line_number}}});
+                    continue;
+                }
+                return {};
+            }
+            if (!token_found) {
+                break;
+            }
         }
         return left_expression;
     }
@@ -301,27 +321,37 @@ private:
         if (!left_expression) {
             return {};
         }
-        auto plus_token =
-            extract_token(lexer::TokenType::SpecialNotation, "+", false);
-        if (plus_token) {
-            auto right_expression = parse_expression_lvl_5();
-            if (right_expression) {
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{symbol::PlusExpression{{
-                        left_expression.value(), right_expression.value(), plus_token.value().line_number}}});
+        while (true) {
+            bool token_found = false;
+            auto plus_token =
+                extract_token(lexer::TokenType::SpecialNotation, "+", false);
+            if (plus_token) {
+                token_found = true;
+                auto right_expression = parse_expression_lvl_4();
+                if (right_expression) {
+                    left_expression = std::make_shared<symbol::Expression>(
+                        symbol::Expression{symbol::PlusExpression{{
+                            left_expression.value(), right_expression.value(), plus_token.value().line_number}}});
+                    continue;
+                }
+                return {};
             }
-            return {};
-        }
-        auto minus_token =
-            extract_token(lexer::TokenType::SpecialNotation, "-", false);
-        if (minus_token) {
-            auto right_expression = parse_expression_lvl_5();
-            if (right_expression) {
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{symbol::MinusExpression{{
-                        left_expression.value(), right_expression.value(), minus_token.value().line_number}}});
+            auto minus_token =
+                extract_token(lexer::TokenType::SpecialNotation, "-", false);
+            if (minus_token) {
+                token_found = true;
+                auto right_expression = parse_expression_lvl_4();
+                if (right_expression) {
+                    left_expression = std::make_shared<symbol::Expression>(
+                        symbol::Expression{symbol::MinusExpression{{
+                            left_expression.value(), right_expression.value(), minus_token.value().line_number}}});
+                    continue;
+                }
+                return {};
             }
-            return {};
+            if (!token_found) {
+                break;
+            }
         }
         return left_expression;
     }
@@ -329,27 +359,40 @@ private:
     [[nodiscard]] std::optional<std::shared_ptr<symbol::Expression>>
     parse_expression_lvl_4() noexcept {
         auto left_expression = parse_expression_lvl_3();
-        auto multiply_token =
-            extract_token(lexer::TokenType::SpecialNotation, "*", false);
-        if (multiply_token) {
-            auto right_expression = parse_expression_lvl_4();
-            if (right_expression) {
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{symbol::MultiplyExpression{{
-                        left_expression.value(), right_expression.value(), multiply_token.value().line_number}}});
-            }
+        if (!left_expression) {
             return {};
         }
-        auto divide_token =
-            extract_token(lexer::TokenType::SpecialNotation, "/", false);
-        if (divide_token) {
-            auto right_expression = parse_expression_lvl_4();
-            if (right_expression) {
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{symbol::DivideExpression{{
-                        left_expression.value(), right_expression.value(), divide_token.value().line_number}}});
+        while (true) {
+            bool token_found = false;
+            auto multiply_token =
+                extract_token(lexer::TokenType::SpecialNotation, "*", false);
+            if (multiply_token) {
+                auto right_expression = parse_expression_lvl_3();
+                if (right_expression) {
+                    token_found = true;
+                    left_expression = std::make_shared<symbol::Expression>(
+                        symbol::Expression{symbol::MultiplyExpression{{
+                            left_expression.value(), right_expression.value(), multiply_token.value().line_number}}});
+                    continue;
+                }
+                return {};
             }
-            return {};
+            auto divide_token =
+                extract_token(lexer::TokenType::SpecialNotation, "/", false);
+            if (divide_token) {
+                auto right_expression = parse_expression_lvl_3();
+                if (right_expression) {
+                    token_found = true;
+                    left_expression = std::make_shared<symbol::Expression>(
+                        symbol::Expression{symbol::DivideExpression{{
+                            left_expression.value(), right_expression.value(), divide_token.value().line_number}}});
+                    continue;
+                }
+                return {};
+            }
+            if (!token_found) {
+                break;
+            }
         }
         return left_expression;
     }
@@ -513,7 +556,7 @@ private:
                 symbol::Expression{symbol::FalseExpression{
                     {detail::string_view_to_bool(false_token.value().lexeme), false_token.value().line_number}}});
         }
-        std::cerr << "Expected expression." << std::endl;
+        error << "Expected expression." << std::endl;
         return {};
     }
 
@@ -522,11 +565,11 @@ private:
         if (with_type) {
 
             auto type_token_temp = extract_token(lexer::TokenType::TypeIdentifier);
-            type_token = type_token_temp.value().lexeme;
             dot_token = extract_token(lexer::TokenType::SpecialNotation, ".");
-            if (!type_token || !dot_token) {
+            if (!type_token_temp || !dot_token) {
                 return {};
             }
+            type_token = type_token_temp.value().lexeme;
         }
         auto object_token = extract_token(lexer::TokenType::ObjectIdentifier);
         auto opening_bracket_token = extract_token(lexer::TokenType::SpecialNotation, "(");
@@ -543,7 +586,7 @@ private:
             }
             found_comma = false;
             if (token_it.is_exhausted()) {
-                std::cerr << "Expected \")\"" << std::endl;
+                error << "Expected \")\"" << std::endl;
                 return {};
             }
             auto expression_lvl_7 = parse_expression_lvl_8();
@@ -568,7 +611,7 @@ private:
             }
             found_comma = false;
             if (token_it.is_exhausted()) {
-                std::cerr << "Expected \")\"." << std::endl;
+                error << "Expected \")\"." << std::endl;
             }
             auto expression = parse_expression_lvl_8();
             if (!expression) {
@@ -635,7 +678,7 @@ private:
                 if (!expressions.empty()) {
                     return {symbol::CompoundExpression{std::move(expressions)}};
                 }
-                std::cerr << "Expected expression." << std::endl;
+                error << "Expected expression." << std::endl;
                 return {};
             }
             auto brace_result = parse_expression_lvl_8();
@@ -663,7 +706,7 @@ private:
                 if (!branch_expressions.empty()) {
                     return {symbol::CaseExpression{case_expression.value(), std::move(branch_expressions)}};
                 }
-                std::cerr << "Expected expression." << std::endl;
+                error << "Expected expression." << std::endl;
                 return {};
             }
             auto object_id = extract_token(lexer::TokenType::ObjectIdentifier);
@@ -740,17 +783,18 @@ private:
             }
         }
         if (raise_error) {
-            std::cerr << "Expected ";
+            error << "Expected ";
             if (!lexer::token_name[required_token_type].empty()) {
-                std::cerr << lexer::token_name[required_token_type] << " ";
+                error << lexer::token_name[required_token_type] << " ";
             }
-            std::cerr << required_lexeme << std::endl;
+            error << required_lexeme << std::endl;
         }
         return {};
     }
 
     detail::ItWrapper token_it;
     std::optional<symbol::Program> result;
+    std::stringstream error;
 };
 
 } // namespace cool::parser

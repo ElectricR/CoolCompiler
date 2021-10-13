@@ -68,9 +68,18 @@ void print_expression(const auto& expr, int shift) {
             [shift](const cool::parser::symbol::DotExpression& expression) {
                 std::cout << std::setw(shift) << ""
                           << "#" << expression.line_number << std::endl;
-                std::cout << std::setw(shift) << ""
-                          << "_dispatch" << std::endl;
+                if (expression.type_id) {
+                    std::cout << std::setw(shift) << ""
+                              << "_static_dispatch" << std::endl;
+                } else {
+                    std::cout << std::setw(shift) << ""
+                              << "_dispatch" << std::endl;
+                }
                 print_expression(*expression.expression, shift + 2);
+                if (expression.type_id) {
+                    std::cout << std::setw(shift + 2) << ""
+                              << expression.type_id.value() << std::endl;
+                }
                 std::cout << std::setw(shift + 2) << "" << expression.object_id
                           << std::endl;
                 std::cout << std::setw(shift + 2) << ""
@@ -344,6 +353,9 @@ int main(int argc, char* argv[]) {
         if (program) {
             print_program(program.value(), argv[i], printed_program);
             printed_program = true;
+        } else {
+            std::cerr << parser.get_error().str();
+            return 1;
         }
     }
     return 0;
