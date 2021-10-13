@@ -7,7 +7,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/..)
 
 include_directories("include/")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g -O0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
 
 ################################
 # GTest
@@ -27,6 +27,10 @@ add_executable(lexer_smoke_test tests/lexer_tests/lexer_smoke_test.cpp)
 target_link_libraries(lexer_smoke_test gtest_main)
 add_test(lexer_smoke_test lexer_smoke_test)
 
+add_executable(parser_smoke_test tests/parser_tests/parser_smoke_test.cpp)
+target_link_libraries(parser_smoke_test gtest_main)
+add_test(parser_smoke_test parser_smoke_test)
 ###############################
 
 add_executable(lexer src/lexer/lexer.cpp)
+add_executable(parser src/parser/parser.cpp)

@@ -1,5 +1,6 @@
 #include "lexer/Lexer.h"
 #include "lexer/Token.h"
+#include "utils.h"
 
 #include <iterator>
 
@@ -33,56 +34,8 @@ void print_lexer_result(auto result) {
             break;
         }
         case cool::lexer::TokenType::String: {
-            std::cout << '#' << token.line_number << " STR_CONST \"";
-            std::ranges::for_each(token.lexeme, [](char ch) {
-                switch (ch) {
-                case '\\': {
-                    std::cout << "\\\\";
-                    break;
-                }
-                case '\"': {
-                    std::cout << "\\\"";
-                    break;
-                }
-                case '\t': {
-                    std::cout << "\\t";
-                    break;
-                }
-                case '\b': {
-                    std::cout << "\\b";
-                    break;
-                }
-                case '\f': {
-                    std::cout << "\\f";
-                    break;
-                }
-                case '\n': {
-                    std::cout << "\\n";
-                    break;
-                }
-                case '\033': {
-                    std::cout << "\\033";
-                    break;
-                }
-                case '\015': {
-                    std::cout << "\\015";
-                    break;
-                }
-                case '\022': {
-                    std::cout << "\\022";
-                    break;
-                }
-                case '\013': {
-                    std::cout << "\\013";
-                    break;
-                }
-                default: {
-                    std::cout << ch;
-                    break;
-                }
-                }
-            });
-            std::cout << '"' << std::endl;
+            std::cout << '#' << token.line_number << " STR_CONST ";
+            util::print_string(token.lexeme);
             break;
         }
         case cool::lexer::TokenType::Error: {

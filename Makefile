@@ -1,8 +1,12 @@
-test: lexer_test
+test: parser_test
 
 lexer_test: build
 	./lexer_smoke_test
 	python3 -m unittest tests/lexer_tests/lexer_end_to_end_test.py
+
+parser_test: build
+	./parser_smoke_test
+	python3 -m unittest tests/parser_tests/parser_end_to_end.py
 
 build: googletest compile_commands.json
 	cmake -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 
@@ -32,5 +36,6 @@ clean:
 	-rm examples/stack_machine.s
 	-rm lexer
 	-rm lexer_smoke_test
+	-rm parser_smoke_test
 
-.PHONY: build clean lexer_test format
+.PHONY: build clean lexer_test parser_test format
