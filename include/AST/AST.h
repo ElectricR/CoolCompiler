@@ -6,7 +6,7 @@
 #include <variant>
 #include <vector>
 
-namespace cool::parser::symbol {
+namespace cool::AST {
 
 struct Expression;
 

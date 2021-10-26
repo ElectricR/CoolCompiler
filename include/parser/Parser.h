@@ -58,7 +58,7 @@ public:
         result = parse_program();
     }
 
-    [[nodiscard]] const std::optional<symbol::Program>&
+    [[nodiscard]] const std::optional<AST::Program>&
     get_result() const noexcept {
         return result;
     }
@@ -68,8 +68,8 @@ public:
     }
 
 private:
-    [[nodiscard]] std::optional<symbol::Program> parse_program() noexcept {
-        symbol::Program program;
+    [[nodiscard]] std::optional<AST::Program> parse_program() noexcept {
+        AST::Program program;
 
         while (!token_it.is_exhausted()) {
             auto class_ = parse_class();
@@ -87,7 +87,7 @@ private:
         return program;
     }
 
-    [[nodiscard]] std::optional<symbol::Class> parse_class() noexcept {
+    [[nodiscard]] std::optional<AST::Class> parse_class() noexcept {
         auto class_token = extract_token(lexer::TokenType::Keyword, "CLASS");
         auto type_id = extract_token(lexer::TokenType::TypeIdentifier);
         auto inherits_keyword =
@@ -103,12 +103,12 @@ private:
             return {};
         }
 
-        std::vector<symbol::Feature> features;
+        std::vector<AST::Feature> features;
         while (true) {
             auto closing_parenthesis =
                 extract_token(lexer::TokenType::SpecialNotation, "}", false);
             if (closing_parenthesis) {
-                symbol::Class class_ = {std::string{type_id.value().lexeme}, {},
+                AST::Class class_ = {std::string{type_id.value().lexeme}, {},
                     features, type_id.value().line_number};
                 if (inherits_type_id.has_value()) {
                     class_.inherits = inherits_type_id.value().lexeme;
@@ -128,7 +128,7 @@ private:
         }
     }
 
-    [[nodiscard]] std::optional<symbol::Feature> parse_feature() noexcept {
+    [[nodiscard]] std::optional<AST::Feature> parse_feature() noexcept {
         auto object_id = extract_token(lexer::TokenType::ObjectIdentifier);
         auto brace =
             extract_token(lexer::TokenType::SpecialNotation, "(", false);
@@ -153,10 +153,10 @@ private:
         return {};
     }
 
-    [[nodiscard]] std::optional<symbol::MethodFeature> parse_method_feature(
+    [[nodiscard]] std::optional<AST::MethodFeature> parse_method_feature(
         auto& object_id) noexcept {
         bool found_formal = false;
-        std::vector<symbol::Formal> formals;
+        std::vector<AST::Formal> formals;
 
         while (true) {
             auto brace =
@@ -201,7 +201,7 @@ private:
         return {};
     }
 
-    [[nodiscard]] std::optional<symbol::Formal> parse_formal() noexcept {
+    [[nodiscard]] std::optional<AST::Formal> parse_formal() noexcept {
         auto object_id = extract_token(lexer::TokenType::ObjectIdentifier);
         auto colon = extract_token(lexer::TokenType::SpecialNotation, ":");
         auto type_id = extract_token(lexer::TokenType::TypeIdentifier);
@@ -214,7 +214,7 @@ private:
         return {};
     }
 
-    [[nodiscard]] std::optional<symbol::FieldFeature> parse_field_feature(
+    [[nodiscard]] std::optional<AST::FieldFeature> parse_field_feature(
         auto& object_id) noexcept {
         auto type_id = extract_token(lexer::TokenType::TypeIdentifier);
         if (type_id) {
@@ -234,7 +234,7 @@ private:
         return {};
     }
 
-    [[nodiscard]] std::optional<std::shared_ptr<symbol::Expression>>
+    [[nodiscard]] std::optional<std::shared_ptr<AST::Expression>>
     parse_expression_lvl_8() noexcept {
         if (token_it.contains_next()) {
             auto current = token_it.current();
@@ -245,9 +245,9 @@ private:
                 token_it.advance();
                 auto expression = parse_expression_lvl_8();
                 if (expression) {
-                    return std::make_shared<symbol::Expression>(
-                        symbol::Expression{
-                            symbol::AssignExpression{current.lexeme,
+                    return std::make_shared<AST::Expression>(
+                        AST::Expression{
+                            AST::AssignExpression{current.lexeme,
                                 expression.value(), current.line_number}});
                 }
                 return {};
@@ -257,14 +257,14 @@ private:
         return parse_expression_lvl_7();
     }
 
-    [[nodiscard]] std::optional<std::shared_ptr<symbol::Expression>>
+    [[nodiscard]] std::optional<std::shared_ptr<AST::Expression>>
     parse_expression_lvl_7() noexcept {
         auto not_token = extract_token(lexer::TokenType::Keyword, "NOT", false);
         if (not_token) {
             auto expression = parse_expression_lvl_7();
             if (expression) {
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{symbol::NotExpression{
+                return std::make_shared<AST::Expression>(
+                    AST::Expression{AST::NotExpression{
                         expression.value(), not_token.value().line_number}});
             }
             return {};
@@ -272,7 +272,7 @@ private:
         return parse_expression_lvl_6();
     }
 
-    [[nodiscard]] std::optional<std::shared_ptr<symbol::Expression>>
+    [[nodiscard]] std::optional<std::shared_ptr<AST::Expression>>
     parse_expression_lvl_6() noexcept {
         auto left_expression = parse_expression_lvl_5();
         if (!left_expression) {
@@ -286,8 +286,8 @@ private:
                 auto right_expression = parse_expression_lvl_6();
                 if (right_expression) {
                     token_found = true;
-                    left_expression = std::make_shared<symbol::Expression>(
-                        symbol::Expression{symbol::LessExpression{
+                    left_expression = std::make_shared<AST::Expression>(
+                        AST::Expression{AST::LessExpression{
                             {left_expression.value(), right_expression.value(),
                                 less_token.value().line_number}}});
                     continue;
@@ -299,8 +299,8 @@ private:
                 auto right_expression = parse_expression_lvl_6();
                 if (right_expression) {
                     token_found = true;
-                    left_expression = std::make_shared<symbol::Expression>(
-                        symbol::Expression{symbol::LEExpression{
+                    left_expression = std::make_shared<AST::Expression>(
+                        AST::Expression{AST::LEExpression{
                             {left_expression.value(), right_expression.value(),
                                 LE_token.value().line_number}}});
                     continue;
@@ -313,8 +313,8 @@ private:
                 auto right_expression = parse_expression_lvl_6();
                 if (right_expression) {
                     token_found = true;
-                    left_expression = std::make_shared<symbol::Expression>(
-                        symbol::Expression{symbol::EqualExpression{
+                    left_expression = std::make_shared<AST::Expression>(
+                        AST::Expression{AST::EqualExpression{
                             {left_expression.value(), right_expression.value(),
                                 equal_token.value().line_number}}});
                     continue;
@@ -327,7 +327,7 @@ private:
         }
         return left_expression;
     }
-    [[nodiscard]] std::optional<std::shared_ptr<symbol::Expression>>
+    [[nodiscard]] std::optional<std::shared_ptr<AST::Expression>>
     parse_expression_lvl_5() noexcept {
         auto left_expression = parse_expression_lvl_4();
         if (!left_expression) {
@@ -341,8 +341,8 @@ private:
                 token_found = true;
                 auto right_expression = parse_expression_lvl_4();
                 if (right_expression) {
-                    left_expression = std::make_shared<symbol::Expression>(
-                        symbol::Expression{symbol::PlusExpression{
+                    left_expression = std::make_shared<AST::Expression>(
+                        AST::Expression{AST::PlusExpression{
                             {left_expression.value(), right_expression.value(),
                                 plus_token.value().line_number}}});
                     continue;
@@ -355,8 +355,8 @@ private:
                 token_found = true;
                 auto right_expression = parse_expression_lvl_4();
                 if (right_expression) {
-                    left_expression = std::make_shared<symbol::Expression>(
-                        symbol::Expression{symbol::MinusExpression{
+                    left_expression = std::make_shared<AST::Expression>(
+                        AST::Expression{AST::MinusExpression{
                             {left_expression.value(), right_expression.value(),
                                 minus_token.value().line_number}}});
                     continue;
@@ -370,7 +370,7 @@ private:
         return left_expression;
     }
 
-    [[nodiscard]] std::optional<std::shared_ptr<symbol::Expression>>
+    [[nodiscard]] std::optional<std::shared_ptr<AST::Expression>>
     parse_expression_lvl_4() noexcept {
         auto left_expression = parse_expression_lvl_3();
         if (!left_expression) {
@@ -384,8 +384,8 @@ private:
                 auto right_expression = parse_expression_lvl_3();
                 if (right_expression) {
                     token_found = true;
-                    left_expression = std::make_shared<symbol::Expression>(
-                        symbol::Expression{symbol::MultiplyExpression{
+                    left_expression = std::make_shared<AST::Expression>(
+                        AST::Expression{AST::MultiplyExpression{
                             {left_expression.value(), right_expression.value(),
                                 multiply_token.value().line_number}}});
                     continue;
@@ -398,8 +398,8 @@ private:
                 auto right_expression = parse_expression_lvl_3();
                 if (right_expression) {
                     token_found = true;
-                    left_expression = std::make_shared<symbol::Expression>(
-                        symbol::Expression{symbol::DivideExpression{
+                    left_expression = std::make_shared<AST::Expression>(
+                        AST::Expression{AST::DivideExpression{
                             {left_expression.value(), right_expression.value(),
                                 divide_token.value().line_number}}});
                     continue;
@@ -413,15 +413,15 @@ private:
         return left_expression;
     }
 
-    [[nodiscard]] std::optional<std::shared_ptr<symbol::Expression>>
+    [[nodiscard]] std::optional<std::shared_ptr<AST::Expression>>
     parse_expression_lvl_2() noexcept {
         auto tilde_token =
             extract_token(lexer::TokenType::SpecialNotation, "~", false);
         if (tilde_token) {
             auto expression = parse_expression_lvl_2();
             if (expression) {
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{symbol::TildeExpression{
+                return std::make_shared<AST::Expression>(
+                    AST::Expression{AST::TildeExpression{
                         expression.value(), tilde_token.value().line_number}});
             }
             return {};
@@ -429,15 +429,15 @@ private:
         return parse_expression_lvl_1();
     }
 
-    [[nodiscard]] std::optional<std::shared_ptr<symbol::Expression>>
+    [[nodiscard]] std::optional<std::shared_ptr<AST::Expression>>
     parse_expression_lvl_3() noexcept {
         auto isvoid_token =
             extract_token(lexer::TokenType::Keyword, "ISVOID", false);
         if (isvoid_token) {
             auto expression = parse_expression_lvl_3();
             if (expression) {
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{symbol::IsVoidExpression{
+                return std::make_shared<AST::Expression>(
+                    AST::Expression{AST::IsVoidExpression{
                         expression.value(), isvoid_token.value().line_number}});
             }
             return {};
@@ -445,7 +445,7 @@ private:
         return parse_expression_lvl_2();
     }
 
-    [[nodiscard]] std::optional<std::shared_ptr<symbol::Expression>>
+    [[nodiscard]] std::optional<std::shared_ptr<AST::Expression>>
     parse_expression_lvl_1() noexcept {
         auto expression = parse_expression_lvl_0();
         if (!expression) {
@@ -468,15 +468,15 @@ private:
         }
     }
 
-    [[nodiscard]] std::optional<std::shared_ptr<symbol::Expression>>
+    [[nodiscard]] std::optional<std::shared_ptr<AST::Expression>>
     parse_expression_lvl_0() noexcept {
         auto if_token = extract_token(lexer::TokenType::Keyword, "IF", false);
         if (if_token) {
             auto if_result = parse_if();
             if (if_result) {
                 if_result.value().line_number = if_token.value().line_number;
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{if_result.value()});
+                return std::make_shared<AST::Expression>(
+                    AST::Expression{if_result.value()});
             }
             return {};
         }
@@ -487,8 +487,8 @@ private:
             if (while_result) {
                 while_result.value().line_number =
                     while_token.value().line_number;
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{while_result.value()});
+                return std::make_shared<AST::Expression>(
+                    AST::Expression{while_result.value()});
             }
             return {};
         }
@@ -499,8 +499,8 @@ private:
             if (compound_expression_result) {
                 compound_expression_result.value().line_number =
                     opening_brace_token.value().line_number;
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{compound_expression_result.value()});
+                return std::make_shared<AST::Expression>(
+                    AST::Expression{compound_expression_result.value()});
             }
             return {};
         }
@@ -509,8 +509,8 @@ private:
             auto let_result = parse_let();
             if (let_result) {
                 let_result.value().line_number = let_token.value().line_number;
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{let_result.value()});
+                return std::make_shared<AST::Expression>(
+                    AST::Expression{let_result.value()});
             }
             return {};
         }
@@ -521,8 +521,8 @@ private:
             if (case_result) {
                 case_result.value().line_number =
                     case_token.value().line_number;
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{case_result.value()});
+                return std::make_shared<AST::Expression>(
+                    AST::Expression{case_result.value()});
             }
             return {};
         }
@@ -530,8 +530,8 @@ private:
         if (new_token) {
             auto new_result = parse_new();
             if (new_result) {
-                return std::make_shared<symbol::Expression>(
-                    symbol::Expression{new_result.value()});
+                return std::make_shared<AST::Expression>(
+                    AST::Expression{new_result.value()});
             }
             return {};
         }
@@ -554,43 +554,43 @@ private:
                 if (expression) {
                     expression.value().line_number =
                         object_id_token.value().line_number;
-                    return std::make_shared<symbol::Expression>(
-                        symbol::Expression{std::move(expression.value())});
+                    return std::make_shared<AST::Expression>(
+                        AST::Expression{std::move(expression.value())});
                 }
                 return {};
             }
-            return std::make_shared<symbol::Expression>(
-                symbol::Expression{symbol::ObjectExpression{
+            return std::make_shared<AST::Expression>(
+                AST::Expression{AST::ObjectExpression{
                     std::string{object_id_token.value().lexeme},
                     object_id_token.value().line_number}});
         }
         auto int_token = extract_token(lexer::TokenType::Integer, "", false);
         if (int_token) {
-            return std::make_shared<symbol::Expression>(
-                symbol::Expression{symbol::IntExpression{
+            return std::make_shared<AST::Expression>(
+                AST::Expression{AST::IntExpression{
                     std::stoi(std::string{int_token.value().lexeme}),
                     int_token.value().line_number}});
         }
         auto string_token = extract_token(lexer::TokenType::String, "", false);
         if (string_token) {
-            return std::make_shared<symbol::Expression>(
-                symbol::Expression{symbol::StringExpression{
+            return std::make_shared<AST::Expression>(
+                AST::Expression{AST::StringExpression{
                     std::string{string_token.value().lexeme},
                     string_token.value().line_number}});
         }
         auto true_token =
             extract_token(lexer::TokenType::BoolConst, "true", false);
         if (true_token) {
-            return std::make_shared<symbol::Expression>(
-                symbol::Expression{symbol::TrueExpression{
+            return std::make_shared<AST::Expression>(
+                AST::Expression{AST::TrueExpression{
                     {detail::string_view_to_bool(true_token.value().lexeme),
                         true_token.value().line_number}}});
         }
         auto false_token =
             extract_token(lexer::TokenType::BoolConst, "false", false);
         if (false_token) {
-            return std::make_shared<symbol::Expression>(
-                symbol::Expression{symbol::FalseExpression{
+            return std::make_shared<AST::Expression>(
+                AST::Expression{AST::FalseExpression{
                     {detail::string_view_to_bool(false_token.value().lexeme),
                         false_token.value().line_number}}});
         }
@@ -598,8 +598,8 @@ private:
         return {};
     }
 
-    [[nodiscard]] std::optional<std::shared_ptr<symbol::Expression>> parse_dot(
-        std::shared_ptr<symbol::Expression> expression_lvl_1, bool with_type,
+    [[nodiscard]] std::optional<std::shared_ptr<AST::Expression>> parse_dot(
+        std::shared_ptr<AST::Expression> expression_lvl_1, bool with_type,
         auto dot_token) noexcept {
         std::optional<std::string> type_token;
         if (with_type) {
@@ -619,7 +619,7 @@ private:
         if (!opening_bracket_token || !object_token) {
             return {};
         }
-        std::vector<std::shared_ptr<symbol::Expression>> expressions;
+        std::vector<std::shared_ptr<AST::Expression>> expressions;
 
         bool found_comma = false;
         while (true) {
@@ -643,15 +643,15 @@ private:
             }
             return {};
         }
-        return std::make_shared<symbol::Expression>(
-            symbol::Expression{symbol::DotExpression{expression_lvl_1,
+        return std::make_shared<AST::Expression>(
+            AST::Expression{AST::DotExpression{expression_lvl_1,
                 type_token, std::string{object_token.value().lexeme},
                 std::move(expressions), dot_token.value().line_number}});
     }
 
-    [[nodiscard]] std::optional<symbol::FunctionExpression> parse_function(
+    [[nodiscard]] std::optional<AST::FunctionExpression> parse_function(
         auto object_id) noexcept {
-        symbol::FunctionExpression fun_expression;
+        AST::FunctionExpression fun_expression;
         fun_expression.object_id = object_id.lexeme;
         bool found_comma = false;
         while (true) {
@@ -674,7 +674,7 @@ private:
         }
     }
 
-    [[nodiscard]] std::optional<symbol::IfExpression> parse_if() noexcept {
+    [[nodiscard]] std::optional<AST::IfExpression> parse_if() noexcept {
         auto condition_expression = parse_expression_lvl_8();
         if (!condition_expression) {
             return {};
@@ -700,7 +700,7 @@ private:
             else_expression.value()}};
     }
 
-    [[nodiscard]] std::optional<symbol::WhileExpression>
+    [[nodiscard]] std::optional<AST::WhileExpression>
     parse_while() noexcept {
         auto condition_expression = parse_expression_lvl_8();
         if (!condition_expression) {
@@ -719,15 +719,15 @@ private:
         return {{condition_expression.value(), body_expression.value()}};
     }
 
-    [[nodiscard]] std::optional<symbol::CompoundExpression>
+    [[nodiscard]] std::optional<AST::CompoundExpression>
     parse_compound_expression() noexcept {
-        std::vector<std::shared_ptr<symbol::Expression>> expressions;
+        std::vector<std::shared_ptr<AST::Expression>> expressions;
         while (true) {
             auto closing_brace_token =
                 extract_token(lexer::TokenType::SpecialNotation, "}", false);
             if (closing_brace_token) {
                 if (!expressions.empty()) {
-                    return {symbol::CompoundExpression{std::move(expressions)}};
+                    return {AST::CompoundExpression{std::move(expressions)}};
                 }
                 error << "Expected expression." << std::endl;
                 return {};
@@ -742,7 +742,7 @@ private:
         }
     }
 
-    [[nodiscard]] std::optional<symbol::CaseExpression> parse_case() noexcept {
+    [[nodiscard]] std::optional<AST::CaseExpression> parse_case() noexcept {
         auto case_expression = parse_expression_lvl_8();
         if (!case_expression) {
             return {};
@@ -750,13 +750,13 @@ private:
         if (!extract_token(lexer::TokenType::Keyword, "OF")) {
             return {};
         }
-        std::vector<symbol::CaseBranch> branch_expressions;
+        std::vector<AST::CaseBranch> branch_expressions;
         while (true) {
             auto esac_token =
                 extract_token(lexer::TokenType::Keyword, "ESAC", false);
             if (esac_token) {
                 if (!branch_expressions.empty()) {
-                    return {symbol::CaseExpression{case_expression.value(),
+                    return {AST::CaseExpression{case_expression.value(),
                         std::move(branch_expressions)}};
                 }
                 error << "Expected expression." << std::endl;
@@ -773,7 +773,7 @@ private:
             if (object_id && colon && type_id && darrow && branch_expression &&
                 semicolon_token) {
                 branch_expressions.push_back(
-                    symbol::CaseBranch{std::string{object_id.value().lexeme},
+                    AST::CaseBranch{std::string{object_id.value().lexeme},
                         std::string{type_id.value().lexeme},
                         std::move(branch_expression.value()),
                         object_id.value().line_number});
@@ -783,15 +783,15 @@ private:
         }
     }
 
-    [[nodiscard]] std::optional<symbol::LetExpression> parse_let() noexcept {
-        symbol::LetExpression let_expression;
+    [[nodiscard]] std::optional<AST::LetExpression> parse_let() noexcept {
+        AST::LetExpression let_expression;
         while (true) {
             auto object_id = extract_token(lexer::TokenType::ObjectIdentifier);
             auto colon = extract_token(lexer::TokenType::SpecialNotation, ":");
             auto type_id = extract_token(lexer::TokenType::TypeIdentifier);
             auto assign_token =
                 extract_token(lexer::TokenType::Assign, "", false);
-            std::optional<std::shared_ptr<symbol::Expression>>
+            std::optional<std::shared_ptr<AST::Expression>>
                 assign_expression;
 
             if (assign_token) {
@@ -802,7 +802,7 @@ private:
             }
             if (object_id && colon && type_id) {
                 let_expression.let_expressions.push_back(
-                    symbol::LetEntry{std::string{object_id.value().lexeme},
+                    AST::LetEntry{std::string{object_id.value().lexeme},
                         std::string{type_id.value().lexeme}, assign_expression,
                         object_id.value().line_number});
             } else {
@@ -824,7 +824,7 @@ private:
         return {};
     }
 
-    [[nodiscard]] std::optional<symbol::NewExpression> parse_new() noexcept {
+    [[nodiscard]] std::optional<AST::NewExpression> parse_new() noexcept {
         auto type_id = extract_token(lexer::TokenType::TypeIdentifier);
         if (!type_id) {
             return {};
@@ -857,7 +857,7 @@ private:
     }
 
     detail::ItWrapper token_it;
-    std::optional<symbol::Program> result;
+    std::optional<AST::Program> result;
     std::stringstream error;
 };
 
