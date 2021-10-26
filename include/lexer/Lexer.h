@@ -13,7 +13,7 @@ namespace cool::lexer {
 
 class Lexer {
 public:
-    Lexer(std::istream& source_file) {
+    explicit Lexer(std::istream& source_file) {
         std::string line;
         std::string cool_string_appendix;
         unsigned line_number = 1;
