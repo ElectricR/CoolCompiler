@@ -15,7 +15,7 @@ namespace detail {
 
 class ItWrapper {
 public:
-    ItWrapper(const std::vector<lexer::Token>& tokens)
+    explicit ItWrapper(const std::vector<lexer::Token>& tokens)
         : current_iterator(tokens.cbegin()), end(tokens.cend()) {}
 
     bool is_exhausted() const noexcept {
@@ -54,7 +54,7 @@ static bool string_view_to_bool(std::string_view str_view) noexcept {
 
 class Parser {
 public:
-    Parser(const lexer::Lexer& lexer) : token_it(lexer.get_result()) {
+    explicit Parser(const lexer::Lexer& lexer) : token_it(lexer.get_result()) {
         result = parse_program();
     }
 
