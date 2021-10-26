@@ -1,5 +1,5 @@
 #include "parser/Parser.h"
-#include "parser/symbols.h"
+#include "AST/AST.h"
 
 #include <gtest/gtest.h>
 
