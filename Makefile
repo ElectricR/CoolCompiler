@@ -42,5 +42,6 @@ clean:
 	-rm lexer_smoke_test
 	-rm parser_smoke_test
 	-rm semant_smoke_test
+	-rm build -r
 
 .PHONY: build clean lexer_test parser_test format
