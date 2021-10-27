@@ -1,7 +1,7 @@
 #pragma once
 
-#include "lexer/Lexer.h"
 #include "AST/AST.h"
+#include "lexer/Lexer.h"
 
 #include <algorithm>
 #include <iostream>
@@ -246,9 +246,8 @@ private:
                 auto expression = parse_expression_lvl_8();
                 if (expression) {
                     return std::make_shared<AST::Expression>(
-                        AST::Expression{
-                            AST::AssignExpression{current.lexeme,
-                                expression.value(), current.line_number}});
+                        AST::Expression{AST::AssignExpression{current.lexeme,
+                            expression.value(), current.line_number}});
                 }
                 return {};
             }
@@ -573,9 +572,8 @@ private:
         }
         auto string_token = extract_token(lexer::TokenType::String, "", false);
         if (string_token) {
-            return std::make_shared<AST::Expression>(
-                AST::Expression{AST::StringExpression{
-                    std::string{string_token.value().lexeme},
+            return std::make_shared<AST::Expression>(AST::Expression{
+                AST::StringExpression{std::string{string_token.value().lexeme},
                     string_token.value().line_number}});
         }
         auto true_token =
@@ -644,8 +642,8 @@ private:
             return {};
         }
         return std::make_shared<AST::Expression>(
-            AST::Expression{AST::DotExpression{expression_lvl_1,
-                type_token, std::string{object_token.value().lexeme},
+            AST::Expression{AST::DotExpression{expression_lvl_1, type_token,
+                std::string{object_token.value().lexeme},
                 std::move(expressions), dot_token.value().line_number}});
     }
 
@@ -700,8 +698,7 @@ private:
             else_expression.value()}};
     }
 
-    [[nodiscard]] std::optional<AST::WhileExpression>
-    parse_while() noexcept {
+    [[nodiscard]] std::optional<AST::WhileExpression> parse_while() noexcept {
         auto condition_expression = parse_expression_lvl_8();
         if (!condition_expression) {
             return {};
@@ -791,8 +788,7 @@ private:
             auto type_id = extract_token(lexer::TokenType::TypeIdentifier);
             auto assign_token =
                 extract_token(lexer::TokenType::Assign, "", false);
-            std::optional<std::shared_ptr<AST::Expression>>
-                assign_expression;
+            std::optional<std::shared_ptr<AST::Expression>> assign_expression;
 
             if (assign_token) {
                 assign_expression = parse_expression_lvl_8();

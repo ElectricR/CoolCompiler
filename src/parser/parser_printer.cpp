@@ -1,5 +1,5 @@
-#include "parser/Parser.h"
 #include "AST/AST_Printer.h"
+#include "parser/Parser.h"
 
 int main(int argc, char* argv[]) {
     bool printed_program = false;

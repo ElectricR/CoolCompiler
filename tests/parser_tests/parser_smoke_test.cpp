@@ -1,5 +1,5 @@
-#include "parser/Parser.h"
 #include "AST/AST.h"
+#include "parser/Parser.h"
 
 #include <gtest/gtest.h>
 
@@ -57,8 +57,7 @@ TEST(ParserSmokeTest, MemberFunctionTest) {
             {},
             "Int",
             std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{
-                    {cool::AST::IntExpression{0}}}),
+                cool::AST::Expression{{cool::AST::IntExpression{0}}}),
         }}},
     }}};
 
@@ -80,8 +79,7 @@ TEST(ParserSmokeTest, MemberFunctionWithParametersTest) {
             {{"x", "Int"}},
             "Int",
             std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{
-                    {cool::AST::IntExpression{0}}}),
+                cool::AST::Expression{{cool::AST::IntExpression{0}}}),
         }}},
     }}};
 
@@ -102,8 +100,7 @@ TEST(ParserSmokeTest, FieldTest) {
             "x",
             "Int",
             std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{
-                    {cool::AST::IntExpression{0}}}),
+                cool::AST::Expression{{cool::AST::IntExpression{0}}}),
         }}},
     }}};
 
@@ -124,10 +121,9 @@ TEST(ParserSmokeTest, ObjectIDExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::ObjectExpression{"a"},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::ObjectExpression{"a"},
+            }}),
         }}},
     }}};
 
@@ -147,10 +143,9 @@ TEST(ParserSmokeTest, IntExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::IntExpression{42},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::IntExpression{42},
+            }}),
         }}},
     }}};
 
@@ -172,10 +167,9 @@ TEST(ParserSmokeTest, StringExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::StringExpression{"42bar"},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::StringExpression{"42bar"},
+            }}),
         }}},
     }}};
 
@@ -196,10 +190,9 @@ TEST(ParserSmokeTest, TrueExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::TrueExpression{{true}},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::TrueExpression{{true}},
+            }}),
         }}},
     }}};
 
@@ -220,10 +213,9 @@ TEST(ParserSmokeTest, FalseExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::FalseExpression{{false}},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::FalseExpression{{false}},
+            }}),
         }}},
     }}};
 
@@ -244,10 +236,9 @@ TEST(ParserSmokeTest, BracketExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::IntExpression{42},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::IntExpression{42},
+            }}),
         }}},
     }}};
 
@@ -270,18 +261,14 @@ TEST(ParserSmokeTest, IfTest) {
             {},
             "Int",
             std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{
-                    {cool::AST::IfExpression{
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{1}})},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{7}})},
-                    }}}),
+                cool::AST::Expression{{cool::AST::IfExpression{
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{1}})},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{7}})},
+                }}}),
         }}},
     }}};
 
@@ -304,16 +291,13 @@ TEST(ParserSmokeTest, WhileTest) {
             {},
             "Int",
             std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{
-                    {cool::AST::WhileExpression{
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::StringExpression{
-                                    "bar"}})},
-                    }}}),
+                cool::AST::Expression{{cool::AST::WhileExpression{
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{
+                            cool::AST::StringExpression{"bar"}})},
+                }}}),
         }}},
     }}};
 
@@ -335,18 +319,15 @@ TEST(ParserSmokeTest, BracesExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::CompoundExpression{{
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::StringExpression{
-                                    "bar"}})},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{42}})},
-                    }},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::CompoundExpression{{
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{
+                            cool::AST::StringExpression{"bar"}})},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{42}})},
+                }},
+            }}),
         }}},
     }}};
 
@@ -369,12 +350,10 @@ TEST(ParserSmokeTest, CaseExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::
-                    Expression>(cool::AST::Expression{
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
                 {cool::AST::CaseExpression{
                     {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{
-                            cool::AST::IntExpression{42}})},
+                        cool::AST::Expression{cool::AST::IntExpression{42}})},
                     {
                         {
                             {"a"},
@@ -388,8 +367,7 @@ TEST(ParserSmokeTest, CaseExpressionTest) {
                             {"String"},
                             {std::make_shared<cool::AST::Expression>(
                                 cool::AST::Expression{
-                                    cool::AST::StringExpression{
-                                        "bar"}})},
+                                    cool::AST::StringExpression{"bar"}})},
                         },
                     },
                 }},
@@ -415,24 +393,22 @@ TEST(ParserSmokeTest, DotExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{
-                    {cool::AST::DotExpression{
-                        {{std::make_shared<cool::AST::Expression>(
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                {cool::AST::DotExpression{
+                    {{std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})}},
+                    {"String"},
+                    {"len"},
+                    {
+                        {std::make_shared<cool::AST::Expression>(
                             cool::AST::Expression{
-                                cool::AST::IntExpression{2}})}},
-                        {"String"},
-                        {"len"},
-                        {
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::IntExpression{42}})},
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::IntExpression{1}})},
-                        },
-                    }},
-                }),
+                                cool::AST::IntExpression{42}})},
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{1}})},
+                    },
+                }},
+            }),
         }}},
     }}};
 
@@ -455,31 +431,27 @@ TEST(ParserSmokeTest, DotMultipleExpressionTest) {
             {},
             "Object",
             std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{
-                    cool::AST::DotExpression{
+                cool::AST::Expression{cool::AST::DotExpression{
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::DotExpression{
+                            {std::make_shared<cool::AST::Expression>(
+                                cool::AST::Expression{
+                                    cool::AST::IntExpression{2}})},
+                            {},
+                            {"toStr"},
+                            {},
+                        }})},
+                    {},
+                    {"len"},
+                    {
                         {std::make_shared<cool::AST::Expression>(
                             cool::AST::Expression{
-                                cool::AST::DotExpression{
-                                    {std::make_shared<
-                                        cool::AST::Expression>(
-                                        cool::AST::Expression{
-                                            cool::AST::IntExpression{
-                                                2}})},
-                                    {},
-                                    {"toStr"},
-                                    {},
-                                }})},
-                        {},
-                        {"len"},
-                        {
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::IntExpression{42}})},
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::IntExpression{1}})},
-                        },
-                    }}),
+                                cool::AST::IntExpression{42}})},
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{1}})},
+                    },
+                }}),
         }}},
     }}};
 
@@ -500,17 +472,14 @@ TEST(ParserSmokeTest, PlusSimpleExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::PlusExpression{{
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                    }},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::PlusExpression{{
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                }},
+            }}),
         }}},
     }}};
 
@@ -531,17 +500,14 @@ TEST(ParserSmokeTest, MinusSimpleExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::MinusExpression{{
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                    }},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::MinusExpression{{
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                }},
+            }}),
         }}},
     }}};
 
@@ -562,17 +528,14 @@ TEST(ParserSmokeTest, MultiplySimpleExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::MultiplyExpression{{
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                    }},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::MultiplyExpression{{
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                }},
+            }}),
         }}},
     }}};
 
@@ -593,17 +556,14 @@ TEST(ParserSmokeTest, DivideSimpleExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::DivideExpression{{
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                    }},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::DivideExpression{{
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                }},
+            }}),
         }}},
     }}};
 
@@ -625,26 +585,19 @@ TEST(ParserSmokeTest, ComplexMathExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::
-                    Expression>(cool::AST::Expression{{
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
                 cool::AST::PlusExpression{{
                     {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{
-                            cool::AST::MultiplyExpression{{
-                                {std::make_shared<
-                                    cool::AST::Expression>(
-                                    cool::AST::Expression{
-                                        cool::AST::IntExpression{
-                                            2}})},
-                                {std::make_shared<
-                                    cool::AST::Expression>(
-                                    cool::AST::Expression{
-                                        cool::AST::IntExpression{
-                                            2}})},
-                            }}})},
-                    {std::make_shared<cool::AST::
-                            Expression>(cool::AST::Expression{
-                        cool::AST::DivideExpression{{
+                        cool::AST::Expression{cool::AST::MultiplyExpression{{
+                            {std::make_shared<cool::AST::Expression>(
+                                cool::AST::Expression{
+                                    cool::AST::IntExpression{2}})},
+                            {std::make_shared<cool::AST::Expression>(
+                                cool::AST::Expression{
+                                    cool::AST::IntExpression{2}})},
+                        }}})},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::DivideExpression{{
                             {std::make_shared<cool::AST::Expression>(
                                 cool::AST::Expression{
                                     cool::AST::IntExpression{1}})},
@@ -674,17 +627,14 @@ TEST(ParserSmokeTest, LessSimpleExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::LessExpression{{
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                    }},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::LessExpression{{
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                }},
+            }}),
         }}},
     }}};
 
@@ -705,17 +655,14 @@ TEST(ParserSmokeTest, LESimpleExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::LEExpression{{
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                    }},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::LEExpression{{
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                }},
+            }}),
         }}},
     }}};
 
@@ -736,17 +683,14 @@ TEST(ParserSmokeTest, EqualSimpleExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::EqualExpression{{
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                    }},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::EqualExpression{{
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+                }},
+            }}),
         }}},
     }}};
 
@@ -767,13 +711,11 @@ TEST(ParserSmokeTest, SimpleTildeExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::TildeExpression{
-                        std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::TildeExpression{
+                    std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+            }}),
         }}},
     }}};
 
@@ -794,18 +736,14 @@ TEST(ParserSmokeTest, DoubleTildeExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::TildeExpression{
-                        std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::TildeExpression{
-                                    std::make_shared<
-                                        cool::AST::Expression>(
-                                        cool::AST::Expression{
-                                            cool::AST::IntExpression{
-                                                2}})}})},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::TildeExpression{
+                    std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::TildeExpression{
+                            std::make_shared<cool::AST::Expression>(
+                                cool::AST::Expression{
+                                    cool::AST::IntExpression{2}})}})},
+            }}),
         }}},
     }}};
 
@@ -827,13 +765,11 @@ TEST(ParserSmokeTest, SimpleIsVoidExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::IsVoidExpression{
-                        std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::IsVoidExpression{
+                    std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+            }}),
         }}},
     }}};
 
@@ -854,13 +790,11 @@ TEST(ParserSmokeTest, SimpleNotExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::NotExpression{
-                        std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{2}})},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::NotExpression{
+                    std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::IntExpression{2}})},
+            }}),
         }}},
     }}};
 
@@ -881,10 +815,9 @@ TEST(ParserSmokeTest, SimpleNewExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::NewExpression{"A"},
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::NewExpression{"A"},
+            }}),
         }}},
     }}};
 
@@ -906,8 +839,7 @@ TEST(ParserSmokeTest, SimpleLetExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::
-                    Expression>(cool::AST::Expression{{
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
                 cool::AST::LetExpression{
                     {
                         {"a", "Int",
@@ -919,9 +851,8 @@ TEST(ParserSmokeTest, SimpleLetExpressionTest) {
                                 cool::AST::Expression{
                                     cool::AST::IntExpression{1}})}},
                     },
-                    {std::make_shared<cool::AST::
-                            Expression>(cool::AST::Expression{
-                        cool::AST::PlusExpression{{
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::PlusExpression{{
                             {std::make_shared<cool::AST::Expression>(
                                 cool::AST::Expression{
                                     cool::AST::IntExpression{2}})},
@@ -952,26 +883,20 @@ TEST(ParserSmokeTest, SimpleAssignExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::AssignExpression{
-                        {"a"},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::PlusExpression{{
-                                    {std::make_shared<
-                                        cool::AST::Expression>(
-                                        cool::AST::Expression{
-                                            cool::AST::IntExpression{
-                                                2}})},
-                                    {std::make_shared<
-                                        cool::AST::Expression>(
-                                        cool::AST::Expression{
-                                            cool::AST::IntExpression{
-                                                2}})},
-                                }}})},
-                    },
-                }}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::AssignExpression{
+                    {"a"},
+                    {std::make_shared<cool::AST::Expression>(
+                        cool::AST::Expression{cool::AST::PlusExpression{{
+                            {std::make_shared<cool::AST::Expression>(
+                                cool::AST::Expression{
+                                    cool::AST::IntExpression{2}})},
+                            {std::make_shared<cool::AST::Expression>(
+                                cool::AST::Expression{
+                                    cool::AST::IntExpression{2}})},
+                        }}})},
+                },
+            }}),
         }}},
     }}};
 
@@ -993,20 +918,19 @@ TEST(ParserSmokeTest, SimpleFunctionExpressionTest) {
             "foo",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{
-                    cool::AST::FunctionExpression{
-                        "bar",
-                        {
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::IntExpression{1}})},
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::IntExpression{42}})},
-                        },
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
+                cool::AST::FunctionExpression{
+                    "bar",
+                    {
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{1}})},
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{42}})},
                     },
-                }}),
+                },
+            }}),
         }}},
     }}};
 

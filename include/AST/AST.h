@@ -195,6 +195,7 @@ struct Expression {
         FalseExpression, NotExpression, LetExpression, AssignExpression,
         FunctionExpression>
         value;
+    std::string type = "_no_type";
     bool operator==(const Expression& other) const = default;
 };
 
@@ -337,4 +338,4 @@ struct Program {
     bool operator==(const Program& other) const = default;
 };
 
-} // namespace cool::parser::symbol
+} // namespace cool::AST
