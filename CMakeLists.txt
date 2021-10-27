@@ -19,9 +19,9 @@ include_directories(googletest/googletest/include)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wconversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual -Wpedantic -Wconversion -Wsign-conversion -Wnull-dereference -Wdouble-promotion -Wextra-semi -Wformat=2")
 
-set(LEXER_SOURCES "src/lexer/Lexer.cpp")
-set(PARSER_SOURCES "${LEXER_SOURCES}")
-set(SEMANT_SOURCES "${PARSER_SOURCES}")
+set(LEXER_SOURCES src/lexer/Lexer.cpp)
+set(PARSER_SOURCES ${LEXER_SOURCES} src/parser/Parser.cpp)
+set(SEMANT_SOURCES ${PARSER_SOURCES})
 
 ###############################
 # Smoke
