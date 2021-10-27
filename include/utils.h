@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <numeric>
 #include <ranges>
@@ -15,9 +16,9 @@ constexpr auto adjacent_reduce(InputIt first2, InputIt last, T init,
         first1, --last, first2, init, reduce_op, transform_op);
 }
 
-void print_string(std::string_view str) noexcept {
+static void print_string(std::string_view str) noexcept {
     std::cout << '"';
-    std::ranges::for_each(str, [](char ch) {
+    std::for_each(str.cbegin(), str.cend(), [](char ch) {
         switch (ch) {
         case '\\': {
             std::cout << "\\\\";
