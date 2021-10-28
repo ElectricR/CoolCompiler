@@ -13,10 +13,14 @@ namespace cool::lexer {
 
 class Lexer {
 public:
-    explicit Lexer(std::istream& source_file);
+    Lexer(std::istream& source_file, std::string filepath = "");
 
     [[nodiscard]] const auto& get_result() const noexcept {
         return result;
+    }
+
+    [[nodiscard]] std::string get_filepath() const noexcept {
+        return filepath;
     }
 
 private:
@@ -90,6 +94,7 @@ private:
         std::string_view& buffer, unsigned line_number) noexcept;
 
     std::vector<Token> result;
+    std::string filepath;
 };
 
 } // namespace cool::lexer

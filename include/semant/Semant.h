@@ -6,10 +6,12 @@ namespace cool::semant {
 
 class Semant {
 public:
-    explicit Semant(const parser::Parser& parser) {
-        if (auto parser_result = parser.get_result()) {
-            program = parser_result.value();
-            check_semantics();
+    explicit Semant(const std::vector<parser::Parser>& parsers) {
+        for (auto &parser : parsers) {
+            if (auto parser_result = parser.get_result()) {
+                std::ranges::copy(parser.get_result().value().classes, std::back_inserter(program.classes));
+                check_semantics();
+            }
         }
     }
 
@@ -19,6 +21,10 @@ public:
 
     [[nodiscard]] std::string get_error() const {
         return error_msg.value();
+    }
+
+    [[nodiscard]] const auto& get_result() const noexcept {
+        return program;
     }
 
 private:

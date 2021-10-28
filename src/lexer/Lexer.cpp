@@ -1,6 +1,6 @@
 #include "lexer/Lexer.h"
 
-cool::lexer::Lexer::Lexer(std::istream& source_file) {
+cool::lexer::Lexer::Lexer(std::istream& source_file, std::string filepath_): filepath(filepath_) {
     std::string line;
     std::string cool_string_appendix;
     unsigned line_number = 1;

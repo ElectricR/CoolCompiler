@@ -325,6 +325,7 @@ struct Class {
     std::optional<std::string> inherits;
     std::vector<Feature> features;
     unsigned line_number = 0;
+    std::string filepath{};
 
     bool operator==(const Class& other) const {
         return type_id == other.type_id && inherits == other.inherits &&

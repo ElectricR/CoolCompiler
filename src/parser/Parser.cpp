@@ -48,7 +48,7 @@ cool::parser::Parser::parse_class() noexcept {
             extract_token(lexer::TokenType::SpecialNotation, "}", false);
         if (closing_parenthesis) {
             cool::AST::Class class_ = {std::string{type_id.value().lexeme}, {},
-                features, type_id.value().line_number};
+                features, type_id.value().line_number, filepath};
             if (inherits_type_id.has_value()) {
                 class_.inherits = inherits_type_id.value().lexeme;
             }

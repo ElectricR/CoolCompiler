@@ -44,7 +44,7 @@ template <class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
 
 class AST_Printer {
 public:
-    void print_program(const cool::AST::Program& program, std::string_view path,
+    void print_program(const cool::AST::Program& program,
         bool printed_program) noexcept {
         if (!printed_program) {
             std::cout << "#";
@@ -53,7 +53,7 @@ public:
         }
         int shift = 2;
         for (auto class_ : program.classes) {
-            print_class(class_, shift, path);
+            print_class(class_, shift);
         }
     }
 
@@ -354,7 +354,7 @@ private:
     }
 
     void print_class(
-        const cool::AST::Class& class_, int shift, std::string_view path) {
+        const cool::AST::Class& class_, int shift) {
         std::cout << std::setw(shift) << ""
                   << "#" << class_.line_number << std::endl;
         std::cout << std::setw(shift) << ""
@@ -368,7 +368,7 @@ private:
             std::cout << std::setw(shift) << ""
                       << "Object" << std::endl;
         }
-        std::cout << std::setw(shift) << "" << '"' << path << '"' << std::endl;
+        std::cout << std::setw(shift) << "" << '"' << class_.filepath << '"' << std::endl;
         std::cout << std::setw(shift) << "" << '(' << std::endl;
         for (const auto& feature : class_.features) {
             print_feature(feature, shift);

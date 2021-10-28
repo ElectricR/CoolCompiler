@@ -49,9 +49,11 @@ bool string_view_to_bool(std::string_view str_view) noexcept;
 
 class Parser {
 public:
-    explicit Parser(const lexer::Lexer& lexer) : token_it(lexer.get_result()) {
+    explicit Parser(const lexer::Lexer& lexer) : token_it(lexer.get_result()), filepath(lexer.get_filepath()) {
         result = parse_program();
     }
+
+    Parser(Parser&&) = default;
 
     [[nodiscard]] const std::optional<AST::Program>&
     get_result() const noexcept {
@@ -131,6 +133,7 @@ private:
     detail::ItWrapper token_it;
     std::optional<AST::Program> result;
     std::stringstream error;
+    std::string filepath;
 };
 
 } // namespace cool::parser
