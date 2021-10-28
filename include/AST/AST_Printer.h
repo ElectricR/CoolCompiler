@@ -24,7 +24,7 @@ template <Binary T> std::string get_binary_name(const T&) {
     } else if (std::is_same_v<T, cool::AST::DivideExpression>) {
         return "_divide";
     } else if (std::is_same_v<T, cool::AST::LEExpression>) {
-        return "_le";
+        return "_leq";
     } else if (std::is_same_v<T, cool::AST::LessExpression>) {
         return "_lt";
     } else if (std::is_same_v<T, cool::AST::EqualExpression>) {
