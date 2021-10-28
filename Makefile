@@ -1,4 +1,4 @@
-test: semant_test
+test: parser_test
 
 lexer_test: build
 	./lexer_smoke_test
