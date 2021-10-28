@@ -2,7 +2,7 @@ import unittest
 import subprocess
 import os
 
-class LexerTest(unittest.TestCase):
+class ParserTest(unittest.TestCase):
     def check(self, *file_name):
         print(f"Checking {file_name}...")
         reference_lexer_proc = subprocess.Popen(["./reference/bin/lexer", *file_name], stdout=subprocess.PIPE)
