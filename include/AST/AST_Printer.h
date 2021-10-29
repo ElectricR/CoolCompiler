@@ -55,7 +55,7 @@ private:
     void print_expression(const auto& expr, int shift) {
         std::visit(
             detail::Overloaded{
-                [shift, this](const cool::AST::FunctionExpression& expression) {
+                [&](const cool::AST::FunctionExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -67,7 +67,7 @@ private:
                     std::cout << std::setw(shift + 4) << ""
                               << "self" << std::endl;
                     std::cout << std::setw(shift + 2) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                     std::cout << std::setw(shift + 2) << ""
                               << expression.object_id << std::endl;
                     std::cout << std::setw(shift + 2) << ""
@@ -78,10 +78,10 @@ private:
                     std::cout << std::setw(shift + 2) << ""
                               << ")" << std::endl;
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
 
-                [shift, this](const cool::AST::DotExpression& expression) {
+                [&](const cool::AST::DotExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     if (expression.type_id) {
@@ -107,9 +107,9 @@ private:
                     std::cout << std::setw(shift + 2) << ""
                               << ")" << std::endl;
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const cool::AST::IfExpression& expression) {
+                [&](const cool::AST::IfExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -119,9 +119,9 @@ private:
                     print_expression(*expression.if_expression, shift + 2);
                     print_expression(*expression.else_expression, shift + 2);
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const cool::AST::WhileExpression& expression) {
+                [&](const cool::AST::WhileExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -130,9 +130,9 @@ private:
                         *expression.condition_expression, shift + 2);
                     print_expression(*expression.body_expression, shift + 2);
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const cool::AST::CompoundExpression& expression) {
+                [&](const cool::AST::CompoundExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -141,9 +141,9 @@ private:
                         print_expression(*expression_block, shift + 2);
                     }
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const cool::AST::CaseExpression& expression) {
+                [&](const cool::AST::CaseExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -161,9 +161,9 @@ private:
                         print_expression(*branch.expression, shift + 4);
                     }
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const cool::AST::NewExpression& expression) {
+                [&](const cool::AST::NewExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -171,18 +171,18 @@ private:
                     std::cout << std::setw(shift + 2) << ""
                               << expression.type_id << std::endl;
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const cool::AST::IsVoidExpression& expression) {
+                [&](const cool::AST::IsVoidExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
                               << "_isvoid" << std::endl;
                     print_expression(*expression.expression, shift + 2);
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const Binary auto& expression) {
+                [&](const Binary auto& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -191,18 +191,18 @@ private:
                     print_expression(*expression.left_expression, shift + 2);
                     print_expression(*expression.right_expression, shift + 2);
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const cool::AST::TildeExpression& expression) {
+                [&](const cool::AST::TildeExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
                               << "_neg" << std::endl;
                     print_expression(*expression.expression, shift + 2);
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const cool::AST::ObjectExpression& expression) {
+                [&](const cool::AST::ObjectExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -210,9 +210,9 @@ private:
                     std::cout << std::setw(shift + 2) << ""
                               << expression.object_id << std::endl;
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const cool::AST::IntExpression& expression) {
+                [&](const cool::AST::IntExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -220,9 +220,9 @@ private:
                     std::cout << std::setw(shift + 2) << "" << expression.value
                               << std::endl;
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const cool::AST::StringExpression& expression) {
+                [&](const cool::AST::StringExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -230,9 +230,9 @@ private:
                     std::cout << std::setw(shift + 2) << "";
                     util::print_string(expression.value);
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const Boolean auto& expression) {
+                [&](const Boolean auto& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -240,18 +240,18 @@ private:
                     std::cout << std::setw(shift + 2) << "" << expression.value
                               << std::endl;
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const cool::AST::NotExpression& expression) {
+                [&](const cool::AST::NotExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
                               << "_comp" << std::endl;
                     print_expression(*expression.expression, shift + 2);
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
-                [shift, this](const cool::AST::LetExpression& expression) {
+                [&](const cool::AST::LetExpression& expression) {
                     auto shift_2 = shift;
                     for (auto& let_entry : expression.let_expressions) {
                         std::cout << std::setw(shift_2) << ""
@@ -273,7 +273,7 @@ private:
                             std::cout << std::setw(shift_2) << ""
                                       << "_no_expr" << std::endl;
                             std::cout << std::setw(shift_2) << ""
-                                      << ": _no_type" << std::endl;
+                                      << ": " << expr.type << std::endl;
                         }
                     }
                     print_expression(*expression.expression, shift_2);
@@ -281,10 +281,10 @@ private:
                          ++i) {
                         shift_2 -= 2;
                         std::cout << std::setw(shift_2) << ""
-                                  << ": _no_type" << std::endl;
+                                  << ": " << expr.type << std::endl;
                     }
                 },
-                [shift, this](const cool::AST::AssignExpression& expression) {
+                [&](const cool::AST::AssignExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -293,7 +293,7 @@ private:
                               << expression.object_id << std::endl;
                     print_expression(*expression.expression, shift + 2);
                     std::cout << std::setw(shift) << ""
-                              << ": _no_type" << std::endl;
+                              << ": " << expr.type << std::endl;
                 },
             },
             expr.value);
