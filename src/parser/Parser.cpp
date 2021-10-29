@@ -25,6 +25,7 @@ cool::parser::Parser::parse_program() noexcept {
     }
     return program;
 }
+
 [[nodiscard]] std::optional<cool::AST::Class>
 cool::parser::Parser::parse_class() noexcept {
     auto class_token = extract_token(lexer::TokenType::Keyword, "CLASS");
