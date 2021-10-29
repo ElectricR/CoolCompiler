@@ -5,6 +5,7 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include <type_traits>
 
 namespace cool::AST {
 
@@ -46,6 +47,9 @@ struct BoolExpression {
     }
 };
 
+template <class T>
+concept Boolean = std::is_base_of_v<cool::AST::BoolExpression, T>;
+
 struct TrueExpression : public BoolExpression {};
 
 struct FalseExpression : public BoolExpression {};
@@ -57,6 +61,9 @@ struct BinaryExpression {
 
     bool operator==(const BinaryExpression& other) const;
 };
+
+template <class T>
+concept Binary = std::is_base_of_v<cool::AST::BinaryExpression, T>;
 
 struct PlusExpression : public BinaryExpression {};
 
@@ -338,5 +345,6 @@ struct Program {
 
     bool operator==(const Program& other) const = default;
 };
+
 
 } // namespace cool::AST

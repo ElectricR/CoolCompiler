@@ -11,9 +11,6 @@ namespace cool::AST {
 
 namespace detail {
 
-template <class T>
-concept Binary = std::is_base_of_v<cool::AST::BinaryExpression, T>;
-
 template <Binary T> std::string get_binary_name(const T&) {
     if constexpr (std::is_same_v<T, cool::AST::PlusExpression>) {
         return "_plus";
@@ -33,9 +30,6 @@ template <Binary T> std::string get_binary_name(const T&) {
         return "";
     }
 }
-
-template <class T>
-concept Boolean = std::is_base_of_v<cool::AST::BoolExpression, T>;
 
 template <class... Ts> struct Overloaded : Ts... { using Ts::operator()...; };
 template <class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
@@ -188,7 +182,7 @@ private:
                     std::cout << std::setw(shift) << ""
                               << ": _no_type" << std::endl;
                 },
-                [shift, this](const detail::Binary auto& expression) {
+                [shift, this](const Binary auto& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
@@ -238,7 +232,7 @@ private:
                     std::cout << std::setw(shift) << ""
                               << ": _no_type" << std::endl;
                 },
-                [shift, this](const detail::Boolean auto& expression) {
+                [shift, this](const Boolean auto& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;
                     std::cout << std::setw(shift) << ""
