@@ -315,7 +315,7 @@ struct FieldFeature {
 
     bool operator==(const FieldFeature& other) const {
         return object_id == other.object_id && type_id == other.type_id &&
-               ((!value.has_value() && other.value.has_value()) ||
+               ((!value.has_value() && !other.value.has_value()) ||
                    (value.has_value() &&
                        *value.value() == *other.value.value()));
     }
