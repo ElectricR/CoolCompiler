@@ -55,32 +55,6 @@ private:
     void print_expression(const auto& expr, int shift) {
         std::visit(
             detail::Overloaded{
-                [&](const cool::AST::FunctionExpression& expression) {
-                    std::cout << std::setw(shift) << ""
-                              << "#" << expression.line_number << std::endl;
-                    std::cout << std::setw(shift) << ""
-                              << "_dispatch" << std::endl;
-                    std::cout << std::setw(shift + 2) << ""
-                              << "#" << expression.line_number << std::endl;
-                    std::cout << std::setw(shift + 2) << ""
-                              << "_object" << std::endl;
-                    std::cout << std::setw(shift + 4) << ""
-                              << "self" << std::endl;
-                    std::cout << std::setw(shift + 2) << ""
-                              << ": " << expr.type << std::endl;
-                    std::cout << std::setw(shift + 2) << ""
-                              << expression.object_id << std::endl;
-                    std::cout << std::setw(shift + 2) << ""
-                              << "(" << std::endl;
-                    for (auto& expression_in : expression.expressions) {
-                        print_expression(*expression_in, shift + 2);
-                    }
-                    std::cout << std::setw(shift + 2) << ""
-                              << ")" << std::endl;
-                    std::cout << std::setw(shift) << ""
-                              << ": " << expr.type << std::endl;
-                },
-
                 [&](const cool::AST::DotExpression& expression) {
                     std::cout << std::setw(shift) << ""
                               << "#" << expression.line_number << std::endl;

@@ -582,15 +582,16 @@ cool::parser::Parser::parse_dot(
             std::move(expressions), dot_token.value().line_number}});
 }
 
-[[nodiscard]] std::optional<cool::AST::FunctionExpression>
+[[nodiscard]] std::optional<cool::AST::DotExpression>
 cool::parser::Parser::parse_function(auto object_id) noexcept {
-    cool::AST::FunctionExpression fun_expression;
-    fun_expression.object_id = object_id.lexeme;
+    cool::AST::DotExpression dot_expression;
+    dot_expression.object_id = object_id.lexeme;
+    dot_expression.expression = std::make_shared<AST::Expression>(AST::Expression{AST::ObjectExpression{"self", object_id.line_number}});
     bool found_comma = false;
     while (true) {
         if (!found_comma &&
             extract_token(lexer::TokenType::SpecialNotation, ")", false)) {
-            return fun_expression;
+            return dot_expression;
         }
         found_comma = false;
         if (token_it.is_exhausted()) {
@@ -600,7 +601,7 @@ cool::parser::Parser::parse_function(auto object_id) noexcept {
         if (!expression) {
             return {};
         }
-        fun_expression.expressions.push_back(expression.value());
+        dot_expression.parameter_expressions.push_back(expression.value());
         if (extract_token(lexer::TokenType::SpecialNotation, ",", false)) {
             found_comma = true;
         }

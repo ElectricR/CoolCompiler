@@ -902,37 +902,3 @@ TEST(ParserSmokeTest, SimpleAssignExpressionTest) {
 
     ASSERT_EQ(parser.get_result().value(), correct);
 }
-
-TEST(ParserSmokeTest, SimpleFunctionExpressionTest) {
-    std::stringstream test_string{
-        "class Main { foo() : Object { bar(1, 42) }; };"};
-
-    cool::lexer::Lexer lexer(test_string);
-
-    cool::parser::Parser parser(lexer);
-
-    cool::AST::Program correct = {{{
-        "Main",
-        {},
-        {{cool::AST::MethodFeature{
-            "foo",
-            {},
-            "Object",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::FunctionExpression{
-                    "bar",
-                    {
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{1}})},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{
-                                cool::AST::IntExpression{42}})},
-                    },
-                },
-            }}),
-        }}},
-    }}};
-
-    ASSERT_EQ(parser.get_result().value(), correct);
-}

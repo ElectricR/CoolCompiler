@@ -933,49 +933,6 @@ TEST(SemantSmokeTest, TypeCheckDotMultipleBad) {
     ASSERT_EQ(semant.get_error(), "Could not find suitable method toStr");
 }
 
-TEST(SemantSmokeTest, TypeCheckFunction) {
-    std::stringstream test_string{
-        "class Main { foo() : Int { 1 }; main() : Object { foo() }; };"};
-
-    cool::lexer::Lexer lexer(test_string);
-
-    cool::parser::Parser parser(lexer);
-
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
-
-    cool::semant::Semant semant(parsers);
-
-    cool::AST::Program correct = {{{
-        "Main",
-        {},
-        {
-           {cool::AST::MethodFeature{
-            "foo",
-            {},
-            "Int",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::IntExpression{1
-                }
-            }, "Int"}),
-        }} ,{cool::AST::MethodFeature{
-            "main",
-            {},
-            "Object",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::FunctionExpression{
-                    "foo",
-                    {
-                    },
-                },
-            }, "Int"}),
-        }}},
-    }}};
-
-    ASSERT_EQ(semant.is_successfull(), true);
-    ASSERT_EQ(semant.get_result(), correct);
-}
-
 TEST(SemantSmokeTest, TypeCheckLet) {
     std::stringstream test_string{"class Main { main() : Int { let a : Int <- 2, b : Int <- 1 in a + b }; };"};
 

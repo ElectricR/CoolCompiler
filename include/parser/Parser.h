@@ -109,7 +109,7 @@ private:
         std::shared_ptr<AST::Expression> expression_lvl_1, bool with_type,
         auto dot_token) noexcept; 
 
-    [[nodiscard]] std::optional<AST::FunctionExpression> parse_function(
+    [[nodiscard]] std::optional<AST::DotExpression> parse_function(
         auto object_id) noexcept; 
 
     [[nodiscard]] std::optional<AST::IfExpression> parse_if() noexcept; 

@@ -185,22 +185,13 @@ struct AssignExpression {
     bool operator==(const AssignExpression& other) const;
 };
 
-struct FunctionExpression {
-    std::string object_id;
-    std::vector<std::shared_ptr<Expression>> expressions;
-    unsigned line_number = 0;
-
-    bool operator==(const FunctionExpression& other) const;
-};
-
 struct Expression {
     std::variant<DotExpression, IfExpression, WhileExpression,
         CompoundExpression, CaseExpression, NewExpression, IsVoidExpression,
         PlusExpression, MinusExpression, MultiplyExpression, DivideExpression,
         LessExpression, LEExpression, EqualExpression, TildeExpression,
         ObjectExpression, IntExpression, StringExpression, TrueExpression,
-        FalseExpression, NotExpression, LetExpression, AssignExpression,
-        FunctionExpression>
+        FalseExpression, NotExpression, LetExpression, AssignExpression>
         value;
     std::string type = "_no_type";
     bool operator==(const Expression& other) const = default;
@@ -212,14 +203,6 @@ bool inline IsVoidExpression::operator==(const IsVoidExpression& other) const {
 
 bool inline AssignExpression::operator==(const AssignExpression& other) const {
     return *expression == *other.expression && object_id == other.object_id;
-}
-
-bool inline FunctionExpression::operator==(
-    const FunctionExpression& other) const {
-    return std::ranges::equal(expressions, other.expressions, {},
-               &std::shared_ptr<Expression>::operator*,
-               &std::shared_ptr<Expression>::operator*) &&
-           object_id == other.object_id;
 }
 
 bool inline LetEntry::operator==(const LetEntry& other) const {

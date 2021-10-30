@@ -240,23 +240,6 @@ void cool::semant::Semant::check_expression(
     std::string result_type;
     std::visit(
         Overloaded{
-            [&](const cool::AST::FunctionExpression& expression) {
-                for (auto& subexpression : expression.expressions) {
-                    check_expression(
-                        subexpression, vars_stack, all_types, class_);
-                }
-                if (error_msg)
-                    return;
-
-                std::string target_class = "self";
-                if (!check_expression_callable(expression.expressions,
-                        all_types, target_class, expression.object_id, class_)) {
-                    return;
-                }
-                result_type = all_types.at(target_class)
-                                  .methods.at(expression.object_id)
-                                  .return_type;
-            },
             [&](const cool::AST::DotExpression& expression) {
                 check_expression(
                     expression.expression, vars_stack, all_types, class_);
