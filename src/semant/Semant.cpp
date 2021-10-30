@@ -251,6 +251,9 @@ void cool::semant::Semant::check_expression(
                     return;
 
                 std::string target_class = expression.expression->type;
+                if (target_class == "SELF_TYPE") {
+                target_class = class_.type_id;
+                }
                 if (!check_expression_callable(expression.parameter_expressions,
                         all_types, target_class, expression.object_id, class_)) {
                     return;

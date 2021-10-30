@@ -247,7 +247,7 @@ private:
                             std::cout << std::setw(shift_2) << ""
                                       << "_no_expr" << std::endl;
                             std::cout << std::setw(shift_2) << ""
-                                      << ": " << expr.type << std::endl;
+                                      << ": " << "_no_type" << std::endl;
                         }
                     }
                     print_expression(*expression.expression, shift_2);
