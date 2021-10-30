@@ -21,7 +21,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wconversion -Wno
 
 set(LEXER_SOURCES src/lexer/Lexer.cpp)
 set(PARSER_SOURCES ${LEXER_SOURCES} src/parser/Parser.cpp)
-set(SEMANT_SOURCES ${PARSER_SOURCES})
+set(SEMANT_SOURCES ${PARSER_SOURCES} src/semant/Semant.cpp)
 
 ###############################
 # Smoke
@@ -41,3 +41,4 @@ add_test(semant_smoke_test semant_smoke_test)
 
 add_executable(lexer src/lexer/lexer_printer.cpp ${LEXER_SOURCES})
 add_executable(parser src/parser/parser_printer.cpp ${PARSER_SOURCES})
+add_executable(semant src/semant/semant_printer.cpp ${SEMANT_SOURCES})

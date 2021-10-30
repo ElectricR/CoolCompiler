@@ -346,5 +346,10 @@ struct Program {
     bool operator==(const Program& other) const = default;
 };
 
+template <class T>
+concept Arithmetic = std::is_same_v<cool::AST::PlusExpression, T> || std::is_same_v<cool::AST::MinusExpression, T> || std::is_same_v<cool::AST::MultiplyExpression, T> || std::is_same_v<cool::AST::DivideExpression, T>;
+
+template <class T>
+concept CompareButNotEqual = std::is_same_v<cool::AST::LEExpression, T> || std::is_same_v<cool::AST::LessExpression, T>;
 
 } // namespace cool::AST

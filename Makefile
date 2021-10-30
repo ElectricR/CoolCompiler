@@ -1,4 +1,4 @@
-test: parser_test
+test: semant_test
 
 lexer_test: build
 	./lexer_smoke_test
@@ -10,6 +10,7 @@ parser_test: build
 
 semant_test: build
 	./semant_smoke_test
+	python3 -m unittest tests/semant_tests/semant_end_to_end.py
 
 build: googletest compile_commands.json
 	cmake -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 
@@ -39,6 +40,7 @@ clean:
 	-rm examples/stack_machine.s
 	-rm lexer
 	-rm parser
+	-rm semant
 	-rm lexer_smoke_test
 	-rm parser_smoke_test
 	-rm semant_smoke_test
