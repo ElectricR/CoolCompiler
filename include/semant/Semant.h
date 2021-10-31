@@ -10,9 +10,9 @@ public:
         for (auto &parser : parsers) {
             if (auto parser_result = parser.get_result()) {
                 std::ranges::copy(parser.get_result().value().classes, std::back_inserter(program.classes));
-                check_semantics();
             }
         }
+        check_semantics();
     }
 
     [[nodiscard]] bool is_successfull() const noexcept {
