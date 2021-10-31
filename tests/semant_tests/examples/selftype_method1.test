@@ -1,0 +1,15 @@
+class A {
+ foo() : SELF_TYPE {
+self
+};
+};
+
+class Main {
+a : A;
+main( ) : Object {
+{
+a <- new A;
+a <- a.foo();
+}
+};
+};

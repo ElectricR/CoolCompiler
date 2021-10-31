@@ -22,11 +22,7 @@ const std::unordered_map<std::string, std::string> base_types = {
 
 void cool::semant::Semant::get_class_names(auto& all_types) noexcept {
     for (auto& class_ : program.classes) {
-        if (all_types.contains(class_.type_id)) {
-            error_msg = "Redefinition of class " + class_.type_id;
-            break;
-        }
-        if (class_.type_id == "SELF_TYPE") {
+        if (all_types.contains(class_.type_id) || class_.type_id == "SELF_TYPE" || base_types.contains(class_.type_id)) {
             error_msg = "Redefinition of class " + class_.type_id;
             break;
         }
@@ -84,12 +80,80 @@ void cool::semant::Semant::check_entry_point() noexcept {
     }
 }
 
+void cool::semant::Semant::check_inherited_redefinitions(
+    auto& all_types) noexcept {
+    for (auto& class_ : program.classes) {
+        for (const auto& feature : class_.features) {
+            std::visit(Overloaded{
+               [&](const AST::MethodFeature& method_feature) {
+                   std::string curr_class = all_types[class_.type_id].inherits;
+
+                   while (curr_class.size()) {
+                       if (all_types[curr_class].fields.contains(
+                               method_feature.object_id)) {
+                           error_msg = "Redefinition of feature " +
+                                       method_feature.object_id;
+                           return;
+                       }
+                       if (all_types[curr_class].methods.contains(
+                               method_feature.object_id)) {
+                        if (!std::ranges::equal(method_feature.formals, all_types[curr_class].methods[method_feature.object_id].attr_types, {}, &AST::Formal::type_id)) {
+                           error_msg = "Wrong redefinition of method " +
+                                       method_feature.object_id;
+                           return;
+                        }
+                       }
+
+                       curr_class = all_types[curr_class].inherits;
+                   }
+
+               },
+               [&](const AST::FieldFeature& field_feature) {
+                   std::string curr_class = all_types[class_.type_id].inherits;
+
+                   while (curr_class.size()) {
+                       if (all_types[curr_class].methods.contains(
+                               field_feature.object_id) ||
+                           all_types[curr_class].fields.contains(
+                               field_feature.object_id)) {
+                           error_msg = "Redefinition of feature " +
+                                       field_feature.object_id;
+                           return;
+                       }
+
+                       curr_class = all_types[curr_class].inherits;
+                   }
+               },
+           },
+                feature.feature);
+        }
+    }
+}
+
 void cool::semant::Semant::populate_all_types(auto& all_types) noexcept {
     for (auto& [base_type_name, base_type_inherits] : base_types) {
         all_types[base_type_name] = {
-            base_type_inherits, {{"copy", {"SELF_TYPE", {}}}}, {}};
+            base_type_inherits, {}, {}};
         if (base_type_name == "String") {
             all_types[base_type_name].methods.insert({"length", {"Int", {}}});
+            all_types[base_type_name].methods.insert({"substr", {"String", {"Int", "Int"}}});
+            all_types[base_type_name].methods.insert({"concat", {"String", {"String"}}});
+            all_types[base_type_name].methods.insert({"copy", {"String", {}}});
+        }
+        if (base_type_name == "Object") {
+            all_types[base_type_name].methods.insert({"abort", {"Object", {}}});
+        }
+        if (base_type_name == "IO") {
+            all_types[base_type_name].methods.insert({"out_string", {"SELF_TYPE", {"String"}}});
+            all_types[base_type_name].methods.insert({"out_int", {"SELF_TYPE", {"Int"}}});
+            all_types[base_type_name].methods.insert({"in_string", {"String", {}}});
+            all_types[base_type_name].methods.insert({"in_int", {"Int", {}}});
+        }
+        if (base_type_name == "Int") {
+            all_types[base_type_name].methods.insert({"copy", {"Int", {}}});
+        }
+        if (base_type_name == "Bool") {
+            all_types[base_type_name].methods.insert({"copy", {"Bool", {}}});
         }
     }
     for (auto& class_ : program.classes) {
@@ -114,8 +178,20 @@ void cool::semant::Semant::populate_all_types(auto& all_types) noexcept {
                                     .methods[method_feature.object_id]
                                     .attr_types),
                             &AST::Formal::type_id);
+                        if (std::ranges::any_of(method_feature.formals, [](auto& attr_type) { return attr_type == "SELF_TYPE"; }, &AST::Formal::type_id)) {
+                            error_msg = "SELF_TYPE in method parameter";
+                            return;
+                        }
+                        if (std::ranges::any_of(method_feature.formals, [](auto& attr_type) { return attr_type == "self"; }, &AST::Formal::object_id)) {
+                            error_msg = "self in method parameter";
+                            return;
+                        }
                     },
                     [&](const AST::FieldFeature& field_feature) {
+                        if (field_feature.object_id == "self") {
+                            error_msg = "self as field";
+                            return;
+                        }
                         if (all_types[class_.type_id].methods.contains(
                                 field_feature.object_id) ||
                             all_types[class_.type_id].fields.contains(
@@ -131,6 +207,7 @@ void cool::semant::Semant::populate_all_types(auto& all_types) noexcept {
                 feature.feature);
         }
     }
+    check_inherited_redefinitions(all_types);
 }
 
 [[nodiscard]] bool DFS(const auto& all_types, const auto& init) noexcept {
@@ -154,7 +231,7 @@ void cool::semant::Semant::check_inheritance(auto& all_types) noexcept {
             }
             if (!all_types.contains(class_representation.inherits) &&
                 class_representation.inherits != "IO" && class_representation.inherits != "Object") {
-                error_msg = "No such type " + class_representation.inherits;
+                error_msg = "No such type to inherit " + class_representation.inherits;
                 break;
             }
         } else {
@@ -186,7 +263,7 @@ cool::semant::Semant::get_object_id_type(
     const auto& all_types, const auto& first, const auto& second) noexcept {
     std::unordered_set<std::string> first_ancestors = {{first}};
     std::string iter_value = first;
-    while (iter_value != "") {
+    while (iter_value != "Object") {
         first_ancestors.insert(all_types.at(iter_value).inherits);
         iter_value = all_types.at(iter_value).inherits;
     }
@@ -252,16 +329,17 @@ void cool::semant::Semant::check_expression(
 
                 std::string target_class = expression.expression->type;
                 if (target_class == "SELF_TYPE") {
-                target_class = class_.type_id;
+                    target_class = class_.type_id;
                 }
                 if (!check_expression_callable(expression.parameter_expressions,
-                        all_types, target_class, expression.object_id, class_)) {
+                        all_types, target_class, expression.object_id,
+                        class_)) {
                     return;
                 }
                 if (all_types.at(target_class)
                         .methods.at(expression.object_id)
                         .return_type == "SELF_TYPE") {
-                    result_type = target_class;
+                    result_type = expression.expression->type;
                 } else {
                     result_type = all_types.at(target_class)
                                       .methods.at(expression.object_id)
@@ -281,8 +359,13 @@ void cool::semant::Semant::check_expression(
                     error_msg = "Expected Bool expression in if statement";
                     return;
                 }
-                result_type = LCA(all_types, expression.if_expression->type,
-                    expression.else_expression->type);
+                if (expression.if_expression->type == "SELF_TYPE") {
+                    result_type = LCA(all_types, class_.type_id,
+                        expression.else_expression->type);
+                } else {
+                    result_type = LCA(all_types, expression.if_expression->type,
+                        expression.else_expression->type);
+                }
             },
             [&](const cool::AST::WhileExpression& expression) {
                 check_expression(expression.condition_expression, vars_stack,
@@ -330,22 +413,24 @@ void cool::semant::Semant::check_expression(
                         return;
                     vars_stack.pop_back();
                 }
-                result_type = expression.branch_expressions.front().type_id;
+                result_type = expression.branch_expressions.front().expression->type;
                 std::ranges::for_each(
                     expression.branch_expressions.cbegin() + 1,
                     expression.branch_expressions.cend(),
                     [&](const auto& case_branch_expression_ptr) {
+                        if (case_branch_expression_ptr->type == "SELF_TYPE" ) {
+                        result_type = LCA(all_types, result_type,
+                            class_.type_id);
+                        } else {
                         result_type = LCA(all_types, result_type,
                             case_branch_expression_ptr->type);
+                        }
                     },
                     &AST::CaseBranch::expression);
             },
             [&](const cool::AST::NewExpression& expression) {
-                if (expression.type_id == "SELF_TYPE") {
-                    result_type = class_.type_id;
-                    return;
-                }
-                if (!all_types.contains(expression.type_id)) {
+                if (expression.type_id != "SELF_TYPE" &&
+                    !all_types.contains(expression.type_id)) {
                     error_msg = "Type " + expression.type_id + " not found";
                     return;
                 }
@@ -454,6 +539,10 @@ void cool::semant::Semant::check_expression(
             },
             [&](const cool::AST::LetExpression& expression) {
                 for (auto& let_entry : expression.let_expressions) {
+                    if (let_entry.object_id == "self") {
+                        error_msg = "self in let init";
+                        return;
+                    }
                     if (let_entry.assign_expression) {
                         check_expression(let_entry.assign_expression.value(),
                             vars_stack, all_types, class_);
@@ -486,6 +575,10 @@ void cool::semant::Semant::check_expression(
                 result_type = expression.expression->type;
             },
             [&](const cool::AST::AssignExpression& expression) {
+                if (expression.object_id == "self") {
+                    error_msg = "Can't assign to self";
+                    return;
+                }
                 check_expression(
                     expression.expression, vars_stack, all_types, class_);
                 if (error_msg)
@@ -528,6 +621,9 @@ void cool::semant::Semant::check_class_field(auto& field_feature,
     std::string curr_type, const auto& result_type,
     const auto& all_types, const auto& class_) noexcept {
     if (curr_type == "SELF_TYPE") {
+        if (result_type == "SELF_TYPE") {
+            return true;
+        }
         curr_type = class_.type_id;
     }
     if (curr_type == result_type)
@@ -543,7 +639,7 @@ void cool::semant::Semant::check_class_field(auto& field_feature,
 
 void cool::semant::Semant::check_class_method(auto& method_feature,
     auto& vars_stack, const auto& all_types, const auto& class_) noexcept {
-    if (!all_types.contains(method_feature.type_id)) {
+    if (!all_types.contains(method_feature.type_id) && method_feature.type_id != "SELF_TYPE") {
         error_msg = "No such type " + method_feature.type_id;
         return;
     }

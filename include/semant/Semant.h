@@ -55,6 +55,8 @@ private:
         const auto& all_types, std::string& target_class,
         const auto& requested_method_id, const auto& class_) noexcept;
 
+    void check_inherited_redefinitions(auto& all_types) noexcept;
+
     void populate_all_types(auto& all_types) noexcept; 
 
     [[nodiscard]] bool check_type_permissibility(std::string curr_type, const auto& result_type, const auto& all_types, const auto& class_) noexcept;

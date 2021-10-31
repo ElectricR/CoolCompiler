@@ -1,0 +1,23 @@
+
+class A {
+ foo() : SELF_TYPE {
+self
+};
+};
+
+class B {
+ foo() : SELF_TYPE {
+self
+};
+};
+
+class Main {
+
+a : A;
+main( ) : Object {
+{
+a <- new A;
+a <- (new B).foo();
+}
+};
+};

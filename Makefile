@@ -41,6 +41,9 @@ clean:
 	-rm lexer
 	-rm parser
 	-rm semant
+	-rm lexer_db
+	-rm parser_db
+	-rm semant_db
 	-rm lexer_smoke_test
 	-rm parser_smoke_test
 	-rm semant_smoke_test

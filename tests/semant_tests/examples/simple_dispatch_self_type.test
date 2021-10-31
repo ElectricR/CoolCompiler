@@ -1,0 +1,11 @@
+class A {
+    foo() : SELF_TYPE {
+        self
+    };
+};
+
+class Main inherits A {
+    main () : Object {
+        foo()
+    };
+};

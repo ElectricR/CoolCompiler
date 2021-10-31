@@ -3,3 +3,4 @@ build/
 googletest/
 compile_commands.json
 *__pycache__*
+src/test_gen.py

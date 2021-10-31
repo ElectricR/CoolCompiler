@@ -39,13 +39,6 @@ target_link_libraries(semant_smoke_test gtest_main)
 add_test(semant_smoke_test semant_smoke_test)
 ###############################
 
-
-add_executable(lexer_db src/lexer/lexer_printer.cpp ${LEXER_SOURCES})
-add_executable(parser_db src/parser/parser_printer.cpp ${PARSER_SOURCES})
-add_executable(semant_db src/semant/semant_printer.cpp ${SEMANT_SOURCES})
-
-set(CMAKE_CXX_FLAGS "-Ofast")
-
 add_executable(lexer src/lexer/lexer_printer.cpp ${LEXER_SOURCES})
 add_executable(parser src/parser/parser_printer.cpp ${PARSER_SOURCES})
 add_executable(semant src/semant/semant_printer.cpp ${SEMANT_SOURCES})

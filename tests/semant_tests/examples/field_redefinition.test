@@ -1,0 +1,7 @@
+class A {
+    foo : Int;
+};
+
+class Main inherits A {
+    foo() : Int { 1 };
+};

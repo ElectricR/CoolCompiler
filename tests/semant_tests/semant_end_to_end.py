@@ -58,6 +58,9 @@ class SemantTest(unittest.TestCase):
     def test_methodnameclash(self):
         self.check(f"tests/semant_tests/examples/methodnameclash.test")
 
+    def test_letselftype(self):
+        self.check(f"tests/semant_tests/examples/letselftype.test")
+
     def test_badequalitytest(self):
         self.check(f"tests/semant_tests/examples/badequalitytest.test")
 
@@ -69,6 +72,9 @@ class SemantTest(unittest.TestCase):
 
     def test_redefinedclass(self):
         self.check(f"tests/semant_tests/examples/redefinedclass.test")
+
+    def test_selftype_method1(self):
+        self.check(f"tests/semant_tests/examples/selftype_method1.test")
 
     def test_inheritsObject(self):
         self.check(f"tests/semant_tests/examples/inheritsObject.test")
@@ -87,6 +93,9 @@ class SemantTest(unittest.TestCase):
 
     def test_overridingmethod4(self):
         self.check(f"tests/semant_tests/examples/overridingmethod4.test")
+
+    def test_simple_dispatch_self_type(self):
+        self.check(f"tests/semant_tests/examples/simple_dispatch_self_type.test")
 
     def test_assignment(self):
         self.check(f"tests/semant_tests/examples/assignment.test")
@@ -175,8 +184,14 @@ class SemantTest(unittest.TestCase):
     def test_neg(self):
         self.check(f"tests/semant_tests/examples/neg.test")
 
+    def test_selftype_method2(self):
+        self.check(f"tests/semant_tests/examples/selftype_method2.test")
+
     def test_inheritsbool(self):
         self.check(f"tests/semant_tests/examples/inheritsbool.test")
+
+    def test_field_redefinition(self):
+        self.check(f"tests/semant_tests/examples/field_redefinition.test")
 
     def test_signaturechange(self):
         self.check(f"tests/semant_tests/examples/signaturechange.test")

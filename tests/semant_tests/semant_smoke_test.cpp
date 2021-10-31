@@ -156,7 +156,7 @@ TEST(SemantSmokeTest, InheritanceUnknownClass) {
     cool::semant::Semant semant(parsers);
 
     ASSERT_EQ(semant.is_successfull(), false);
-    ASSERT_EQ(semant.get_error(), "No such type Foo");
+    ASSERT_EQ(semant.get_error(), "No such type to inherit Foo");
 }
 
 TEST(SemantSmokeTest, FieldUnknownType) {
@@ -810,7 +810,7 @@ TEST(SemantSmokeTest, TypeCheckNewSelfType) {
                     cool::AST::Expression{{
                                               cool::AST::NewExpression{"SELF_TYPE"},
                                           },
-                        "A"}),
+                        "SELF_TYPE"}),
             }}},
         },
         {
