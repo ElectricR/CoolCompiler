@@ -38,8 +38,8 @@ template <class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
 
 class AST_Printer {
 public:
-    void print_program(const cool::AST::Program& program,
-        bool printed_program) noexcept {
+    void print_program(
+        const cool::AST::Program& program, bool printed_program) noexcept {
         if (!printed_program) {
             std::cout << "#";
             std::cout << program.classes[0].line_number << std::endl;
@@ -247,7 +247,8 @@ private:
                             std::cout << std::setw(shift_2) << ""
                                       << "_no_expr" << std::endl;
                             std::cout << std::setw(shift_2) << ""
-                                      << ": " << "_no_type" << std::endl;
+                                      << ": "
+                                      << "_no_type" << std::endl;
                         }
                     }
                     print_expression(*expression.expression, shift_2);
@@ -321,8 +322,7 @@ private:
             feat.feature);
     }
 
-    void print_class(
-        const cool::AST::Class& class_, int shift) {
+    void print_class(const cool::AST::Class& class_, int shift) {
         std::cout << std::setw(shift) << ""
                   << "#" << class_.line_number << std::endl;
         std::cout << std::setw(shift) << ""
@@ -336,7 +336,8 @@ private:
             std::cout << std::setw(shift) << ""
                       << "Object" << std::endl;
         }
-        std::cout << std::setw(shift) << "" << '"' << class_.filepath << '"' << std::endl;
+        std::cout << std::setw(shift) << "" << '"' << class_.filepath << '"'
+                  << std::endl;
         std::cout << std::setw(shift) << "" << '(' << std::endl;
         for (const auto& feature : class_.features) {
             print_feature(feature, shift);

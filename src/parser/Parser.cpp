@@ -1,6 +1,7 @@
 #include "parser/Parser.h"
 
-bool cool::parser::detail::string_view_to_bool(std::string_view str_view) noexcept {
+bool cool::parser::detail::string_view_to_bool(
+    std::string_view str_view) noexcept {
     bool result = false;
     std::istringstream ss{std::string{str_view}};
     ss >> std::boolalpha >> result;
@@ -586,7 +587,8 @@ cool::parser::Parser::parse_dot(
 cool::parser::Parser::parse_function(auto object_id) noexcept {
     cool::AST::DotExpression dot_expression;
     dot_expression.object_id = object_id.lexeme;
-    dot_expression.expression = std::make_shared<AST::Expression>(AST::Expression{AST::ObjectExpression{"self", object_id.line_number}});
+    dot_expression.expression = std::make_shared<AST::Expression>(
+        AST::Expression{AST::ObjectExpression{"self", object_id.line_number}});
     bool found_comma = false;
     while (true) {
         if (!found_comma &&

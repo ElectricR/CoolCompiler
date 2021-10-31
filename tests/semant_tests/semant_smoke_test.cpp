@@ -49,7 +49,8 @@ TEST(SemantSmokeTest, MainNoMainMethod) {
 }
 
 TEST(SemantSmokeTest, MainIsSecond) {
-    std::stringstream test_string{"class Foo { foo(): Object { 1 }; }; class Main { main(): Object { 1 }; };"};
+    std::stringstream test_string{"class Foo { foo(): Object { 1 }; }; class "
+                                  "Main { main(): Object { 1 }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -62,7 +63,8 @@ TEST(SemantSmokeTest, MainIsSecond) {
 }
 
 TEST(SemantSmokeTest, MainClassRedefinition) {
-    std::stringstream test_string{"class Main { main() : Object { 1 };  }; class Main { main() : Object { 1 };  };"};
+    std::stringstream test_string{"class Main { main() : Object { 1 };  }; "
+                                  "class Main { main() : Object { 1 };  };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -76,7 +78,8 @@ TEST(SemantSmokeTest, MainClassRedefinition) {
 }
 
 TEST(SemantSmokeTest, MainClassRedefinitionIsSecond) {
-    std::stringstream test_string{"class Main { foo() : Object { 1 };  }; class Main { main() : Object { 1 };  };"};
+    std::stringstream test_string{"class Main { foo() : Object { 1 };  }; "
+                                  "class Main { main() : Object { 1 };  };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -90,7 +93,8 @@ TEST(SemantSmokeTest, MainClassRedefinitionIsSecond) {
 }
 
 TEST(SemantSmokeTest, MainMethodRedefinition) {
-    std::stringstream test_string{"class Main { main() : Object { 1 }; main() : Object { 2 }; };"};
+    std::stringstream test_string{
+        "class Main { main() : Object { 1 }; main() : Object { 2 }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -104,7 +108,9 @@ TEST(SemantSmokeTest, MainMethodRedefinition) {
 }
 
 TEST(SemantSmokeTest, InheritanceCyclic) {
-    std::stringstream test_string{"class Foo inherits Bar { foo(): Object { 1 }; }; class Bar inherits Foo { bar(): Object { 1 }; }; class Main { main(): Object { 1 }; };"};
+    std::stringstream test_string{
+        "class Foo inherits Bar { foo(): Object { 1 }; }; class Bar inherits "
+        "Foo { bar(): Object { 1 }; }; class Main { main(): Object { 1 }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -118,7 +124,11 @@ TEST(SemantSmokeTest, InheritanceCyclic) {
 }
 
 TEST(SemantSmokeTest, InheritanceCyclicExtended) {
-    std::stringstream test_string{"class A inherits B { foo(): Object { 1 }; }; class B inherits C { foo(): Object { 1 }; }; class C inherits D { foo(): Object { 1 }; }; class D inherits A { foo(): Object { 1 }; }; class Main { main(): Object { 1 }; };"};
+    std::stringstream test_string{
+        "class A inherits B { foo(): Object { 1 }; }; class B inherits C { "
+        "foo(): Object { 1 }; }; class C inherits D { foo(): Object { 1 }; }; "
+        "class D inherits A { foo(): Object { 1 }; }; class Main { main(): "
+        "Object { 1 }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -132,7 +142,8 @@ TEST(SemantSmokeTest, InheritanceCyclicExtended) {
 }
 
 TEST(SemantSmokeTest, InheritancePrimitiveClass) {
-    std::stringstream test_string{"class Main inherits Int { main(): Object { 1 }; };"};
+    std::stringstream test_string{
+        "class Main inherits Int { main(): Object { 1 }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -146,7 +157,8 @@ TEST(SemantSmokeTest, InheritancePrimitiveClass) {
 }
 
 TEST(SemantSmokeTest, InheritanceUnknownClass) {
-    std::stringstream test_string{"class Main inherits Foo{ main(): Object { 1 }; };"};
+    std::stringstream test_string{
+        "class Main inherits Foo{ main(): Object { 1 }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -160,7 +172,8 @@ TEST(SemantSmokeTest, InheritanceUnknownClass) {
 }
 
 TEST(SemantSmokeTest, FieldUnknownType) {
-    std::stringstream test_string{"class Main { foo : Bar; main(): Object { 1 }; };"};
+    std::stringstream test_string{
+        "class Main { foo : Bar; main(): Object { 1 }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -190,9 +203,8 @@ TEST(SemantSmokeTest, TypeCheckIntType) {
             "main",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::IntExpression{1}
-            }, "Int"}),
+            std::make_shared<cool::AST::Expression>(
+                cool::AST::Expression{{cool::AST::IntExpression{1}}, "Int"}),
         }}},
     }}};
 
@@ -201,7 +213,8 @@ TEST(SemantSmokeTest, TypeCheckIntType) {
 }
 
 TEST(SemantSmokeTest, TypeCheckFieldId) {
-    std::stringstream test_string{"class Main { foo : Int; main(): Object { foo }; };"};
+    std::stringstream test_string{
+        "class Main { foo : Int; main(): Object { foo }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -234,7 +247,8 @@ TEST(SemantSmokeTest, TypeCheckFieldId) {
 }
 
 TEST(SemantSmokeTest, TypeCheckUnknownId) {
-    std::stringstream test_string{"class Main { foo : Int; main(): Object { bar }; };"};
+    std::stringstream test_string{
+        "class Main { foo : Int; main(): Object { bar }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -265,14 +279,18 @@ TEST(SemantSmokeTest, TypeCheckPlus) {
             "main",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::PlusExpression{{
-                    {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::IntExpression{2}, "Int"})},
-                    {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::IntExpression{2}, "Int"})},
-                }},
-            }, "Int"}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                {
+                    cool::AST::PlusExpression{{
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{2}, "Int"})},
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{2}, "Int"})},
+                    }},
+                },
+                "Int"}),
         }}},
     }}};
 
@@ -281,7 +299,8 @@ TEST(SemantSmokeTest, TypeCheckPlus) {
 }
 
 TEST(SemantSmokeTest, TypeCheckBadPlus) {
-    std::stringstream test_string{"class Main { main() : Object { 2 + true }; };"};
+    std::stringstream test_string{
+        "class Main { main() : Object { 2 + true }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -293,7 +312,8 @@ TEST(SemantSmokeTest, TypeCheckBadPlus) {
     cool::semant::Semant semant(parsers);
 
     ASSERT_EQ(semant.is_successfull(), false);
-    ASSERT_EQ(semant.get_error(), "Unknown operands for arithmetic expression: Int and Bool");
+    ASSERT_EQ(semant.get_error(),
+        "Unknown operands for arithmetic expression: Int and Bool");
 }
 
 TEST(SemantSmokeTest, TypeCheckEqual) {
@@ -315,14 +335,18 @@ TEST(SemantSmokeTest, TypeCheckEqual) {
             "main",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::EqualExpression{{
-                    {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::IntExpression{2}, "Int"})},
-                    {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::IntExpression{2}, "Int"})},
-                }},
-            }, "Bool"}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                {
+                    cool::AST::EqualExpression{{
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{2}, "Int"})},
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{2}, "Int"})},
+                    }},
+                },
+                "Bool"}),
         }}},
     }}};
 
@@ -331,7 +355,8 @@ TEST(SemantSmokeTest, TypeCheckEqual) {
 }
 
 TEST(SemantSmokeTest, TypeCheckBadEqualWithBase) {
-    std::stringstream test_string{"class Main { main() : Object { 2 = true }; };"};
+    std::stringstream test_string{
+        "class Main { main() : Object { 2 = true }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -343,7 +368,8 @@ TEST(SemantSmokeTest, TypeCheckBadEqualWithBase) {
     cool::semant::Semant semant(parsers);
 
     ASSERT_EQ(semant.is_successfull(), false);
-    ASSERT_EQ(semant.get_error(), "Unknown operands for compare expression: Int and Bool");
+    ASSERT_EQ(semant.get_error(),
+        "Unknown operands for compare expression: Int and Bool");
 }
 
 TEST(SemantSmokeTest, TypeCheckLess) {
@@ -365,14 +391,18 @@ TEST(SemantSmokeTest, TypeCheckLess) {
             "main",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::LessExpression{{
-                    {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::IntExpression{2}, "Int"})},
-                    {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::IntExpression{2}, "Int"})},
-                }},
-            }, "Bool"}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                {
+                    cool::AST::LessExpression{{
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{2}, "Int"})},
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{2}, "Int"})},
+                    }},
+                },
+                "Bool"}),
         }}},
     }}};
 
@@ -381,7 +411,8 @@ TEST(SemantSmokeTest, TypeCheckLess) {
 }
 
 TEST(SemantSmokeTest, TypeCheckBadLessWithBase) {
-    std::stringstream test_string{"class Main { main() : Object { 2 < true }; };"};
+    std::stringstream test_string{
+        "class Main { main() : Object { 2 < true }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -393,7 +424,8 @@ TEST(SemantSmokeTest, TypeCheckBadLessWithBase) {
     cool::semant::Semant semant(parsers);
 
     ASSERT_EQ(semant.is_successfull(), false);
-    ASSERT_EQ(semant.get_error(), "Unknown operands for compare expression: Int and Bool");
+    ASSERT_EQ(semant.get_error(),
+        "Unknown operands for compare expression: Int and Bool");
 }
 
 TEST(SemantSmokeTest, TypeCheckWrongMethodReturnValue) {
@@ -432,15 +464,18 @@ TEST(SemantSmokeTest, TypeCheckCompoundStatement) {
             "main",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::CompoundExpression{{
-                    {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{
-                            cool::AST::StringExpression{"bar"}, "String"})},
-                    {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::IntExpression{42}, "Int"})},
-                }},
-            }, "Int"}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                {
+                    cool::AST::CompoundExpression{{
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::StringExpression{"bar"}, "String"})},
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{42}, "Int"})},
+                    }},
+                },
+                "Int"}),
         }}},
     }}};
 
@@ -462,7 +497,8 @@ TEST(SemantSmokeTest, TypeCheckWhileLoop) {
     cool::semant::Semant semant(parsers);
 
     ASSERT_EQ(semant.is_successfull(), false);
-    ASSERT_EQ(semant.get_error(), "Expected Bool expression in while statement");
+    ASSERT_EQ(
+        semant.get_error(), "Expected Bool expression in while statement");
 }
 
 TEST(SemantSmokeTest, TypeCheckIsVoid) {
@@ -485,11 +521,14 @@ TEST(SemantSmokeTest, TypeCheckIsVoid) {
             "main",
             {},
             "Bool",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::IsVoidExpression{
-                    std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::IntExpression{2}, "Int"})},
-            }, "Bool"}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                {
+                    cool::AST::IsVoidExpression{
+                        std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{2}, "Int"})},
+                },
+                "Bool"}),
         }}},
     }}};
 
@@ -498,8 +537,7 @@ TEST(SemantSmokeTest, TypeCheckIsVoid) {
 }
 
 TEST(SemantSmokeTest, TypeCheckNeg) {
-    std::stringstream test_string{
-        "class Main { main() : Object { ~2 }; };"};
+    std::stringstream test_string{"class Main { main() : Object { ~2 }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -517,11 +555,14 @@ TEST(SemantSmokeTest, TypeCheckNeg) {
             "main",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::TildeExpression{
-                    std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::IntExpression{2}, "Int"})},
-            }, "Int"}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                {
+                    cool::AST::TildeExpression{
+                        std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::IntExpression{2}, "Int"})},
+                },
+                "Int"}),
         }}},
     }}};
 
@@ -530,8 +571,7 @@ TEST(SemantSmokeTest, TypeCheckNeg) {
 }
 
 TEST(SemantSmokeTest, TypeCheckBadNeg) {
-    std::stringstream test_string{
-        "class Main { main() : Object { ~true }; };"};
+    std::stringstream test_string{"class Main { main() : Object { ~true }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -566,11 +606,14 @@ TEST(SemantSmokeTest, TypeCheckNot) {
             "main",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::NotExpression{
-                    std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::TrueExpression{{true}}, "Bool"})},
-            }, "Bool"}),
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                {
+                    cool::AST::NotExpression{
+                        std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::TrueExpression{{true}}, "Bool"})},
+                },
+                "Bool"}),
         }}},
     }}};
 
@@ -579,8 +622,7 @@ TEST(SemantSmokeTest, TypeCheckNot) {
 }
 
 TEST(SemantSmokeTest, TypeCheckBadNot) {
-    std::stringstream test_string{
-        "class Main { main() : Object { not 2 }; };"};
+    std::stringstream test_string{"class Main { main() : Object { not 2 }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -620,20 +662,26 @@ TEST(SemantSmokeTest, TypeCheckAssign) {
                 "main",
                 {},
                 "Object",
-                std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                    cool::AST::AssignExpression{
-                        {"foo"},
-                        {std::make_shared<cool::AST::Expression>(
-                            cool::AST::Expression{cool::AST::PlusExpression{{
-                                {std::make_shared<cool::AST::Expression>(
-                                    cool::AST::Expression{
-                                        cool::AST::IntExpression{2}, "Int"})},
-                                {std::make_shared<cool::AST::Expression>(
-                                    cool::AST::Expression{
-                                        cool::AST::IntExpression{2}, "Int"})},
-                            }}, "Int"})},
+                std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                    {
+                        cool::AST::AssignExpression{
+                            {"foo"},
+                            {std::make_shared<
+                                cool::AST::Expression>(cool::AST::Expression{
+                                cool::AST::PlusExpression{{
+                                    {std::make_shared<cool::AST::Expression>(
+                                        cool::AST::Expression{
+                                            cool::AST::IntExpression{2},
+                                            "Int"})},
+                                    {std::make_shared<cool::AST::Expression>(
+                                        cool::AST::Expression{
+                                            cool::AST::IntExpression{2},
+                                            "Int"})},
+                                }},
+                                "Int"})},
+                        },
                     },
-                }, "Int"}),
+                    "Int"}),
             }}},
     }}};
 
@@ -678,15 +726,19 @@ TEST(SemantSmokeTest, TypeCheckIf) {
             "main",
             {},
             "Int",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{cool::AST::IfExpression{
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                {cool::AST::IfExpression{
                     {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::TrueExpression{{true}}, "Bool"})},
+                        cool::AST::Expression{
+                            cool::AST::TrueExpression{{true}}, "Bool"})},
                     {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::IntExpression{2}, "Int"})},
+                        cool::AST::Expression{
+                            cool::AST::IntExpression{2}, "Int"})},
                     {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::IntExpression{7}, "Int"})},
-                }}, "Int"}),
+                        cool::AST::Expression{
+                            cool::AST::IntExpression{7}, "Int"})},
+                }},
+                "Int"}),
         }}},
     }}};
 
@@ -710,20 +762,23 @@ TEST(SemantSmokeTest, TypeCheckIfObject) {
     cool::AST::Program correct = {{{
         "Main",
         {},
-        {
-            {cool::AST::MethodFeature{
+        {{cool::AST::MethodFeature{
             "main",
             {},
             "Object",
-            std::make_shared<cool::AST::Expression>(
-                cool::AST::Expression{{cool::AST::IfExpression{
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                {cool::AST::IfExpression{
                     {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::TrueExpression{{true}}, "Bool"})},
+                        cool::AST::Expression{
+                            cool::AST::TrueExpression{{true}}, "Bool"})},
                     {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::StringExpression{"foo"}, "String"})},
+                        cool::AST::Expression{
+                            cool::AST::StringExpression{"foo"}, "String"})},
                     {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::IntExpression{7}, "Int"})},
-                }}, "Object"}),
+                        cool::AST::Expression{
+                            cool::AST::IntExpression{7}, "Int"})},
+                }},
+                "Object"}),
         }}},
     }}};
 
@@ -749,7 +804,8 @@ TEST(SemantSmokeTest, TypeCheckIfBad) {
 }
 
 TEST(SemantSmokeTest, TypeCheckNew) {
-    std::stringstream test_string{"class A {}; class Main { main() : Object { new A }; };"};
+    std::stringstream test_string{
+        "class A {}; class Main { main() : Object { new A }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -787,7 +843,8 @@ TEST(SemantSmokeTest, TypeCheckNew) {
 }
 
 TEST(SemantSmokeTest, TypeCheckNewSelfType) {
-    std::stringstream test_string{"class A { foo() : Object { new SELF_TYPE }; }; class Main { main() : Object { 1 }; };"};
+    std::stringstream test_string{"class A { foo() : Object { new SELF_TYPE }; "
+                                  "}; class Main { main() : Object { 1 }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -806,11 +863,11 @@ TEST(SemantSmokeTest, TypeCheckNewSelfType) {
                 "foo",
                 {},
                 "Object",
-                std::make_shared<cool::AST::Expression>(
-                    cool::AST::Expression{{
-                                              cool::AST::NewExpression{"SELF_TYPE"},
-                                          },
-                        "SELF_TYPE"}),
+                std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                    {
+                        cool::AST::NewExpression{"SELF_TYPE"},
+                    },
+                    "SELF_TYPE"}),
             }}},
         },
         {
@@ -851,7 +908,8 @@ TEST(SemantSmokeTest, TypeCheckNewBad) {
 
 TEST(SemantSmokeTest, TypeCheckCase) {
     std::stringstream test_string{
-        "class Main { main() : Object { case 42 of a : Int => 1; b : String => \"bar\"; esac }; };"};
+        "class Main { main() : Object { case 42 of a : Int => 1; b : String => "
+        "\"bar\"; esac }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -901,7 +959,8 @@ TEST(SemantSmokeTest, TypeCheckCase) {
 
 TEST(SemantSmokeTest, TypeCheckCaseBadBranches) {
     std::stringstream test_string{
-        "class Main { main() : Object { case true of a : Int => 1; b : Int => \"bar\"; esac }; };"};
+        "class Main { main() : Object { case true of a : Int => 1; b : Int => "
+        "\"bar\"; esac }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -934,7 +993,8 @@ TEST(SemantSmokeTest, TypeCheckDotMultipleBad) {
 }
 
 TEST(SemantSmokeTest, TypeCheckLet) {
-    std::stringstream test_string{"class Main { main() : Int { let a : Int <- 2, b : Int <- 1 in a + b }; };"};
+    std::stringstream test_string{"class Main { main() : Int { let a : Int <- "
+                                  "2, b : Int <- 1 in a + b }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -952,29 +1012,35 @@ TEST(SemantSmokeTest, TypeCheckLet) {
             "main",
             {},
             "Int",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::LetExpression{
-                    {
-                        {"a", "Int",
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::IntExpression{2}, "Int"})}},
-                        {"b", "Int",
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::IntExpression{1}, "Int"})}},
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                {
+                    cool::AST::LetExpression{
+                        {
+                            {"a", "Int",
+                                {std::make_shared<cool::AST::Expression>(
+                                    cool::AST::Expression{
+                                        cool::AST::IntExpression{2}, "Int"})}},
+                            {"b", "Int",
+                                {std::make_shared<cool::AST::Expression>(
+                                    cool::AST::Expression{
+                                        cool::AST::IntExpression{1}, "Int"})}},
+                        },
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::PlusExpression{{
+                                    {std::make_shared<cool::AST::Expression>(
+                                        cool::AST::Expression{
+                                            cool::AST::ObjectExpression{"a"},
+                                            "Int"})},
+                                    {std::make_shared<cool::AST::Expression>(
+                                        cool::AST::Expression{
+                                            cool::AST::ObjectExpression{"b"},
+                                            "Int"})},
+                                }},
+                                "Int"})},
                     },
-                    {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::PlusExpression{{
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::ObjectExpression{"a"}, "Int"})},
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::ObjectExpression{"b"}, "Int"})},
-                        }}, "Int"})},
                 },
-            }, "Int"}),
+                "Int"}),
         }}},
     }}};
 
@@ -983,7 +1049,8 @@ TEST(SemantSmokeTest, TypeCheckLet) {
 }
 
 TEST(SemantSmokeTest, TypeCheckLetDependentAssign) {
-    std::stringstream test_string{"class Main { main() : Int { let a : Int <- 2, b : Int <- a in a + b }; };"};
+    std::stringstream test_string{"class Main { main() : Int { let a : Int <- "
+                                  "2, b : Int <- a in a + b }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 
@@ -1001,29 +1068,36 @@ TEST(SemantSmokeTest, TypeCheckLetDependentAssign) {
             "main",
             {},
             "Int",
-            std::make_shared<cool::AST::Expression>(cool::AST::Expression{{
-                cool::AST::LetExpression{
-                    {
-                        {"a", "Int",
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::IntExpression{2}, "Int"})}},
-                        {"b", "Int",
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::ObjectExpression{"a"}, "Int"})}},
+            std::make_shared<cool::AST::Expression>(cool::AST::Expression{
+                {
+                    cool::AST::LetExpression{
+                        {
+                            {"a", "Int",
+                                {std::make_shared<cool::AST::Expression>(
+                                    cool::AST::Expression{
+                                        cool::AST::IntExpression{2}, "Int"})}},
+                            {"b", "Int",
+                                {std::make_shared<cool::AST::Expression>(
+                                    cool::AST::Expression{
+                                        cool::AST::ObjectExpression{"a"},
+                                        "Int"})}},
+                        },
+                        {std::make_shared<cool::AST::Expression>(
+                            cool::AST::Expression{
+                                cool::AST::PlusExpression{{
+                                    {std::make_shared<cool::AST::Expression>(
+                                        cool::AST::Expression{
+                                            cool::AST::ObjectExpression{"a"},
+                                            "Int"})},
+                                    {std::make_shared<cool::AST::Expression>(
+                                        cool::AST::Expression{
+                                            cool::AST::ObjectExpression{"b"},
+                                            "Int"})},
+                                }},
+                                "Int"})},
                     },
-                    {std::make_shared<cool::AST::Expression>(
-                        cool::AST::Expression{cool::AST::PlusExpression{{
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::ObjectExpression{"a"}, "Int"})},
-                            {std::make_shared<cool::AST::Expression>(
-                                cool::AST::Expression{
-                                    cool::AST::ObjectExpression{"b"}, "Int"})},
-                        }}, "Int"})},
                 },
-            }, "Int"}),
+                "Int"}),
         }}},
     }}};
 
@@ -1032,7 +1106,8 @@ TEST(SemantSmokeTest, TypeCheckLetDependentAssign) {
 }
 
 TEST(SemantSmokeTest, TypeCheckLetBad) {
-    std::stringstream test_string{"class Main { main() : Int { let a : Int <- b, b : Int <- a in a + b }; };"};
+    std::stringstream test_string{"class Main { main() : Int { let a : Int <- "
+                                  "b, b : Int <- a in a + b }; };"};
 
     cool::lexer::Lexer lexer(test_string);
 

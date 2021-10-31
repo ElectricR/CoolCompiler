@@ -1,6 +1,7 @@
 #include "lexer/Lexer.h"
 
-cool::lexer::Lexer::Lexer(std::istream& source_file, std::string filepath_): filepath(filepath_) {
+cool::lexer::Lexer::Lexer(std::istream& source_file, std::string filepath_)
+    : filepath(filepath_) {
     std::string line;
     std::string cool_string_appendix;
     unsigned line_number = 1;
@@ -73,9 +74,8 @@ void cool::lexer::Lexer::consume_line(
     line.clear();
 }
 
-bool cool::lexer::Lexer::consume_cool_string(
-    std::string& cool_string_appendix, unsigned line_number,
-    std::string& cleaned_line) noexcept {
+bool cool::lexer::Lexer::consume_cool_string(std::string& cool_string_appendix,
+    unsigned line_number, std::string& cleaned_line) noexcept {
     auto [is_extracted, is_slash_terminated, null_character_found,
         extracted_string, cleaned_line_start] =
         extract_cool_string(cool_string_appendix);
