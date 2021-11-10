@@ -12,10 +12,10 @@ TEST(SemantSmokeTest, MainCheck) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), true);
 }
@@ -25,10 +25,10 @@ TEST(SemantSmokeTest, MainNoMainClass) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Main class not found");
@@ -39,10 +39,10 @@ TEST(SemantSmokeTest, MainNoMainMethod) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Method main not found");
@@ -54,10 +54,10 @@ TEST(SemantSmokeTest, MainIsSecond) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), true);
 }
@@ -68,10 +68,10 @@ TEST(SemantSmokeTest, MainClassRedefinition) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Redefinition of class Main");
@@ -83,10 +83,10 @@ TEST(SemantSmokeTest, MainClassRedefinitionIsSecond) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Redefinition of class Main");
@@ -98,10 +98,10 @@ TEST(SemantSmokeTest, MainMethodRedefinition) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Redefinition of feature main");
@@ -114,10 +114,10 @@ TEST(SemantSmokeTest, InheritanceCyclic) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Cyclic dependency found in Bar");
@@ -132,10 +132,10 @@ TEST(SemantSmokeTest, InheritanceCyclicExtended) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Cyclic dependency found in B");
@@ -147,10 +147,10 @@ TEST(SemantSmokeTest, InheritancePrimitiveClass) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Can't inherit Int");
@@ -162,10 +162,10 @@ TEST(SemantSmokeTest, InheritanceUnknownClass) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "No such type to inherit Foo");
@@ -177,10 +177,10 @@ TEST(SemantSmokeTest, FieldUnknownType) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "No such type Bar");
@@ -191,10 +191,10 @@ TEST(SemantSmokeTest, TypeCheckIntType) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -218,10 +218,10 @@ TEST(SemantSmokeTest, TypeCheckFieldId) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -252,10 +252,10 @@ TEST(SemantSmokeTest, TypeCheckUnknownId) {
 
     cool::lexer::Lexer lexer(test_string);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
 }
@@ -267,10 +267,10 @@ TEST(SemantSmokeTest, TypeCheckPlus) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -306,10 +306,10 @@ TEST(SemantSmokeTest, TypeCheckBadPlus) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(),
@@ -323,10 +323,10 @@ TEST(SemantSmokeTest, TypeCheckEqual) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -362,10 +362,10 @@ TEST(SemantSmokeTest, TypeCheckBadEqualWithBase) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(),
@@ -379,10 +379,10 @@ TEST(SemantSmokeTest, TypeCheckLess) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -418,10 +418,10 @@ TEST(SemantSmokeTest, TypeCheckBadLessWithBase) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(),
@@ -435,10 +435,10 @@ TEST(SemantSmokeTest, TypeCheckWrongMethodReturnValue) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Can't assign Int to String");
@@ -452,10 +452,10 @@ TEST(SemantSmokeTest, TypeCheckCompoundStatement) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -491,10 +491,10 @@ TEST(SemantSmokeTest, TypeCheckWhileLoop) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(
@@ -509,10 +509,10 @@ TEST(SemantSmokeTest, TypeCheckIsVoid) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -543,10 +543,10 @@ TEST(SemantSmokeTest, TypeCheckNeg) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -577,10 +577,10 @@ TEST(SemantSmokeTest, TypeCheckBadNeg) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Expected Int in ~, got Bool");
@@ -594,10 +594,10 @@ TEST(SemantSmokeTest, TypeCheckNot) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -628,10 +628,10 @@ TEST(SemantSmokeTest, TypeCheckBadNot) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Expected Bool in \"not\", got Int");
@@ -645,10 +645,10 @@ TEST(SemantSmokeTest, TypeCheckAssign) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -697,10 +697,10 @@ TEST(SemantSmokeTest, TypeCheckBadAssign) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Can't assign Int to Bool");
@@ -714,10 +714,10 @@ TEST(SemantSmokeTest, TypeCheckIf) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -754,10 +754,10 @@ TEST(SemantSmokeTest, TypeCheckIfObject) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -794,10 +794,10 @@ TEST(SemantSmokeTest, TypeCheckIfBad) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Expected Bool expression in if statement");
@@ -811,10 +811,10 @@ TEST(SemantSmokeTest, TypeCheckNew) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{
         {
@@ -850,10 +850,10 @@ TEST(SemantSmokeTest, TypeCheckNewSelfType) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{
         {
@@ -897,10 +897,10 @@ TEST(SemantSmokeTest, TypeCheckNewBad) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Type A not found");
@@ -915,10 +915,10 @@ TEST(SemantSmokeTest, TypeCheckCase) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -966,10 +966,10 @@ TEST(SemantSmokeTest, TypeCheckCaseBadBranches) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Not all branch types are distinct");
@@ -983,10 +983,10 @@ TEST(SemantSmokeTest, TypeCheckDotMultipleBad) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "Could not find suitable method toStr");
@@ -1000,10 +1000,10 @@ TEST(SemantSmokeTest, TypeCheckLet) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -1056,10 +1056,10 @@ TEST(SemantSmokeTest, TypeCheckLetDependentAssign) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     cool::AST::Program correct = {{{
         "Main",
@@ -1113,10 +1113,10 @@ TEST(SemantSmokeTest, TypeCheckLetBad) {
 
     cool::parser::Parser parser(lexer);
 
-    std::vector<cool::parser::Parser> parsers;
-    parsers.emplace_back(lexer);
+    std::vector<cool::AST::Program> programs;
+    programs.push_back(cool::parser::Parser(lexer).get_result().value());
 
-    cool::semant::Semant semant(parsers);
+    cool::semant::Semant semant(programs);
 
     ASSERT_EQ(semant.is_successfull(), false);
     ASSERT_EQ(semant.get_error(), "ID b not found");

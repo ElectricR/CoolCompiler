@@ -6,12 +6,10 @@ namespace cool::semant {
 
 class Semant {
 public:
-    explicit Semant(const std::vector<parser::Parser>& parsers) {
-        for (auto& parser : parsers) {
-            if (auto parser_result = parser.get_result()) {
-                std::ranges::copy(parser.get_result().value().classes,
-                    std::back_inserter(program.classes));
-            }
+    explicit Semant(const std::vector<AST::Program>& ASTs) {
+        for (auto& ast : ASTs) {
+            std::ranges::copy(ast.classes,
+                std::back_inserter(program.classes));
         }
         check_semantics();
     }
