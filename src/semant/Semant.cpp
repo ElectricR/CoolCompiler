@@ -152,6 +152,10 @@ void cool::semant::Semant::populate_all_types(auto& all_types) noexcept {
         }
         if (base_type_name == "Object") {
             all_types[base_type_name].methods.insert({"abort", {"Object", {}}});
+            all_types[base_type_name].methods.insert(
+                {"type_name", {"String", {}}});
+            all_types[base_type_name].methods.insert(
+                {"copy", {"SELF_TYPE", {}}});
         }
         if (base_type_name == "IO") {
             all_types[base_type_name].methods.insert(
@@ -386,12 +390,18 @@ void cool::semant::Semant::check_expression(
                     error_msg = "Expected Bool expression in if statement";
                     return;
                 }
+                std::string self_type_type = class_.type_id;
+                std::string if_type = expression.if_expression->type;
+                std::string else_type = expression.else_expression->type;
                 if (expression.if_expression->type == "SELF_TYPE") {
-                    result_type = LCA(all_types, class_.type_id,
-                        expression.else_expression->type);
-                } else {
-                    result_type = LCA(all_types, expression.if_expression->type,
-                        expression.else_expression->type);
+                    if_type = class_.type_id;
+                }
+                if (expression.else_expression->type == "SELF_TYPE") {
+                    else_type = class_.type_id;
+                }
+                result_type = LCA(all_types, if_type, else_type);
+                if (result_type == self_type_type) {
+                    result_type = "SELF_TYPE";
                 }
             },
             [&](const cool::AST::WhileExpression& expression) {
@@ -442,6 +452,12 @@ void cool::semant::Semant::check_expression(
                 }
                 result_type =
                     expression.branch_expressions.front().expression->type;
+                std::optional<std::string> self_type_type;
+                if (expression.branch_expressions.front().expression->type ==
+                    "SELF_TYPE") {
+                    self_type_type = class_.type_id;
+                    result_type = class_.type_id;
+                }
                 std::ranges::for_each(
                     expression.branch_expressions.cbegin() + 1,
                     expression.branch_expressions.cend(),
@@ -455,6 +471,11 @@ void cool::semant::Semant::check_expression(
                         }
                     },
                     &AST::CaseBranch::expression);
+                if (self_type_type.has_value()) {
+                    if (self_type_type.value() == class_.type_id) {
+                        result_type = "SELF_TYPE";
+                    }
+                }
             },
             [&](const cool::AST::NewExpression& expression) {
                 if (expression.type_id != "SELF_TYPE" &&
@@ -634,6 +655,9 @@ void cool::semant::Semant::check_expression(
 
 void cool::semant::Semant::check_class_field(auto& field_feature,
     auto& vars_stack, const auto& all_types, const auto& class_) noexcept {
+    if (field_feature.type_id == "SELF_TYPE") {
+        return;
+    }
     if (!all_types.contains(field_feature.type_id)) {
         error_msg = "No such type " + field_feature.type_id;
         return;

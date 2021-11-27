@@ -49,6 +49,9 @@ class SemantTest(unittest.TestCase):
     def test_hairyscary(self):
         self.check(f"tests/semant_tests/examples/hairyscary.tets")
 
+    def test_test_10(self):
+        self.check(f"tests/semant_tests/examples/test_10.cl")
+
     def test_basic(self):
         self.check(f"tests/semant_tests/examples/basic.test")
 
@@ -94,14 +97,23 @@ class SemantTest(unittest.TestCase):
     def test_overridingmethod4(self):
         self.check(f"tests/semant_tests/examples/overridingmethod4.test")
 
+    def test_test_case_type_selftype(self):
+        self.check(f"tests/semant_tests/examples/test_case_type_selftype.cl")
+
     def test_simple_dispatch_self_type(self):
         self.check(f"tests/semant_tests/examples/simple_dispatch_self_type.test")
+
+    def test_test_11(self):
+        self.check(f"tests/semant_tests/examples/test_11.cl")
 
     def test_assignment(self):
         self.check(f"tests/semant_tests/examples/assignment.test")
 
     def test_outofscope(self):
         self.check(f"tests/semant_tests/examples/outofscope.test")
+
+    def test_test_system_classes(self):
+        self.check(f"tests/semant_tests/examples/test_system_classes.cl")
 
     def test_objectdispatchabort(self):
         self.check(f"tests/semant_tests/examples/objectdispatchabort.test")
@@ -139,6 +151,9 @@ class SemantTest(unittest.TestCase):
     def test_simplecase(self):
         self.check(f"tests/semant_tests/examples/simplecase.test")
 
+    def test_test_self_type(self):
+        self.check(f"tests/semant_tests/examples/test_self_type.cl")
+
     def test_trickyatdispatch2(self):
         self.check(f"tests/semant_tests/examples/trickyatdispatch2.test")
 
@@ -171,6 +186,9 @@ class SemantTest(unittest.TestCase):
 
     def test_badarith(self):
         self.check(f"tests/semant_tests/examples/badarith.test")
+
+    def test_test_12(self):
+        self.check(f"tests/semant_tests/examples/test_12.cl")
 
     def test_nomain(self):
         self.check(f"tests/semant_tests/examples/nomain.test")
