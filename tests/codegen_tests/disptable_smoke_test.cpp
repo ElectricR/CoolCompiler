@@ -102,7 +102,7 @@ IO_dispTab:\n\
 ");
 }
 
-TEST_F(DisptableDataGenTestFixture, GenMainWithFamily) {
+TEST_F(DisptableDataGenTestFixture, GenMain) {
     cool::codegen::MIPS32::ClassDispTableRepresentation Foo = {
         {},
         {"foo"},
