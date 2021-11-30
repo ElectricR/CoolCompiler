@@ -1,4 +1,8 @@
-test: semant_test
+all: build
+	./codegen nao.cl
+	cat a.s
+
+test: codegen_test
 
 lexer_test: build
 	./lexer_smoke_test
@@ -11,6 +15,9 @@ parser_test: build
 semant_test: build
 	./semant_smoke_test
 	python3 -m unittest tests/semant_tests/semant_end_to_end.py
+
+codegen_test: build
+	./datagen_smoke_test
 
 build: googletest compile_commands.json
 	cmake -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 
@@ -41,12 +48,11 @@ clean:
 	-rm lexer
 	-rm parser
 	-rm semant
-	-rm lexer_db
-	-rm parser_db
-	-rm semant_db
+	-rm codegen
 	-rm lexer_smoke_test
 	-rm parser_smoke_test
 	-rm semant_smoke_test
+	-rm datagen_smoke_test
 	-rm build -r
 
 .PHONY: build clean lexer_test parser_test format

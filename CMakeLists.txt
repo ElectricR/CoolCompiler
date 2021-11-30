@@ -22,6 +22,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wconversion -Wno
 set(LEXER_SOURCES src/lexer/Lexer.cpp)
 set(PARSER_SOURCES ${LEXER_SOURCES} src/parser/Parser.cpp)
 set(SEMANT_SOURCES ${PARSER_SOURCES} src/semant/Semant.cpp)
+set(CODEGEN_SOURCES ${SEMANT_SOURCES} src/codegen/MIPS32/PrototypeGen.cpp src/codegen/Codegen.cpp)
 
 ###############################
 # Smoke
@@ -37,9 +38,14 @@ add_test(parser_smoke_test parser_smoke_test)
 add_executable(semant_smoke_test tests/semant_tests/semant_smoke_test.cpp ${SEMANT_SOURCES})
 target_link_libraries(semant_smoke_test gtest_main)
 add_test(semant_smoke_test semant_smoke_test)
+
+add_executable(datagen_smoke_test tests/codegen_tests/datagen_smoke_test.cpp ${CODEGEN_SOURCES})
+target_link_libraries(datagen_smoke_test gtest_main)
+add_test(datagen_smoke_test datagen_smoke_test)
 ###############################
 
 add_executable(lexer src/lexer/lexer_printer.cpp ${LEXER_SOURCES})
 add_executable(parser src/parser/parser_printer.cpp ${PARSER_SOURCES})
 add_executable(semant src/semant/semant_printer.cpp ${SEMANT_SOURCES})
+add_executable(codegen src/codegen/codegen.cpp ${CODEGEN_SOURCES})
 
