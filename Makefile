@@ -20,6 +20,7 @@ codegen_test: build
 	./prototype_smoke_test
 	./disptable_smoke_test
 	./constants_smoke_test
+	./misc_smoke_test
 
 build: googletest compile_commands.json
 	cmake -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 

@@ -3,6 +3,8 @@
 #include "codegen/instructions.h"
 #include "codegen/MIPS32/PrototypeGen.h"
 #include "codegen/MIPS32/DispTableGen.h"
+#include "codegen/MIPS32/ConstantGenerator.h"
+#include "codegen/MIPS32/MiscGen.h"
 
 #include <iostream>
 #include <unordered_set>
@@ -25,6 +27,20 @@ private:
 
     void generate_disptables(const AST::Program& AST, std::ostream& out) noexcept;
 
+    void generate_objtab(const AST::Program& AST, std::ostream& out) const noexcept;
+
+    void generate_nametab(const AST::Program& AST, std::ostream& out) const noexcept;
+
+    void generate_constants(std::ostream& out) const noexcept;
+
+    void generate_globals(std::ostream& out) const noexcept;
+
+    void generate_basic_tags(std::ostream& out) const noexcept;
+
+    void generate_heap_start(std::ostream& out) const noexcept;
+
+    void generate_gc_stuff(std::ostream& out) const noexcept;
+
     void visit_class(const AST::Class& class_) noexcept;
 
     void visit_method(std::string_view class_name, const AST::MethodFeature& method_feature) noexcept;
@@ -40,9 +56,13 @@ private:
     void print_single_instruction(const instructions::Instruction& instruction, std::ostream& out) const noexcept;
 
     void make_class_map(const AST::Program& AST) noexcept;
+
+    void populate_class_name_constants(const AST::Program& AST) noexcept;
 private:
     MIPS32::PrototypeDataGenerator prototype_data_gen;
     MIPS32::DispTableDataGenerator disptable_data_gen;
+    MIPS32::ConstantsDataGeneneror constants_data_gen;
+    MIPS32::MiscGenerator misc_data_gen;
     std::stringstream text;
     std::stringstream data;
     std::unordered_map<std::string_view, const AST::Class&> class_map;

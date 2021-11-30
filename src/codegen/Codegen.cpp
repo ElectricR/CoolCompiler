@@ -8,7 +8,13 @@ template<class... Ts> struct Overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
 
 void Codegen::generate_assembly(const AST::Program& AST, std::ostream& out) noexcept {
+    populate_class_name_constants(AST);
+    generate_basic_tags(data);
+    generate_gc_stuff(data);
     visit_program(AST);
+    generate_constants(data);
+    generate_heap_start(data);
+    generate_globals(out);
     print_data(out);
     print_text(out);
 }
@@ -16,6 +22,8 @@ void Codegen::generate_assembly(const AST::Program& AST, std::ostream& out) noex
 void Codegen::visit_program(const AST::Program& AST) noexcept {
     generate_prototypes(AST, data);
     generate_disptables(AST, data);
+    generate_objtab(AST, data);
+    generate_nametab(AST, data);
     for (const auto& class_ : AST.classes) {
         visit_class(class_);
     }
@@ -59,11 +67,11 @@ void Codegen::generate_prototypes(const AST::Program& AST, std::ostream& out) no
 }
 
 void Codegen::generate_disptables(const AST::Program& AST, std::ostream& out) noexcept {
-    //disptable_data_gen.generate_object_disptable(out);
-    //disptable_data_gen.generate_int_disptable(out);
-    //disptable_data_gen.generate_bool_disptable(out);
-    //disptable_data_gen.generate_string_disptable(out);
-    //disptable_data_gen.generate_io_disptable(out);
+    disptable_data_gen.generate_object_disptable(out);
+    disptable_data_gen.generate_int_disptable(out);
+    disptable_data_gen.generate_bool_disptable(out);
+    disptable_data_gen.generate_string_disptable(out);
+    disptable_data_gen.generate_io_disptable(out);
     for (auto& class_ : AST.classes) {
         auto *current_ancestor = &class_;
         std::unordered_map<std::string_view,
@@ -93,6 +101,39 @@ void Codegen::generate_disptables(const AST::Program& AST, std::ostream& out) no
 
         disptable_data_gen.generate_disptable(family_map, class_.type_id, data);
     }
+}
+
+void Codegen::generate_objtab(const AST::Program& AST, std::ostream& out) const noexcept {
+    std::vector<std::string_view> class_names = {"Object", "Int", "Bool", "String", "IO"};
+    for (auto& class_ : AST.classes) {
+        class_names.emplace_back(class_.type_id);
+    }
+    misc_data_gen.generate_objtab(class_names, out);
+}
+
+void Codegen::generate_nametab(const AST::Program& AST, std::ostream& out) const noexcept {
+    unsigned name_count = 5 + static_cast<unsigned>(AST.classes.size());
+    misc_data_gen.generate_nametab(name_count, out);
+}
+
+void Codegen::generate_constants(std::ostream& out) const noexcept {
+    constants_data_gen.generate_constants(out);
+}
+
+void Codegen::generate_globals(std::ostream& out) const noexcept {
+    misc_data_gen.generate_globals(out);
+}
+
+void Codegen::generate_basic_tags(std::ostream& out) const noexcept {
+    misc_data_gen.generate_basic_tags(out);
+}
+
+void Codegen::generate_heap_start(std::ostream& out) const noexcept {
+    misc_data_gen.generate_heap_start(out);
+}
+
+void Codegen::generate_gc_stuff(std::ostream& out) const noexcept {
+    misc_data_gen.generate_gc_stuff(out);
 }
 
 void Codegen::visit_class(const AST::Class& class_) noexcept {
@@ -170,6 +211,18 @@ void Codegen::print_single_instruction(const instructions::Instruction& instruct
 void Codegen::make_class_map(const AST::Program& AST) noexcept {
     for (auto& class_ : AST.classes) {
         class_map.emplace(class_.type_id, class_);
+    }
+}
+
+void Codegen::populate_class_name_constants(const AST::Program& AST) noexcept {
+    constants_data_gen.register_filepath(AST.classes.front().filepath);
+    constants_data_gen.register_class_name("Object");
+    constants_data_gen.register_class_name("Int");
+    constants_data_gen.register_class_name("Bool");
+    constants_data_gen.register_class_name("String");
+    constants_data_gen.register_class_name("IO");
+    for (auto& class_ : AST.classes) {
+        constants_data_gen.register_class_name(class_.type_id);
     }
 }
 
