@@ -17,7 +17,8 @@ semant_test: build
 	python3 -m unittest tests/semant_tests/semant_end_to_end.py
 
 codegen_test: build
-	./datagen_smoke_test
+	./prototype_smoke_test
+	./disptable_smoke_test
 
 build: googletest compile_commands.json
 	cmake -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 

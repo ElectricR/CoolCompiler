@@ -15,17 +15,18 @@ void Codegen::generate_assembly(const AST::Program& AST, std::ostream& out) noex
 
 void Codegen::visit_program(const AST::Program& AST) noexcept {
     generate_prototypes(AST, data);
+    generate_disptables(AST, data);
     for (const auto& class_ : AST.classes) {
         visit_class(class_);
     }
 }
 
 void Codegen::generate_prototypes(const AST::Program& AST, std::ostream& out) noexcept {
-    data_gen.generate_object_prototype(out);
-    data_gen.generate_int_prototype(out);
-    data_gen.generate_bool_prototype(out);
-    data_gen.generate_string_prototype(out);
-    data_gen.generate_io_prototype(out);
+    prototype_data_gen.generate_object_prototype(out);
+    prototype_data_gen.generate_int_prototype(out);
+    prototype_data_gen.generate_bool_prototype(out);
+    prototype_data_gen.generate_string_prototype(out);
+    prototype_data_gen.generate_io_prototype(out);
     for (auto& class_ : AST.classes) {
         auto *current_ancestor = &class_;
         std::unordered_map<std::string_view,
@@ -53,7 +54,44 @@ void Codegen::generate_prototypes(const AST::Program& AST, std::ostream& out) no
                 &class_map.at(current_ancestor->inherits.value());
         }
 
-        data_gen.generate_prototype(family_map, class_.type_id, data);
+        prototype_data_gen.generate_prototype(family_map, class_.type_id, data);
+    }
+}
+
+void Codegen::generate_disptables(const AST::Program& AST, std::ostream& out) noexcept {
+    //disptable_data_gen.generate_object_disptable(out);
+    //disptable_data_gen.generate_int_disptable(out);
+    //disptable_data_gen.generate_bool_disptable(out);
+    //disptable_data_gen.generate_string_disptable(out);
+    //disptable_data_gen.generate_io_disptable(out);
+    for (auto& class_ : AST.classes) {
+        auto *current_ancestor = &class_;
+        std::unordered_map<std::string_view,
+            MIPS32::ClassDispTableRepresentation>
+            family_map;
+        while (true) {
+            auto fields_range = current_ancestor->features |
+                     std::ranges::views::filter([](auto& feature_variant) {
+                         return std::holds_alternative<AST::MethodFeature>(
+                             feature_variant.feature);
+                     }) |
+                     std::ranges::views::transform(
+                         [](auto& field_feature) -> std::string_view {
+                             return std::get<AST::MethodFeature>(
+                                 field_feature.feature)
+                                 .object_id;
+                         });
+            MIPS32::ClassDispTableRepresentation cl = {
+                current_ancestor->inherits, {fields_range.begin(), fields_range.end()}};
+            family_map.emplace(current_ancestor->type_id, std::move(cl));
+            if (!current_ancestor->inherits) {
+                break;
+            }
+            current_ancestor =
+                &class_map.at(current_ancestor->inherits.value());
+        }
+
+        disptable_data_gen.generate_disptable(family_map, class_.type_id, data);
     }
 }
 

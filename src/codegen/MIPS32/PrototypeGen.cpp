@@ -1,6 +1,5 @@
 #include "codegen/MIPS32/PrototypeGen.h"
 #include <iomanip>
-#include <ranges>
 
 
 namespace cool::codegen::MIPS32 {
