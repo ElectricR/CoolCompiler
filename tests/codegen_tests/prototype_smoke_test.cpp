@@ -24,7 +24,7 @@ TEST_F(PrototypeDataGenTestFixture, GenInt) {
     ASSERT_EQ(gen_result.str(), "\
        .word -1\n\
 Int_protObj:\n\
-       .word 0\n\
+       .word 1\n\
        .word 4\n\
        .word Int_dispTab\n\
        .word 0\n\n\
@@ -36,7 +36,7 @@ TEST_F(PrototypeDataGenTestFixture, GenBool) {
     ASSERT_EQ(gen_result.str(), "\
        .word -1\n\
 Bool_protObj:\n\
-       .word 0\n\
+       .word 2\n\
        .word 4\n\
        .word Bool_dispTab\n\
        .word 0\n\n\
@@ -48,7 +48,7 @@ TEST_F(PrototypeDataGenTestFixture, GenString) {
     ASSERT_EQ(gen_result.str(), "\
        .word -1\n\
 String_protObj:\n\
-       .word 0\n\
+       .word 3\n\
        .word 5\n\
        .word String_dispTab\n\
        .word int_const0\n\
@@ -61,7 +61,7 @@ TEST_F(PrototypeDataGenTestFixture, GenIO) {
     ASSERT_EQ(gen_result.str(), "\
        .word -1\n\
 IO_protObj:\n\
-       .word 0\n\
+       .word 4\n\
        .word 3\n\
        .word IO_dispTab\n\n\
 ");
@@ -120,7 +120,7 @@ TEST_F(PrototypeDataGenTestFixture, GenMainWithFamily) {
     ASSERT_EQ(gen_result.str(), "\
        .word -1\n\
 Main_protObj:\n\
-       .word 0\n\
+       .word 5\n\
        .word 9\n\
        .word Main_dispTab\n\
        .word int_const0\n\

@@ -5,6 +5,7 @@
 #include "codegen/MIPS32/DispTableGen.h"
 
 #include <iostream>
+#include <unordered_set>
 #include <sstream>
 
 namespace cool::codegen {

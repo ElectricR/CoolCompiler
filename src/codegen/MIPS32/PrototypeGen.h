@@ -27,11 +27,11 @@ public:
     void generate_io_prototype(std::ostream& out) noexcept;
 
 private:
-    void generate_prototype_data(std::string_view class_name, unsigned class_size, const std::vector<std::string_view>& field_addresses, std::ostream& out) noexcept;
+    void generate_prototype_data(std::string_view class_name, unsigned class_size, const std::vector<std::string_view>& field_addresses, std::ostream& out, unsigned id) const noexcept;
 
     [[nodiscard]] std::vector<std::string_view> get_class_fields(const ClassPrototypeRepresentation&) noexcept;
 
-    unsigned current_id = 0;
+    unsigned current_id = 5; // Because of 5 base classes
 };
 
 } // namespace
