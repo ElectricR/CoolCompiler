@@ -202,7 +202,7 @@ private:
                     std::cout << std::setw(shift) << ""
                               << "_string" << std::endl;
                     std::cout << std::setw(shift + 2) << "";
-                    util::print_string(expression.value);
+                    util::print_string(expression.value, std::cout);
                     std::cout << std::setw(shift) << ""
                               << ": " << expr.type << std::endl;
                 },

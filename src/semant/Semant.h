@@ -8,8 +8,7 @@ class Semant {
 public:
     explicit Semant(const std::vector<AST::Program>& ASTs) {
         for (auto& ast : ASTs) {
-            std::ranges::copy(ast.classes,
-                std::back_inserter(program.classes));
+            std::ranges::copy(ast.classes, std::back_inserter(program.classes));
         }
         check_semantics();
     }

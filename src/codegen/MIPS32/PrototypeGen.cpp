@@ -1,12 +1,15 @@
 #include "codegen/MIPS32/PrototypeGen.h"
 #include <iomanip>
 
-
 namespace cool::codegen::MIPS32 {
 
-void PrototypeDataGenerator::generate_prototype(const std::unordered_map<std::string_view, ClassPrototypeRepresentation>& class_prototype_map, std::string_view class_name, std::ostream& out) noexcept {
+void PrototypeDataGenerator::generate_prototype(
+    const std::unordered_map<std::string_view, ClassPrototypeRepresentation>&
+        class_prototype_map,
+    std::string_view class_name, std::ostream& out) noexcept {
     std::vector<std::string_view> fields;
-    const ClassPrototypeRepresentation *curr_class = &class_prototype_map.at(class_name);
+    const ClassPrototypeRepresentation* curr_class =
+        &class_prototype_map.at(class_name);
     while (true) {
         for (auto&& field : get_class_fields(*curr_class)) {
             fields.emplace_back(std::move(field));
@@ -18,10 +21,13 @@ void PrototypeDataGenerator::generate_prototype(const std::unordered_map<std::st
         }
     }
     std::reverse(fields.begin(), fields.end());
-    generate_prototype_data(class_name, static_cast<unsigned>(fields.size()) + 3, fields, out, current_id++);
+    generate_prototype_data(class_name,
+        static_cast<unsigned>(fields.size()) + 3, fields, out, current_id++);
 }
 
-[[nodiscard]] std::vector<std::string_view> PrototypeDataGenerator::get_class_fields(const ClassPrototypeRepresentation& class_prototype_representation) noexcept {
+[[nodiscard]] std::vector<std::string_view>
+PrototypeDataGenerator::get_class_fields(const ClassPrototypeRepresentation&
+        class_prototype_representation) noexcept {
     std::vector<std::string_view> fields;
     for (auto& class_type_id : class_prototype_representation.field_types) {
         if (class_type_id == "Int") {
@@ -38,19 +44,23 @@ void PrototypeDataGenerator::generate_prototype(const std::unordered_map<std::st
     return fields;
 }
 
-void PrototypeDataGenerator::generate_object_prototype(std::ostream& out) noexcept {
+void PrototypeDataGenerator::generate_object_prototype(
+    std::ostream& out) noexcept {
     generate_prototype_data("Object", 3, {}, out, 0);
 }
 
-void PrototypeDataGenerator::generate_int_prototype(std::ostream& out) noexcept {
+void PrototypeDataGenerator::generate_int_prototype(
+    std::ostream& out) noexcept {
     generate_prototype_data("Int", 4, {"0"}, out, 1);
 }
 
-void PrototypeDataGenerator::generate_bool_prototype(std::ostream& out) noexcept {
+void PrototypeDataGenerator::generate_bool_prototype(
+    std::ostream& out) noexcept {
     generate_prototype_data("Bool", 4, {"0"}, out, 2);
 }
 
-void PrototypeDataGenerator::generate_string_prototype(std::ostream& out) noexcept {
+void PrototypeDataGenerator::generate_string_prototype(
+    std::ostream& out) noexcept {
     generate_prototype_data("String", 5, {"int_const0", "0"}, out, 3);
 }
 
@@ -58,7 +68,10 @@ void PrototypeDataGenerator::generate_io_prototype(std::ostream& out) noexcept {
     generate_prototype_data("IO", 3, {}, out, 4);
 }
 
-void PrototypeDataGenerator::generate_prototype_data(std::string_view class_name, unsigned class_size, const std::vector<std::string_view>& field_addresses, std::ostream& out, unsigned id) const noexcept {
+void PrototypeDataGenerator::generate_prototype_data(
+    std::string_view class_name, unsigned class_size,
+    const std::vector<std::string_view>& field_addresses, std::ostream& out,
+    unsigned id) const noexcept {
     out << std::setw(12) << ".word" << ' ' << -1 << '\n';
     out << class_name << "_protObj:\n";
     out << std::setw(12) << ".word" << ' ' << id << '\n';
@@ -70,4 +83,4 @@ void PrototypeDataGenerator::generate_prototype_data(std::string_view class_name
     out << '\n';
 }
 
-} //namespace
+} // namespace cool::codegen::MIPS32

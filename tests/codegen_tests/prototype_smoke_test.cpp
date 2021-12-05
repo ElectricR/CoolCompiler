@@ -115,7 +115,9 @@ TEST_F(PrototypeDataGenTestFixture, GenMainWithFamily) {
         {"Foo"},
         {"Bool", "String", "Object", "Foo"},
     };
-    std::unordered_map<std::string_view, cool::codegen::MIPS32::ClassPrototypeRepresentation> class_map = {{"Foo", Foo}, {"Main", Main}};
+    std::unordered_map<std::string_view,
+        cool::codegen::MIPS32::ClassPrototypeRepresentation>
+        class_map = {{"Foo", Foo}, {"Main", Main}};
     prototype_data_gen.generate_prototype(class_map, "Main", gen_result);
     ASSERT_EQ(gen_result.str(), "\
        .word -1\n\
@@ -131,4 +133,3 @@ Main_protObj:\n\
        .word 0\n\n\
 ");
 }
-

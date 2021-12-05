@@ -1,5 +1,5 @@
-#include "semant/Semant.h"
 #include "Codegen.h"
+#include "semant/Semant.h"
 
 int main(int argc, char* argv[]) {
     std::vector<cool::AST::Program> programs;

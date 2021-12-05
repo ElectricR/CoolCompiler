@@ -35,7 +35,7 @@ void print_lexer_result(auto result) {
         }
         case cool::lexer::TokenType::String: {
             std::cout << '#' << token.line_number << " STR_CONST ";
-            util::print_string(token.lexeme);
+            util::print_string(token.lexeme, std::cout);
             break;
         }
         case cool::lexer::TokenType::Error: {

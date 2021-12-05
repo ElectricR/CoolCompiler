@@ -26,7 +26,8 @@ set(CODEGEN_SOURCES ${SEMANT_SOURCES} src/codegen/Codegen.cpp
     src/codegen/MIPS32/PrototypeGen.cpp
     src/codegen/MIPS32/DispTableGen.cpp
     src/codegen/MIPS32/ConstantGenerator.cpp
-    src/codegen/MIPS32/MiscGen.cpp)
+    src/codegen/MIPS32/MiscGen.cpp
+    src/codegen/MIPS32/TextGen.cpp)
 
 ###############################
 # Smoke
@@ -61,6 +62,14 @@ add_test(semant_smoke_test semant_smoke_test)
     add_executable(misc_smoke_test tests/codegen_tests/misc_smoke_test.cpp ${CODEGEN_SOURCES})
     target_link_libraries(misc_smoke_test gtest_main)
     add_test(misc_smoke_test misc_smoke_test)
+
+    add_executable(text_smoke_test tests/codegen_tests/text_smoke_test.cpp ${CODEGEN_SOURCES})
+    target_link_libraries(text_smoke_test gtest_main)
+    add_test(text_smoke_test text_smoke_test)
+
+    add_executable(codegen_smoke_test tests/codegen_tests/codegen_smoke_test.cpp ${CODEGEN_SOURCES})
+    target_link_libraries(codegen_smoke_test gtest_main)
+    add_test(codegen_smoke_test codegen_smoke_test)
     ###############################
 ###############################
 

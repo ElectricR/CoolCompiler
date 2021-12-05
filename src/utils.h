@@ -16,57 +16,57 @@ constexpr auto adjacent_reduce(InputIt first2, InputIt last, T init,
         first1, --last, first2, init, reduce_op, transform_op);
 }
 
-static void print_string(std::string_view str) noexcept {
-    std::cout << '"';
-    std::for_each(str.cbegin(), str.cend(), [](char ch) {
+static void print_string(std::string_view str, std::ostream& out) noexcept {
+    out << '"';
+    std::for_each(str.cbegin(), str.cend(), [&out](char ch) {
         switch (ch) {
         case '\\': {
-            std::cout << "\\\\";
+            out << "\\\\";
             break;
         }
         case '\"': {
-            std::cout << "\\\"";
+            out << "\\\"";
             break;
         }
         case '\t': {
-            std::cout << "\\t";
+            out << "\\t";
             break;
         }
         case '\b': {
-            std::cout << "\\b";
+            out << "\\b";
             break;
         }
         case '\f': {
-            std::cout << "\\f";
+            out << "\\f";
             break;
         }
         case '\n': {
-            std::cout << "\\n";
+            out << "\\n";
             break;
         }
         case '\033': {
-            std::cout << "\\033";
+            out << "\\033";
             break;
         }
         case '\015': {
-            std::cout << "\\015";
+            out << "\\015";
             break;
         }
         case '\022': {
-            std::cout << "\\022";
+            out << "\\022";
             break;
         }
         case '\013': {
-            std::cout << "\\013";
+            out << "\\013";
             break;
         }
         default: {
-            std::cout << ch;
+            out << ch;
             break;
         }
         }
     });
-    std::cout << '"' << std::endl;
+    out << '"' << '\n';
 }
 
 } // namespace util

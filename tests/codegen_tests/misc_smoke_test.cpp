@@ -65,7 +65,8 @@ _MemMgr_TEST:\n\
 }
 
 TEST_F(MiscGenTestFixture, ObjTabGen) {
-    misc_data_gen.generate_objtab({"Object", "Int", "Bool", "String", "IO", "Main"}, gen_result);
+    misc_data_gen.generate_objtab(
+        {"Object", "Int", "Bool", "String", "IO", "Main"}, gen_result);
     ASSERT_EQ(gen_result.str(), "\
 class_objTab:\n\
        .word Object_protObj\n\
@@ -84,15 +85,23 @@ class_objTab:\n\
 }
 
 TEST_F(MiscGenTestFixture, NameTabGen) {
-    misc_data_gen.generate_nametab(6, gen_result);
+    misc_data_gen.generate_nametab(
+        {
+            "Object",
+            "Int",
+            "Bool",
+            "String",
+            "IO",
+            "Main",
+        },
+        gen_result);
     ASSERT_EQ(gen_result.str(), "\
 class_nameTab:\n\
-       .word str_const0\n\
-       .word str_const1\n\
-       .word str_const2\n\
-       .word str_const3\n\
-       .word str_const4\n\
-       .word str_const5\n\n\
+       .word str_constObject\n\
+       .word str_constInt\n\
+       .word str_constBool\n\
+       .word str_constString\n\
+       .word str_constIO\n\
+       .word str_constMain\n\n\
 ");
 }
-

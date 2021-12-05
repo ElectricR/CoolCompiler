@@ -86,7 +86,7 @@ str_const_path:\n\
 
 TEST_F(ConstantsDataGenTestFixture, SimpleStrGen) {
     constants_data_gen.register_class_name("Object");
-    constants_data_gen.register_string("Foo");
+    (void)constants_data_gen.register_string("Foo");
     constants_data_gen.generate_constants(gen_result);
     ASSERT_EQ(gen_result.str(), "\
        .word -1\n\
@@ -127,7 +127,7 @@ str_const_path:\n\
        .word int_const0\n\
        .byte 0\n\n\
        .word -1\n\
-str_const0:\n\
+str_constObject:\n\
        .word 3\n\
        .word 6\n\
        .word String_dispTab\n\
@@ -135,7 +135,7 @@ str_const0:\n\
       .ascii \"Object\"\n\
        .byte 0\n\n\
        .word -1\n\
-str_const1:\n\
+str_const0:\n\
        .word 3\n\
        .word 5\n\
        .word String_dispTab\n\

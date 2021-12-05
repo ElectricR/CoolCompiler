@@ -4,56 +4,70 @@
 
 namespace cool::codegen {
 
-template<class... Ts> struct Overloaded : Ts... { using Ts::operator()...; };
-template<class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
+template <class... Ts> struct Overloaded : Ts... { using Ts::operator()...; };
+template <class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
 
-void Codegen::generate_assembly(const AST::Program& AST, std::ostream& out) noexcept {
+void Codegen::generate_assembly(
+    const AST::Program& AST, std::ostream& out) noexcept {
     populate_class_name_constants(AST);
     generate_basic_tags(data);
     generate_gc_stuff(data);
-    visit_program(AST);
+    get_data_from_AST(AST);
+    generate_text(AST);
     generate_constants(data);
     generate_heap_start(data);
-    generate_globals(out);
+    generate_globals(data);
     print_data(out);
     print_text(out);
 }
 
-void Codegen::visit_program(const AST::Program& AST) noexcept {
+void Codegen::generate_text(const AST::Program& program) noexcept {
+    generate_inits(program);
+    AST_visitor(program);
+}
+
+void Codegen::generate_inits(const AST::Program& program) noexcept {
+    generate_default_inits();
+    for (auto& class_ : program.classes) {
+        generate_init(class_.type_id);
+    }
+}
+
+void Codegen::get_data_from_AST(const AST::Program& AST) noexcept {
     generate_prototypes(AST, data);
     generate_disptables(AST, data);
     generate_objtab(AST, data);
     generate_nametab(AST, data);
-    for (const auto& class_ : AST.classes) {
-        visit_class(class_);
-    }
 }
 
-void Codegen::generate_prototypes(const AST::Program& AST, std::ostream& out) noexcept {
+void Codegen::generate_prototypes(
+    const AST::Program& AST, std::ostream& out) noexcept {
     prototype_data_gen.generate_object_prototype(out);
     prototype_data_gen.generate_int_prototype(out);
     prototype_data_gen.generate_bool_prototype(out);
     prototype_data_gen.generate_string_prototype(out);
     prototype_data_gen.generate_io_prototype(out);
     for (auto& class_ : AST.classes) {
-        auto *current_ancestor = &class_;
+        auto* current_ancestor = &class_;
         std::unordered_map<std::string_view,
             MIPS32::ClassPrototypeRepresentation>
             family_map;
         while (true) {
-            auto fields_range = current_ancestor->features |
-                     std::ranges::views::filter([](auto& feature_variant) {
-                         return std::holds_alternative<AST::FieldFeature>(
-                             feature_variant.feature);
-                     }) |
-                     std::ranges::views::transform(
-                         [](auto& field_feature) -> std::string_view {
-                             return std::get<AST::FieldFeature>(
-                                 field_feature.feature)
-                                 .type_id;
-                         });
+            auto fields_range =
+                current_ancestor->features |
+                std::ranges::views::filter([](auto& feature_variant) {
+                    return std::holds_alternative<AST::FieldFeature>(
+                        feature_variant.feature);
+                }) |
+                std::ranges::views::transform(
+                    [](auto& field_feature) -> std::string_view {
+                        return std::get<AST::FieldFeature>(
+                            field_feature.feature)
+                            .type_id;
+                    });
             MIPS32::ClassPrototypeRepresentation cl = {
-                current_ancestor->inherits, {fields_range.begin(), fields_range.end()}};
+                current_ancestor->inherits,
+                {fields_range.begin(), fields_range.end()}};
             family_map.emplace(current_ancestor->type_id, std::move(cl));
             if (!current_ancestor->inherits) {
                 break;
@@ -66,31 +80,34 @@ void Codegen::generate_prototypes(const AST::Program& AST, std::ostream& out) no
     }
 }
 
-void Codegen::generate_disptables(const AST::Program& AST, std::ostream& out) noexcept {
+void Codegen::generate_disptables(
+    const AST::Program& AST, std::ostream& out) noexcept {
     disptable_data_gen.generate_object_disptable(out);
     disptable_data_gen.generate_int_disptable(out);
     disptable_data_gen.generate_bool_disptable(out);
     disptable_data_gen.generate_string_disptable(out);
     disptable_data_gen.generate_io_disptable(out);
     for (auto& class_ : AST.classes) {
-        auto *current_ancestor = &class_;
+        auto* current_ancestor = &class_;
         std::unordered_map<std::string_view,
             MIPS32::ClassDispTableRepresentation>
             family_map;
         while (true) {
-            auto fields_range = current_ancestor->features |
-                     std::ranges::views::filter([](auto& feature_variant) {
-                         return std::holds_alternative<AST::MethodFeature>(
-                             feature_variant.feature);
-                     }) |
-                     std::ranges::views::transform(
-                         [](auto& field_feature) -> std::string_view {
-                             return std::get<AST::MethodFeature>(
-                                 field_feature.feature)
-                                 .object_id;
-                         });
+            auto fields_range =
+                current_ancestor->features |
+                std::ranges::views::filter([](auto& feature_variant) {
+                    return std::holds_alternative<AST::MethodFeature>(
+                        feature_variant.feature);
+                }) |
+                std::ranges::views::transform(
+                    [](auto& field_feature) -> std::string_view {
+                        return std::get<AST::MethodFeature>(
+                            field_feature.feature)
+                            .object_id;
+                    });
             MIPS32::ClassDispTableRepresentation cl = {
-                current_ancestor->inherits, {fields_range.begin(), fields_range.end()}};
+                current_ancestor->inherits,
+                {fields_range.begin(), fields_range.end()}};
             family_map.emplace(current_ancestor->type_id, std::move(cl));
             if (!current_ancestor->inherits) {
                 break;
@@ -103,17 +120,23 @@ void Codegen::generate_disptables(const AST::Program& AST, std::ostream& out) no
     }
 }
 
-void Codegen::generate_objtab(const AST::Program& AST, std::ostream& out) const noexcept {
-    std::vector<std::string_view> class_names = {"Object", "Int", "Bool", "String", "IO"};
+void Codegen::generate_objtab(
+    const AST::Program& AST, std::ostream& out) const noexcept {
+    std::vector<std::string_view> class_names = {
+        "Object", "Int", "Bool", "String", "IO"};
     for (auto& class_ : AST.classes) {
         class_names.emplace_back(class_.type_id);
     }
     misc_data_gen.generate_objtab(class_names, out);
 }
 
-void Codegen::generate_nametab(const AST::Program& AST, std::ostream& out) const noexcept {
-    unsigned name_count = 5 + static_cast<unsigned>(AST.classes.size());
-    misc_data_gen.generate_nametab(name_count, out);
+void Codegen::generate_nametab(
+    const AST::Program& AST, std::ostream& out) const noexcept {
+    std::vector<std::string_view> class_names;
+    std::transform(AST.classes.cbegin(), AST.classes.cend(),
+        std::back_inserter(class_names),
+        [](auto& class_) -> std::string_view { return class_.type_id; });
+    misc_data_gen.generate_nametab(class_names, out);
 }
 
 void Codegen::generate_constants(std::ostream& out) const noexcept {
@@ -136,42 +159,6 @@ void Codegen::generate_gc_stuff(std::ostream& out) const noexcept {
     misc_data_gen.generate_gc_stuff(out);
 }
 
-void Codegen::visit_class(const AST::Class& class_) noexcept {
-    for (const auto& feature : class_.features) {
-        std::visit(Overloaded{[&class_, this](const AST::MethodFeature& method_feature) {
-                visit_method(class_.type_id, method_feature);
-                },
-
-                       [](const AST::FieldFeature& ) {}},
-            feature.feature);
-    }
-}
-
-void Codegen::visit_method(std::string_view class_name, const AST::MethodFeature& method_feature) noexcept {
-    text << class_name << '.' << method_feature.object_id << ":\n";
-    print_prologue(text);
-    print_epilogue(text);
-}
-
-void Codegen::print_prologue(std::ostream& out) noexcept {
-    print_single_instruction({instructions::AddImmediateUnsigned{"sp", "sp", -12}}, out);
-    print_single_instruction({instructions::SaveWord{"fp", 12}}, out);
-    print_single_instruction({instructions::SaveWord{"s0", 8}}, out);
-    print_single_instruction({instructions::SaveWord{"ra", 4}}, out);
-    print_single_instruction({instructions::AddImmediateUnsigned{"fp", "sp", 4}}, out);
-    out << '\n';
-}
-
-void Codegen::print_epilogue(std::ostream& out) noexcept {
-    out << '\n';
-    print_single_instruction({instructions::LoadWord{"fp", 12}}, out);
-    print_single_instruction({instructions::LoadWord{"s0", 8}}, out);
-    print_single_instruction({instructions::LoadWord{"ra", 4}}, out);
-    print_single_instruction({instructions::AddImmediateUnsigned{"sp", "sp", 12}}, out);
-    print_single_instruction({instructions::JumpRegister{"ra"}}, out);
-    out << '\n';
-}
-
 void Codegen::print_data(std::ostream& out) noexcept {
     out << ".data\n";
     out << data.rdbuf();
@@ -180,32 +167,6 @@ void Codegen::print_data(std::ostream& out) noexcept {
 void Codegen::print_text(std::ostream& out) noexcept {
     out << ".text\n";
     out << text.rdbuf();
-}
-
-void Codegen::print_single_instruction(const instructions::Instruction& instruction, std::ostream& out) const noexcept {
-    std::visit(
-        Overloaded{
-            [&out](const instructions::MemoryInstruction& memory_instruction) {
-                out << "    " << std::setw(8) << memory_instruction.op << " $"
-                    << memory_instruction.dest
-                    << std::setw(6) << memory_instruction.offset << " ($sp)\n";
-            },
-            [&out](const instructions::ImmediateInstruction& immediate_instruction) {
-                out << "    " << std::setw(8) << immediate_instruction.op << " $"
-                    << immediate_instruction.dest << std::setw(6 - static_cast<int>(immediate_instruction.operand.size()))
-                    << '$' << immediate_instruction.operand << ' '
-                    << immediate_instruction.value << '\n';
-            },
-            [&out](const instructions::Jump& jump_instruction) {
-                out << "    " << std::setw(8) << "j" << " $"
-                    << jump_instruction.value << '\n';
-            },
-            [&out](const instructions::JumpRegister& jump_immediate_instruction) {
-                out << "    " << std::setw(8) << "jr" << " $"
-                    << jump_immediate_instruction.dest << '\n';
-            },
-        },
-        instruction.instruction);
 }
 
 void Codegen::make_class_map(const AST::Program& AST) noexcept {
@@ -226,4 +187,38 @@ void Codegen::populate_class_name_constants(const AST::Program& AST) noexcept {
     }
 }
 
-} //namespace
+void Codegen::generate_default_inits() noexcept {
+    text_gen.generate_empty_init("Object", text);
+    text_gen.generate_empty_init("Int", text);
+    text_gen.generate_empty_init("Bool", text);
+    text_gen.generate_empty_init("String", text);
+    text_gen.generate_empty_init("IO", text);
+}
+
+[[nodiscard]] bool check_if_empty(
+    std::unordered_map<std::string_view, const AST::Class&> class_map,
+    std::string_view class_name) noexcept {
+    bool is_empty = true;
+    while (true) {
+        for (auto& feature : class_map.at(class_name).features) {
+            if (std::holds_alternative<AST::FieldFeature>(feature.feature)) {
+                is_empty = false;
+                break;
+            }
+        }
+        if (!class_map.at(class_name).inherits) {
+            break;
+        }
+        class_name = class_map.at(class_name).type_id;
+    }
+    return is_empty;
+}
+
+void Codegen::generate_init(std::string_view class_name) noexcept {
+    if (check_if_empty(class_map, class_name)) {
+        text_gen.generate_empty_init(class_name, text);
+    } else {
+    }
+}
+
+} // namespace cool::codegen

@@ -21,6 +21,8 @@ codegen_test: build
 	./disptable_smoke_test
 	./constants_smoke_test
 	./misc_smoke_test
+	./text_smoke_test
+	./codegen_smoke_test
 
 build: googletest compile_commands.json
 	cmake -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 
@@ -33,7 +35,6 @@ compile_commands.json:
 	-ln -s build/compile_commands.json compile_commands.json
 
 format:
-	find include -iname *.h -o -iname *.cpp | xargs clang-format -i
 	find src -iname *.h -o -iname *.cpp | xargs clang-format -i
 	find tests -iname *.h -o -iname *.cpp | xargs clang-format -i
 

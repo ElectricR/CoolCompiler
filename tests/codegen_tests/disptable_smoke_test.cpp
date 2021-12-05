@@ -111,7 +111,9 @@ TEST_F(DisptableDataGenTestFixture, GenMain) {
         {"Foo"},
         {"main", "bar"},
     };
-    std::unordered_map<std::string_view, cool::codegen::MIPS32::ClassDispTableRepresentation> class_map = {{"Foo", Foo}, {"Main", Main}};
+    std::unordered_map<std::string_view,
+        cool::codegen::MIPS32::ClassDispTableRepresentation>
+        class_map = {{"Foo", Foo}, {"Main", Main}};
     disptable_data_gen.generate_disptable(class_map, "Main", gen_result);
     ASSERT_EQ(gen_result.str(), "\
 Main_dispTab:\n\
@@ -123,4 +125,3 @@ Main_dispTab:\n\
        .word Main.bar\n\n\
 ");
 }
-
