@@ -8,19 +8,16 @@ protected:
     std::stringstream gen_result;
 };
 
-TEST_F(DisptableDataGenTestFixture, GenObject) {
-    disptable_data_gen.generate_object_disptable(gen_result);
+TEST_F(DisptableDataGenTestFixture, GenInt) {
+    disptable_data_gen.register_class_representation(
+        "Object", {{}, {"abort", "type_name", "copy"}});
+    disptable_data_gen.register_class_representation("Int", {"Object", {}});
+    disptable_data_gen.generate_disptables(gen_result);
     ASSERT_EQ(gen_result.str(), "\
 Object_dispTab:\n\
        .word Object.abort\n\
        .word Object.type_name\n\
        .word Object.copy\n\n\
-");
-}
-
-TEST_F(DisptableDataGenTestFixture, GenInt) {
-    disptable_data_gen.generate_int_disptable(gen_result);
-    ASSERT_EQ(gen_result.str(), "\
 Int_dispTab:\n\
        .word Object.abort\n\
        .word Object.type_name\n\
@@ -29,8 +26,15 @@ Int_dispTab:\n\
 }
 
 TEST_F(DisptableDataGenTestFixture, GenBool) {
-    disptable_data_gen.generate_bool_disptable(gen_result);
+    disptable_data_gen.register_class_representation(
+        "Object", {{}, {"abort", "type_name", "copy"}});
+    disptable_data_gen.register_class_representation("Bool", {"Object", {}});
+    disptable_data_gen.generate_disptables(gen_result);
     ASSERT_EQ(gen_result.str(), "\
+Object_dispTab:\n\
+       .word Object.abort\n\
+       .word Object.type_name\n\
+       .word Object.copy\n\n\
 Bool_dispTab:\n\
        .word Object.abort\n\
        .word Object.type_name\n\
@@ -39,8 +43,16 @@ Bool_dispTab:\n\
 }
 
 TEST_F(DisptableDataGenTestFixture, GenString) {
-    disptable_data_gen.generate_string_disptable(gen_result);
+    disptable_data_gen.register_class_representation(
+        "Object", {{}, {"abort", "type_name", "copy"}});
+    disptable_data_gen.register_class_representation(
+        "String", {"Object", {"length", "concat", "substr"}});
+    disptable_data_gen.generate_disptables(gen_result);
     ASSERT_EQ(gen_result.str(), "\
+Object_dispTab:\n\
+       .word Object.abort\n\
+       .word Object.type_name\n\
+       .word Object.copy\n\n\
 String_dispTab:\n\
        .word Object.abort\n\
        .word Object.type_name\n\
@@ -52,8 +64,16 @@ String_dispTab:\n\
 }
 
 TEST_F(DisptableDataGenTestFixture, GenIO) {
-    disptable_data_gen.generate_io_disptable(gen_result);
+    disptable_data_gen.register_class_representation(
+        "Object", {{}, {"abort", "type_name", "copy"}});
+    disptable_data_gen.register_class_representation(
+        "IO", {"Object", {"out_string", "out_int", "in_string", "in_int"}});
+    disptable_data_gen.generate_disptables(gen_result);
     ASSERT_EQ(gen_result.str(), "\
+Object_dispTab:\n\
+       .word Object.abort\n\
+       .word Object.type_name\n\
+       .word Object.copy\n\n\
 IO_dispTab:\n\
        .word Object.abort\n\
        .word Object.type_name\n\
@@ -66,11 +86,15 @@ IO_dispTab:\n\
 }
 
 TEST_F(DisptableDataGenTestFixture, GenWholeFamily) {
-    disptable_data_gen.generate_object_disptable(gen_result);
-    disptable_data_gen.generate_int_disptable(gen_result);
-    disptable_data_gen.generate_bool_disptable(gen_result);
-    disptable_data_gen.generate_string_disptable(gen_result);
-    disptable_data_gen.generate_io_disptable(gen_result);
+    disptable_data_gen.register_class_representation(
+        "Object", {{}, {"abort", "type_name", "copy"}});
+    disptable_data_gen.register_class_representation("Int", {"Object", {}});
+    disptable_data_gen.register_class_representation("Bool", {"Object", {}});
+    disptable_data_gen.register_class_representation(
+        "String", {"Object", {"length", "concat", "substr"}});
+    disptable_data_gen.register_class_representation(
+        "IO", {"Object", {"out_string", "out_int", "in_string", "in_int"}});
+    disptable_data_gen.generate_disptables(gen_result);
     ASSERT_EQ(gen_result.str(), "\
 Object_dispTab:\n\
        .word Object.abort\n\
@@ -104,18 +128,30 @@ IO_dispTab:\n\
 
 TEST_F(DisptableDataGenTestFixture, GenMain) {
     cool::codegen::MIPS32::ClassDispTableRepresentation Foo = {
-        {},
+        {"Object"},
         {"foo"},
     };
     cool::codegen::MIPS32::ClassDispTableRepresentation Main = {
         {"Foo"},
         {"main", "bar"},
     };
-    std::unordered_map<std::string_view,
-        cool::codegen::MIPS32::ClassDispTableRepresentation>
-        class_map = {{"Foo", Foo}, {"Main", Main}};
-    disptable_data_gen.generate_disptable(class_map, "Main", gen_result);
+    disptable_data_gen.register_class_representation(
+        "Object", {{}, {"abort", "type_name", "copy"}});
+    disptable_data_gen.register_class_representation(
+            "Main", std::move(Main));
+    disptable_data_gen.register_class_representation(
+            "Foo", std::move(Foo));
+    disptable_data_gen.generate_disptables(gen_result);
     ASSERT_EQ(gen_result.str(), "\
+Object_dispTab:\n\
+       .word Object.abort\n\
+       .word Object.type_name\n\
+       .word Object.copy\n\n\
+Foo_dispTab:\n\
+       .word Object.abort\n\
+       .word Object.type_name\n\
+       .word Object.copy\n\
+       .word Foo.foo\n\n\
 Main_dispTab:\n\
        .word Object.abort\n\
        .word Object.type_name\n\
@@ -123,5 +159,40 @@ Main_dispTab:\n\
        .word Foo.foo\n\
        .word Main.main\n\
        .word Main.bar\n\n\
+");
+}
+
+TEST_F(DisptableDataGenTestFixture, GenMainWithOverloads) {
+    cool::codegen::MIPS32::ClassDispTableRepresentation Foo = {
+        {"Object"},
+        {"abort", "type_name", "foo"},
+    };
+    cool::codegen::MIPS32::ClassDispTableRepresentation Main = {
+        {"Foo"},
+        {"main", "foo", "copy", "abort"},
+    };
+    disptable_data_gen.register_class_representation(
+        "Object", {{}, {"abort", "type_name", "copy"}});
+    disptable_data_gen.register_class_representation(
+            "Main", std::move(Main));
+    disptable_data_gen.register_class_representation(
+            "Foo", std::move(Foo));
+    disptable_data_gen.generate_disptables(gen_result);
+    ASSERT_EQ(gen_result.str(), "\
+Object_dispTab:\n\
+       .word Object.abort\n\
+       .word Object.type_name\n\
+       .word Object.copy\n\n\
+Foo_dispTab:\n\
+       .word Foo.abort\n\
+       .word Foo.type_name\n\
+       .word Object.copy\n\
+       .word Foo.foo\n\n\
+Main_dispTab:\n\
+       .word Main.abort\n\
+       .word Foo.type_name\n\
+       .word Main.copy\n\
+       .word Main.foo\n\
+       .word Main.main\n\n\
 ");
 }

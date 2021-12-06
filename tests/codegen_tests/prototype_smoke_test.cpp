@@ -109,11 +109,11 @@ IO_protObj:\n\
 TEST_F(PrototypeDataGenTestFixture, GenMainWithFamily) {
     cool::codegen::MIPS32::ClassPrototypeRepresentation Foo = {
         {},
-        {"Int", "IO"},
+        {{"", "Int"}, {"", "IO"}},
     };
     cool::codegen::MIPS32::ClassPrototypeRepresentation Main = {
         {"Foo"},
-        {"Bool", "String", "Object", "Foo"},
+        {{"", "Bool"}, {"", "String"}, {"", "Object"}, {"", "Foo"}},
     };
     std::unordered_map<std::string_view,
         cool::codegen::MIPS32::ClassPrototypeRepresentation>
@@ -133,3 +133,4 @@ Main_protObj:\n\
        .word 0\n\n\
 ");
 }
+

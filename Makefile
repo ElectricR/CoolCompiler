@@ -22,7 +22,7 @@ codegen_test: build
 	./constants_smoke_test
 	./misc_smoke_test
 	./text_smoke_test
-	./codegen_smoke_test
+	./codegen_test
 
 build: googletest compile_commands.json
 	cmake -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 

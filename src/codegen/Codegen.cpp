@@ -60,16 +60,23 @@ void Codegen::generate_prototypes(
                         feature_variant.feature);
                 }) |
                 std::ranges::views::transform(
-                    [](auto& field_feature) -> std::string_view {
-                        return std::get<AST::FieldFeature>(
+                    [](auto& field_feature) -> std::pair<std::string_view, std::string_view> {
+                        return {std::get<AST::FieldFeature>(
                             field_feature.feature)
-                            .type_id;
+                            .object_id, std::get<AST::FieldFeature>(
+                            field_feature.feature)
+                            .type_id};
                     });
             MIPS32::ClassPrototypeRepresentation cl = {
                 current_ancestor->inherits,
                 {fields_range.begin(), fields_range.end()}};
+            if (current_ancestor->inherits && std::unordered_set<std::string_view>{
+                    "Object", "Int", "Bool", "String", "IO"}
+                    .contains(current_ancestor->inherits.value())) {
+                cl.inherits.reset();
+            }
             family_map.emplace(current_ancestor->type_id, std::move(cl));
-            if (!current_ancestor->inherits) {
+            if (!cl.inherits) {
                 break;
             }
             current_ancestor =
@@ -82,42 +89,36 @@ void Codegen::generate_prototypes(
 
 void Codegen::generate_disptables(
     const AST::Program& AST, std::ostream& out) noexcept {
-    disptable_data_gen.generate_object_disptable(out);
-    disptable_data_gen.generate_int_disptable(out);
-    disptable_data_gen.generate_bool_disptable(out);
-    disptable_data_gen.generate_string_disptable(out);
-    disptable_data_gen.generate_io_disptable(out);
-    for (auto& class_ : AST.classes) {
-        auto* current_ancestor = &class_;
-        std::unordered_map<std::string_view,
-            MIPS32::ClassDispTableRepresentation>
-            family_map;
-        while (true) {
-            auto fields_range =
-                current_ancestor->features |
-                std::ranges::views::filter([](auto& feature_variant) {
-                    return std::holds_alternative<AST::MethodFeature>(
-                        feature_variant.feature);
-                }) |
-                std::ranges::views::transform(
-                    [](auto& field_feature) -> std::string_view {
-                        return std::get<AST::MethodFeature>(
-                            field_feature.feature)
-                            .object_id;
-                    });
-            MIPS32::ClassDispTableRepresentation cl = {
-                current_ancestor->inherits,
-                {fields_range.begin(), fields_range.end()}};
-            family_map.emplace(current_ancestor->type_id, std::move(cl));
-            if (!current_ancestor->inherits) {
-                break;
-            }
-            current_ancestor =
-                &class_map.at(current_ancestor->inherits.value());
-        }
+    disptable_data_gen.register_class_representation(
+        "Object", {{}, {"abort", "type_name", "copy"}});
+    disptable_data_gen.register_class_representation("Int", {"Object", {}});
+    disptable_data_gen.register_class_representation("Bool", {"Object", {}});
+    disptable_data_gen.register_class_representation(
+        "String", {"Object", {"length", "concat", "substr"}});
+    disptable_data_gen.register_class_representation(
+        "IO", {"Object", {"out_string", "out_int", "in_string", "in_int"}});
 
-        disptable_data_gen.generate_disptable(family_map, class_.type_id, data);
+    for (auto& class_ : AST.classes) {
+        auto fields_range =
+            class_.features |
+            std::ranges::views::filter([](auto& feature_variant) {
+                return std::holds_alternative<AST::MethodFeature>(
+                    feature_variant.feature);
+            }) |
+            std::ranges::views::transform(
+                [](auto& field_feature) -> std::string_view {
+                    return std::get<AST::MethodFeature>(field_feature.feature)
+                        .object_id;
+                });
+        MIPS32::ClassDispTableRepresentation cl = {
+            class_.inherits, {fields_range.begin(), fields_range.end()}};
+        if (!cl.inherits) {
+            cl.inherits = "Object";
+        }
+        disptable_data_gen.register_class_representation(
+            class_.type_id, std::move(cl));
     }
+    disptable_data_gen.generate_disptables(out);
 }
 
 void Codegen::generate_objtab(
@@ -196,7 +197,7 @@ void Codegen::generate_default_inits() noexcept {
 }
 
 [[nodiscard]] bool check_if_empty(
-    std::unordered_map<std::string_view, const AST::Class&> class_map,
+    const std::unordered_map<std::string_view, const AST::Class&>& class_map,
     std::string_view class_name) noexcept {
     bool is_empty = true;
     while (true) {
@@ -209,7 +210,10 @@ void Codegen::generate_default_inits() noexcept {
         if (!class_map.at(class_name).inherits) {
             break;
         }
-        class_name = class_map.at(class_name).type_id;
+        class_name = class_map.at(class_name).inherits.value();
+        if (std::unordered_set<std::string_view>{"Object", "Int", "Bool", "String", "IO"}.contains(class_name)) {
+                break;
+        }
     }
     return is_empty;
 }
@@ -218,6 +222,26 @@ void Codegen::generate_init(std::string_view class_name) noexcept {
     if (check_if_empty(class_map, class_name)) {
         text_gen.generate_empty_init(class_name, text);
     } else {
+        AST_visitor.set_current_class(class_name);
+        std::string_view parent;
+        if (class_map.at(class_name).inherits) {
+            parent = class_map.at(class_name).inherits.value();
+        } else {
+            parent = "Object";
+        }
+        text_gen.generate_init_label(class_name, text);
+        text_gen.print_prologue(text);
+        text_gen.generate_parent_init(parent, text);
+        for (auto& feature : class_map.at(class_name).features) {
+            if (std::holds_alternative<AST::FieldFeature>(feature.feature)) {
+                if (std::get<AST::FieldFeature>(feature.feature).value) {
+                    std::visit(AST_visitor, std::get<AST::FieldFeature>(feature.feature).value.value()->value);
+                    text_gen.save_to_field(prototype_data_gen.get_field_offset(class_name, std::get<AST::FieldFeature>(feature.feature).object_id), text);
+                }
+            }
+        }
+        text_gen.generate_self_object(text);
+        text_gen.print_epilogue(text);
     }
 }
 

@@ -50,10 +50,28 @@ IO_protObj:
        .word IO_dispTab
 
        .word -1
-Main_protObj:
+Foo_protObj:
        .word 5
-       .word 3
+       .word 4
+       .word Foo_dispTab
+       .word int_const0
+
+       .word -1
+Bar_protObj:
+       .word 6
+       .word 5
+       .word Bar_dispTab
+       .word int_const0
+       .word int_const0
+
+       .word -1
+Main_protObj:
+       .word 7
+       .word 6
        .word Main_dispTab
+       .word int_const0
+       .word int_const0
+       .word int_const0
 
 Object_dispTab:
        .word Object.abort
@@ -87,6 +105,16 @@ IO_dispTab:
        .word IO.in_string
        .word IO.in_int
 
+Foo_dispTab:
+       .word Object.abort
+       .word Object.type_name
+       .word Object.copy
+
+Bar_dispTab:
+       .word Object.abort
+       .word Object.type_name
+       .word Object.copy
+
 Main_dispTab:
        .word Object.abort
        .word Object.type_name
@@ -104,10 +132,16 @@ class_objTab:
        .word String_init
        .word IO_protObj
        .word IO_init
+       .word Foo_protObj
+       .word Foo_init
+       .word Bar_protObj
+       .word Bar_init
        .word Main_protObj
        .word Main_init
 
 class_nameTab:
+       .word str_constFoo
+       .word str_constBar
        .word str_constMain
 
        .word -1
@@ -151,13 +185,6 @@ int_const6:
        .word 4
        .word Int_dispTab
        .word 6
-
-       .word -1
-int_const41:
-       .word 1
-       .word 4
-       .word Int_dispTab
-       .word 41
 
        .word -1
 bool_const0:
@@ -227,6 +254,24 @@ str_constIO:
        .byte 0
 
        .word -1
+str_constFoo:
+       .word 3
+       .word 5
+       .word String_dispTab
+       .word int_const3
+      .ascii "Foo"
+       .byte 0
+
+       .word -1
+str_constBar:
+       .word 3
+       .word 5
+       .word String_dispTab
+       .word int_const3
+      .ascii "Bar"
+       .byte 0
+
+       .word -1
 str_constMain:
        .word 3
        .word 6
@@ -282,7 +327,85 @@ String_init:
 IO_init:
           jr $ra
 
+Foo_init:
+       addiu $sp $sp -12
+          sw $fp 12($sp)
+          sw $s0 8($sp)
+          sw $ra 4($sp)
+       addiu $fp $sp 4
+        move $s0 $a0
+
+         jal Object_init
+          la $a0 int_const6
+          sw $a0 12($s0)
+        move $a0 $s0
+
+          lw $fp 12($sp)
+          lw $s0 8($sp)
+          lw $ra 4($sp)
+       addiu $sp $sp 12
+          jr $ra
+
+Bar_init:
+       addiu $sp $sp -12
+          sw $fp 12($sp)
+          sw $s0 8($sp)
+          sw $ra 4($sp)
+       addiu $fp $sp 4
+        move $s0 $a0
+
+         jal Foo_init
+          lw $a0 12($s0)
+
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+          la $a0 int_const2
+         jal Object.copy
+          lw $t0 4($sp)
+       addiu $sp $sp 4
+          lw $t1 12($t0)
+          lw $t2 12($a0)
+         mul $t1 $t1 $t2
+          sw $t1 12($a0)
+
+          sw $a0 16($s0)
+        move $a0 $s0
+
+          lw $fp 12($sp)
+          lw $s0 8($sp)
+          lw $ra 4($sp)
+       addiu $sp $sp 12
+          jr $ra
+
 Main_init:
+       addiu $sp $sp -12
+          sw $fp 12($sp)
+          sw $s0 8($sp)
+          sw $ra 4($sp)
+       addiu $fp $sp 4
+        move $s0 $a0
+
+         jal Bar_init
+          lw $a0 16($s0)
+
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+          la $a0 int_const2
+         jal Object.copy
+          lw $t0 4($sp)
+       addiu $sp $sp 4
+          lw $t1 12($t0)
+          lw $t2 12($a0)
+         mul $t1 $t1 $t2
+          sw $t1 12($a0)
+
+          sw $a0 20($s0)
+        move $a0 $s0
+
+          lw $fp 12($sp)
+          lw $s0 8($sp)
+          lw $ra 4($sp)
+       addiu $sp $sp 12
           jr $ra
 
 Main.main:
@@ -296,10 +419,24 @@ Main.main:
           la $a0 str_const0
           sw $a0 0($sp)
        addiu $sp $sp -4
-          la $a0 int_const41
+          lw $a0 12($s0)
+
           sw $a0 0($sp)
        addiu $sp $sp -4
-          la $a0 int_const1
+          lw $a0 16($s0)
+
+         jal Object.copy
+          lw $t0 4($sp)
+       addiu $sp $sp 4
+          lw $t1 12($t0)
+          lw $t2 12($a0)
+         add $t1 $t1 $t2
+          sw $t1 12($a0)
+
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+          lw $a0 20($s0)
+
          jal Object.copy
           lw $t0 4($sp)
        addiu $sp $sp 4
@@ -316,7 +453,7 @@ Main.main:
 
          bne $a0 $zero label0
           la $a0 str_const_path
-          li $t1 3
+          li $t1 13
          jal _dispatch_abort
 label0:
           lw $t1 8($a0)
@@ -325,7 +462,7 @@ label0:
 
          bne $a0 $zero label1
           la $a0 str_const_path
-          li $t1 3
+          li $t1 13
          jal _dispatch_abort
 label1:
           lw $t1 8($a0)

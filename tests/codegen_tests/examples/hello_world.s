@@ -293,11 +293,11 @@ Main.main:
          jal Object.copy
          jal IO_init
 
-         bne $a0 $zero label1
+         bne $a0 $zero label0
           la $a0 str_const_path
-          li $t1 0
+          li $t1 3
          jal _dispatch_abort
-label1:
+label0:
           lw $t1 8($a0)
           lw $t1 12($t1)
         jalr $t1

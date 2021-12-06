@@ -7,7 +7,7 @@ protected:
     std::stringstream gen_result;
     cool::codegen::MIPS32::ConstantsDataGeneneror constants_data_gen;
     cool::codegen::MIPS32::ASTVisitor visitor{
-        gen_result, &constants_data_gen, nullptr, nullptr};
+        gen_result, &constants_data_gen, nullptr, nullptr, nullptr};
 };
 
 TEST_F(TextGenTestFixture, PlusExpression) {

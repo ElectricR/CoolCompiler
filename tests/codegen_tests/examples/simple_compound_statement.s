@@ -118,13 +118,6 @@ int_const0:
        .word 0
 
        .word -1
-int_const1:
-       .word 1
-       .word 4
-       .word Int_dispTab
-       .word 1
-
-       .word -1
 int_const2:
        .word 1
        .word 4
@@ -153,11 +146,18 @@ int_const6:
        .word 6
 
        .word -1
-int_const41:
+int_const14:
        .word 1
        .word 4
        .word Int_dispTab
-       .word 41
+       .word 14
+
+       .word -1
+int_const16:
+       .word 1
+       .word 4
+       .word Int_dispTab
+       .word 16
 
        .word -1
 bool_const0:
@@ -238,10 +238,19 @@ str_constMain:
        .word -1
 str_const0:
        .word 3
-       .word 5
+       .word 8
        .word String_dispTab
-       .word int_const1
-      .ascii "\n"
+       .word int_const14
+      .ascii "Hello, World!\n"
+       .byte 0
+
+       .word -1
+str_const1:
+       .word 3
+       .word 9
+       .word String_dispTab
+       .word int_const16
+      .ascii "Goodbye, World!\n"
        .byte 0
 
 heap_start:
@@ -296,36 +305,29 @@ Main.main:
           la $a0 str_const0
           sw $a0 0($sp)
        addiu $sp $sp -4
-          la $a0 int_const41
-          sw $a0 0($sp)
-       addiu $sp $sp -4
-          la $a0 int_const1
-         jal Object.copy
-          lw $t0 4($sp)
-       addiu $sp $sp 4
-          lw $t1 12($t0)
-          lw $t2 12($a0)
-         add $t1 $t1 $t2
-          sw $t1 12($a0)
-
-          sw $a0 0($sp)
-       addiu $sp $sp -4
           la $a0 IO_protObj
          jal Object.copy
          jal IO_init
 
          bne $a0 $zero label0
           la $a0 str_const_path
-          li $t1 3
+          li $t1 4
          jal _dispatch_abort
 label0:
           lw $t1 8($a0)
-          lw $t1 16($t1)
+          lw $t1 12($t1)
         jalr $t1
+
+          la $a0 str_const1
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+          la $a0 IO_protObj
+         jal Object.copy
+         jal IO_init
 
          bne $a0 $zero label1
           la $a0 str_const_path
-          li $t1 3
+          li $t1 5
          jal _dispatch_abort
 label1:
           lw $t1 8($a0)

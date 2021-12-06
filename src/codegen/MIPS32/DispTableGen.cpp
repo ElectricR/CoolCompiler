@@ -2,97 +2,70 @@
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <stack>
 
 namespace cool::codegen::MIPS32 {
 
-void DispTableDataGenerator::generate_disptable(
-    const std::unordered_map<std::string_view, ClassDispTableRepresentation>&
-        class_map,
-    std::string_view class_name, std::ostream& out) noexcept {
-    current_offset = 0;
-    out << class_name << "_dispTab:\n";
-    print_object_methods(out);
-    std::vector<std::pair<std::string_view, std::string_view>> methods;
-    const ClassDispTableRepresentation* curr_representation =
-        &class_map.at(class_name);
-    std::string_view curr_class_name = class_name;
-    while (true) {
-        std::for_each(curr_representation->method_names.crbegin(),
-            curr_representation->method_names.crend(),
-            [&methods, &curr_class_name](auto& method_name) {
-                methods.emplace_back(curr_class_name, method_name);
-            });
-        if (!curr_representation->inherits) {
-            break;
+void DispTableDataGenerator::register_class_representation(std::string_view class_name, ClassDispTableRepresentation&& representation) noexcept {
+    representations[class_name] = std::move(representation);
+    registered.emplace_back(class_name);
+}
+
+void DispTableDataGenerator::generate_disptables(std::ostream& out) noexcept {
+    for (auto& class_name : registered) {
+        if (class_name == "Object") {
+            continue;
         }
-        curr_class_name = curr_representation->inherits.value();
-        curr_representation =
-            &class_map.at(curr_representation->inherits.value());
+        std::stack<std::string_view> class_family;
+        std::string_view current_ancestor = class_name;
+        while (true) {
+            class_family.emplace(current_ancestor);
+            if (representations[current_ancestor].inherits == "Object") {
+                class_family.emplace("Object");
+                break;
+            }
+            current_ancestor = representations[current_ancestor].inherits.value();
+        }
+        while (!class_family.empty()) {
+            current_ancestor = class_family.top();
+            class_family.pop();
+            if (!disptable.contains(current_ancestor)) {
+                generate_disptable(current_ancestor);
+                print_disptable(current_ancestor, out);
+            }
+        }
     }
-    std::for_each(methods.crbegin(), methods.crend(), [this, &out](auto& pair) {
-        register_method(pair.first, pair.second, out);
-    });
+}
+
+void DispTableDataGenerator::generate_disptable(std::string_view class_name) noexcept {
+    if (representations[class_name].inherits) {
+        disptable[class_name] = disptable[representations[class_name].inherits.value()];
+    } else {
+        disptable[class_name] = disptable["Object"];
+    }
+    for (auto& method_name : representations[class_name].method_names) {
+        if (disptable[class_name].first.contains(method_name)) {
+            disptable[class_name].second[disptable[class_name].first[method_name]] = {class_name, method_name};
+        } else {
+            unsigned offset = static_cast<unsigned>(disptable[class_name].first.size()) * 4;
+            disptable[class_name].first[method_name] = offset;
+            disptable[class_name].second[offset] = {class_name, method_name};
+        }
+    }
+}
+
+void DispTableDataGenerator::print_disptable(std::string_view class_name, std::ostream& out) noexcept {
+    out << class_name << "_dispTab:\n";
+    for (unsigned i = 0; i != disptable[class_name].second.size() * 4; i += 4) {
+        print_method(disptable[class_name].second[i].first, disptable[class_name].second[i].second, out);
+    }
     out << '\n';
 }
 
-void DispTableDataGenerator::generate_object_disptable(
-    std::ostream& out) noexcept {
-    current_offset = 0;
-    out << "Object_dispTab:\n";
-    print_object_methods(out);
-    out << '\n';
-}
-
-void DispTableDataGenerator::generate_int_disptable(
-    std::ostream& out) noexcept {
-    current_offset = 0;
-    out << "Int_dispTab:\n";
-    print_object_methods(out);
-    out << '\n';
-}
-
-void DispTableDataGenerator::generate_bool_disptable(
-    std::ostream& out) noexcept {
-    current_offset = 0;
-    out << "Bool_dispTab:\n";
-    print_object_methods(out);
-    out << '\n';
-}
-
-void DispTableDataGenerator::generate_string_disptable(
-    std::ostream& out) noexcept {
-    current_offset = 0;
-    out << "String_dispTab:\n";
-    print_object_methods(out);
-    register_method("String", "length", out);
-    register_method("String", "concat", out);
-    register_method("String", "substr", out);
-    out << '\n';
-}
-
-void DispTableDataGenerator::generate_io_disptable(std::ostream& out) noexcept {
-    current_offset = 0;
-    out << "IO_dispTab:\n";
-    print_object_methods(out);
-    register_method("IO", "out_string", out);
-    register_method("IO", "out_int", out);
-    register_method("IO", "in_string", out);
-    register_method("IO", "in_int", out);
-    out << '\n';
-}
-
-void DispTableDataGenerator::print_object_methods(std::ostream& out) noexcept {
-    register_method("Object", "abort", out);
-    register_method("Object", "type_name", out);
-    register_method("Object", "copy", out);
-}
-
-void DispTableDataGenerator::register_method(std::string_view class_name,
+void DispTableDataGenerator::print_method(std::string_view class_name,
     std::string_view method_name, std::ostream& out) noexcept {
     out << std::setw(12) << ".word" << ' ' << class_name << '.' << method_name
         << '\n';
-    disptable[class_name][method_name] = current_offset;
-    current_offset += 4;
 }
 
 } // namespace cool::codegen::MIPS32

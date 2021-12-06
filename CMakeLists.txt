@@ -67,9 +67,9 @@ add_test(semant_smoke_test semant_smoke_test)
     target_link_libraries(text_smoke_test gtest_main)
     add_test(text_smoke_test text_smoke_test)
 
-    add_executable(codegen_smoke_test tests/codegen_tests/codegen_smoke_test.cpp ${CODEGEN_SOURCES})
-    target_link_libraries(codegen_smoke_test gtest_main)
-    add_test(codegen_smoke_test codegen_smoke_test)
+    add_executable(codegen_test tests/codegen_tests/codegen_test.cpp ${CODEGEN_SOURCES})
+    target_link_libraries(codegen_test gtest_main)
+    add_test(codegen_test codegen_test)
     ###############################
 ###############################
 
