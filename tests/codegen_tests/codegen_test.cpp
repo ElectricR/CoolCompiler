@@ -176,3 +176,9 @@ TEST_F(CodegenTestFixture, MultipleLetsWithField) {
     read_answer("./tests/codegen_tests/examples/multiple_lets_with_field.S");
     ASSERT_EQ(gen_result.str(), answer.str());
 }
+
+TEST_F(CodegenTestFixture, LetWithAssigns) {
+    parse("./tests/codegen_tests/examples/let_with_assigns.cl");
+    read_answer("./tests/codegen_tests/examples/let_with_assigns.S");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}

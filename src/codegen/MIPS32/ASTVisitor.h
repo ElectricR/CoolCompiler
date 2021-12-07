@@ -144,7 +144,7 @@ public:
     void operator()(const AST::ObjectExpression& expr) noexcept {
         if (expr.object_id == "self") {
             text_gen->load_self_object(out);
-        } else { // TODO
+        } else {
             unsigned offset = 0;
             if (stack_representation.contains(expr.object_id)) {
                 offset = stack_representation.get_variable(expr.object_id);
@@ -212,8 +212,14 @@ public:
 
     void operator()(const AST::AssignExpression& assign_expr) noexcept {
         std::visit(*this, assign_expr.expression->value);
-        unsigned offset = prototype_data_gen->get_field_offset(current_class_name, assign_expr.object_id);
-        text_gen->save_to_field(offset, out); // TODO not field
+        unsigned offset = 0;
+        if (stack_representation.contains(assign_expr.object_id)) {
+            offset = stack_representation.get_variable(assign_expr.object_id);
+            text_gen->save_to_local(offset, out);
+        } else {
+            offset = prototype_data_gen->get_field_offset(current_class_name, assign_expr.object_id);
+            text_gen->save_to_field(offset, out);
+        }
     }
 
     void set_current_class(std::string_view class_name) noexcept {
