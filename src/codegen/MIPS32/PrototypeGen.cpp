@@ -26,7 +26,7 @@ void PrototypeDataGenerator::generate_prototype(
         static_cast<unsigned>(fields.size()) + 3, fields, out, current_id++);
 }
 
-unsigned PrototypeDataGenerator::get_field_offset(std::string_view class_name, std::string_view field_name) const noexcept {
+[[nodiscard]] unsigned PrototypeDataGenerator::get_field_offset(std::string_view class_name, std::string_view field_name) const noexcept {
     return field_offsets.at(class_name).at(field_name);
 }
 

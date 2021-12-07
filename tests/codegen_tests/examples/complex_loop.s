@@ -52,8 +52,9 @@ IO_protObj:
        .word -1
 Main_protObj:
        .word 5
-       .word 3
+       .word 4
        .word Main_dispTab
+       .word int_const0
 
 Object_dispTab:
        .word Object.abort
@@ -122,6 +123,13 @@ int_const0:
        .word 0
 
        .word -1
+int_const1:
+       .word 1
+       .word 4
+       .word Int_dispTab
+       .word 1
+
+       .word -1
 int_const2:
        .word 1
        .word 4
@@ -150,18 +158,18 @@ int_const6:
        .word 6
 
        .word -1
-int_const14:
+int_const10:
        .word 1
        .word 4
        .word Int_dispTab
-       .word 14
+       .word 10
 
        .word -1
-int_const18:
+int_const42:
        .word 1
        .word 4
        .word Int_dispTab
-       .word 18
+       .word 42
 
        .word -1
 bool_const0:
@@ -250,37 +258,19 @@ str_const0:
        .word -1
 str_const1:
        .word 3
-       .word 6
+       .word 5
        .word String_dispTab
-       .word int_const6
-      .ascii "Object"
+       .word int_const1
+      .ascii "\n"
        .byte 0
 
        .word -1
 str_const2:
        .word 3
-       .word 5
+       .word 7
        .word String_dispTab
-       .word int_const3
-      .ascii "Int"
-       .byte 0
-
-       .word -1
-str_const3:
-       .word 3
-       .word 9
-       .word String_dispTab
-       .word int_const18
-      .ascii "Should not happen\n"
-       .byte 0
-
-       .word -1
-str_const4:
-       .word 3
-       .word 8
-       .word String_dispTab
-       .word int_const14
-      .ascii "Should happen\n"
+       .word int_const10
+      .ascii "I'm still "
        .byte 0
 
 heap_start:
@@ -322,6 +312,23 @@ IO_init:
           jr $ra
 
 Main_init:
+       addiu $sp $sp -12
+          sw $fp 12($sp)
+          sw $s0 8($sp)
+          sw $ra 4($sp)
+       addiu $fp $sp 4
+        move $s0 $a0
+
+         jal IO_init
+          la $a0 int_const0
+          sw $a0 12($s0)
+
+        move $a0 $s0
+
+          lw $fp 12($sp)
+          lw $s0 8($sp)
+          lw $ra 4($sp)
+       addiu $sp $sp 12
           jr $ra
 
 Main.main:
@@ -332,38 +339,35 @@ Main.main:
        addiu $fp $sp 4
         move $s0 $a0
 
-          la $a0 str_const1
+label0:
+          lw $a0 12($s0)
+
           sw $a0 0($sp)
        addiu $sp $sp -4
-          la $a0 str_const2
+          la $a0 int_const42
         move $t2 $a0
           lw $t1 4($sp)
        addiu $sp $sp 4
           la $a0 bool_const1
-         beq $t1 $t2 label0
+         beq $t1 $t2 label1
           la $a1 bool_const0
          jal equality_test
-label0:
+label1:
           lw $t1 12($a0)
-        beqz $t1 label1
-
-          la $a0 str_const3
+          la $a0 bool_const1
+        beqz $t1 label2
+          la $a0 bool_const0
+label2:
+          lw $t1 12($a0)
+         beq $t1 $zero label3
+          la $a0 str_const1
           sw $a0 0($sp)
        addiu $sp $sp -4
-        move $a0 $s0
+          lw $a0 12($s0)
 
-         bne $a0 $zero label3
-          la $a0 str_const_path
-          li $t1 4
-         jal _dispatch_abort
-label3:
-          lw $t1 8($a0)
-          lw $t1 12($t1)
-        jalr $t1
-
-           b label2
-label1:
-          la $a0 str_const4
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+          la $a0 str_const2
           sw $a0 0($sp)
        addiu $sp $sp -4
         move $a0 $s0
@@ -377,7 +381,42 @@ label4:
           lw $t1 12($t1)
         jalr $t1
 
-label2:
+         bne $a0 $zero label5
+          la $a0 str_const_path
+          li $t1 6
+         jal _dispatch_abort
+label5:
+          lw $t1 8($a0)
+          lw $t1 16($t1)
+        jalr $t1
+
+         bne $a0 $zero label6
+          la $a0 str_const_path
+          li $t1 6
+         jal _dispatch_abort
+label6:
+          lw $t1 8($a0)
+          lw $t1 12($t1)
+        jalr $t1
+
+          lw $a0 12($s0)
+
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+          la $a0 int_const1
+         jal Object.copy
+          lw $t0 4($sp)
+       addiu $sp $sp 4
+          lw $t1 12($t0)
+          lw $t2 12($a0)
+         add $t1 $t1 $t2
+          sw $t1 12($a0)
+
+          sw $a0 12($s0)
+
+           b label0
+label3:
+        move $a0 $zero
           lw $fp 12($sp)
           lw $s0 8($sp)
           lw $ra 4($sp)

@@ -242,6 +242,14 @@ str_constMain:
        .word -1
 str_const0:
        .word 3
+       .word 5
+       .word String_dispTab
+       .word int_const0
+       .byte 0
+
+       .word -1
+str_const1:
+       .word 3
        .word 9
        .word String_dispTab
        .word int_const18
@@ -249,7 +257,7 @@ str_const0:
        .byte 0
 
        .word -1
-str_const1:
+str_const2:
        .word 3
        .word 8
        .word String_dispTab
@@ -258,7 +266,7 @@ str_const1:
        .byte 0
 
        .word -1
-str_const2:
+str_const3:
        .word 3
        .word 9
        .word String_dispTab
@@ -320,7 +328,7 @@ Main.main:
           lw $t1 12($a0)
         beqz $t1 label0
 
-          la $a0 str_const0
+          la $a0 str_const1
           sw $a0 0($sp)
        addiu $sp $sp -4
         move $a0 $s0
@@ -341,7 +349,7 @@ label0:
           lw $t1 12($a0)
         beqz $t1 label3
 
-          la $a0 str_const1
+          la $a0 str_const2
           sw $a0 0($sp)
        addiu $sp $sp -4
         move $a0 $s0
@@ -357,7 +365,7 @@ label5:
 
            b label4
 label3:
-          la $a0 str_const2
+          la $a0 str_const3
           sw $a0 0($sp)
        addiu $sp $sp -4
         move $a0 $s0

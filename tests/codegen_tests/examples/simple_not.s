@@ -225,6 +225,14 @@ str_constMain:
       .ascii "Main"
        .byte 0
 
+       .word -1
+str_const0:
+       .word 3
+       .word 5
+       .word String_dispTab
+       .word int_const0
+       .byte 0
+
 heap_start:
        .word 0
 
@@ -273,6 +281,8 @@ Main.main:
           sw $ra 4($sp)
        addiu $fp $sp 4
         move $s0 $a0
+
+          la $a0 bool_const0
 
           lw $t1 12($a0)
           la $a0 bool_const1

@@ -8,6 +8,9 @@ namespace cool::codegen::MIPS32 {
 
 class ConstantsDataGeneneror {
 public:
+    ConstantsDataGeneneror() {
+        (void) register_string("");
+    }
     void generate_constants(std::ostream& out) const noexcept;
 
     void register_int(int i) noexcept {

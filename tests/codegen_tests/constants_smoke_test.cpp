@@ -36,6 +36,13 @@ str_const_path:\n\
        .word String_dispTab\n\
        .word int_const0\n\
        .byte 0\n\n\
+       .word -1\n\
+str_const0:\n\
+       .word 3\n\
+       .word 5\n\
+       .word String_dispTab\n\
+       .word int_const0\n\
+       .byte 0\n\n\
 ");
 }
 
@@ -76,6 +83,13 @@ bool_const1:\n\
        .word 1\n\n\
        .word -1\n\
 str_const_path:\n\
+       .word 3\n\
+       .word 5\n\
+       .word String_dispTab\n\
+       .word int_const0\n\
+       .byte 0\n\n\
+       .word -1\n\
+str_const0:\n\
        .word 3\n\
        .word 5\n\
        .word String_dispTab\n\
@@ -136,6 +150,13 @@ str_constObject:\n\
        .byte 0\n\n\
        .word -1\n\
 str_const0:\n\
+       .word 3\n\
+       .word 5\n\
+       .word String_dispTab\n\
+       .word int_const0\n\
+       .byte 0\n\n\
+       .word -1\n\
+str_const1:\n\
        .word 3\n\
        .word 5\n\
        .word String_dispTab\n\

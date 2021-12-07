@@ -29,7 +29,7 @@ public:
 
     void generate_io_prototype(std::ostream& out) noexcept;
 
-    unsigned get_field_offset(std::string_view class_name, std::string_view field_name) const noexcept;
+    [[nodiscard]] unsigned get_field_offset(std::string_view class_name, std::string_view field_name) const noexcept;
 
 private:
     void generate_prototype_data(std::string_view class_name,

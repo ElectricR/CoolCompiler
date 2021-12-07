@@ -150,20 +150,6 @@ int_const6:
        .word 6
 
        .word -1
-int_const14:
-       .word 1
-       .word 4
-       .word Int_dispTab
-       .word 14
-
-       .word -1
-int_const18:
-       .word 1
-       .word 4
-       .word Int_dispTab
-       .word 18
-
-       .word -1
 bool_const0:
        .word 2
        .word 4
@@ -250,37 +236,10 @@ str_const0:
        .word -1
 str_const1:
        .word 3
-       .word 6
-       .word String_dispTab
-       .word int_const6
-      .ascii "Object"
-       .byte 0
-
-       .word -1
-str_const2:
-       .word 3
        .word 5
        .word String_dispTab
-       .word int_const3
-      .ascii "Int"
-       .byte 0
-
-       .word -1
-str_const3:
-       .word 3
-       .word 9
-       .word String_dispTab
-       .word int_const18
-      .ascii "Should not happen\n"
-       .byte 0
-
-       .word -1
-str_const4:
-       .word 3
-       .word 8
-       .word String_dispTab
-       .word int_const14
-      .ascii "Should happen\n"
+       .word int_const2
+      .ascii "Hi"
        .byte 0
 
 heap_start:
@@ -332,52 +291,15 @@ Main.main:
        addiu $fp $sp 4
         move $s0 $a0
 
+       addiu $sp $sp -8
+          la $a0 str_const0
+          sw $a0 8($sp)
           la $a0 str_const1
-          sw $a0 0($sp)
-       addiu $sp $sp -4
-          la $a0 str_const2
-        move $t2 $a0
-          lw $t1 4($sp)
-       addiu $sp $sp 4
-          la $a0 bool_const1
-         beq $t1 $t2 label0
-          la $a1 bool_const0
-         jal equality_test
-label0:
-          lw $t1 12($a0)
-        beqz $t1 label1
+          sw $a0 4($sp)
+          lw $a0 8($sp)
 
-          la $a0 str_const3
-          sw $a0 0($sp)
-       addiu $sp $sp -4
-        move $a0 $s0
+       addiu $sp $sp 8
 
-         bne $a0 $zero label3
-          la $a0 str_const_path
-          li $t1 4
-         jal _dispatch_abort
-label3:
-          lw $t1 8($a0)
-          lw $t1 12($t1)
-        jalr $t1
-
-           b label2
-label1:
-          la $a0 str_const4
-          sw $a0 0($sp)
-       addiu $sp $sp -4
-        move $a0 $s0
-
-         bne $a0 $zero label4
-          la $a0 str_const_path
-          li $t1 6
-         jal _dispatch_abort
-label4:
-          lw $t1 8($a0)
-          lw $t1 12($t1)
-        jalr $t1
-
-label2:
           lw $fp 12($sp)
           lw $s0 8($sp)
           lw $ra 4($sp)

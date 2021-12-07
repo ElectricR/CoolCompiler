@@ -221,6 +221,14 @@ str_constMain:
       .ascii "Main"
        .byte 0
 
+       .word -1
+str_const0:
+       .word 3
+       .word 5
+       .word String_dispTab
+       .word int_const0
+       .byte 0
+
 heap_start:
        .word 0
 

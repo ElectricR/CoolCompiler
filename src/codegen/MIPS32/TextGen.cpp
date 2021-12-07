@@ -45,13 +45,18 @@ void TextGen::generate_not(std::ostream& out) noexcept {
     out << "label" << label << ":\n";
 }
 
-void TextGen::generate_self_object(std::ostream& out) noexcept {
+void TextGen::load_self_object(std::ostream& out) noexcept {
     out << std::setw(12) << "move" << ' ' << "$a0 $s0\n";
     out << '\n';
 }
 
-void TextGen::generate_field_object(unsigned offset, std::ostream& out) noexcept {
+void TextGen::load_field_object(unsigned offset, std::ostream& out) noexcept {
     out << std::setw(12) << "lw" << ' ' << "$a0 " << offset << "($s0)\n";
+    out << '\n';
+}
+
+void TextGen::load_stack_object(unsigned offset, std::ostream& out) noexcept {
+    out << std::setw(12) << "lw" << ' ' << "$a0 " << offset << "($sp)\n";
     out << '\n';
 }
 
@@ -95,6 +100,14 @@ void TextGen::generate_int_constant(int x, std::ostream& out) const noexcept {
         x_str = std::to_string(x);
     }
     out << std::setw(12) << "la" << ' ' << "$a0 int_const" << x_str << "\n";
+}
+
+void TextGen::generate_bool_constant(bool x, std::ostream& out) const noexcept {
+    out << std::setw(12) << "la" << ' ' << "$a0 bool_const" << x << "\n";
+}
+
+void TextGen::generate_empty_string_constant(std::ostream& out) const noexcept {
+    out << std::setw(12) << "la" << ' ' << "$a0 str_const0" << "\n";
 }
 
 void TextGen::generate_parent_init(std::string_view parent, std::ostream& out) const noexcept {

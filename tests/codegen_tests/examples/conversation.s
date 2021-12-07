@@ -336,6 +336,14 @@ str_constMain:
        .word -1
 str_const0:
        .word 3
+       .word 5
+       .word String_dispTab
+       .word int_const0
+       .byte 0
+
+       .word -1
+str_const1:
+       .word 3
        .word 13
        .word String_dispTab
        .word int_const33
@@ -343,7 +351,7 @@ str_const0:
        .byte 0
 
        .word -1
-str_const1:
+str_const2:
        .word 3
        .word 8
        .word String_dispTab
@@ -352,7 +360,7 @@ str_const1:
        .byte 0
 
        .word -1
-str_const2:
+str_const3:
        .word 3
        .word 7
        .word String_dispTab
@@ -418,7 +426,7 @@ Alice.responce:
        addiu $fp $sp 4
         move $s0 $a0
 
-          la $a0 str_const0
+          la $a0 str_const1
           sw $a0 0($sp)
        addiu $sp $sp -4
         move $a0 $s0
@@ -446,7 +454,7 @@ Bob.responce:
        addiu $fp $sp 4
         move $s0 $a0
 
-          la $a0 str_const1
+          la $a0 str_const2
           sw $a0 0($sp)
        addiu $sp $sp -4
         move $a0 $s0
@@ -474,7 +482,7 @@ John.greet:
        addiu $fp $sp 4
         move $s0 $a0
 
-          la $a0 str_const2
+          la $a0 str_const3
           sw $a0 0($sp)
        addiu $sp $sp -4
         move $a0 $s0

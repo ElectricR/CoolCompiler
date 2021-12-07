@@ -240,7 +240,7 @@ void Codegen::generate_init(std::string_view class_name) noexcept {
                 }
             }
         }
-        text_gen.generate_self_object(text);
+        text_gen.load_self_object(text);
         text_gen.print_epilogue(text);
     }
 }

@@ -19,8 +19,33 @@ public:
         out << std::setw(12) << "addiu" << ' ' << "$sp $sp -4\n";
     }
 
+    void save_to_local(unsigned offset, std::ostream& out) const noexcept {
+        out << std::setw(12) << "sw" << ' ' << "$a0 " << offset << "($sp)\n";
+    }
+
+    void grow_stack(unsigned size, std::ostream& out) const noexcept {
+        out << std::setw(12) << "addiu" << ' ' << "$sp $sp -" << size << "\n";
+    }
+
+    void reduce_stack(unsigned size, std::ostream& out) const noexcept {
+        out << std::setw(12) << "addiu" << ' ' << "$sp $sp " << size << "\n";
+        out << '\n';
+    }
+
     void save_to_field(unsigned offset, std::ostream& out) const noexcept {
         out << std::setw(12) << "sw" << ' ' << "$a0 " << offset << "($s0)\n";
+        out << '\n';
+    }
+
+    void generate_loop_check(unsigned label, std::ostream& out) noexcept {
+        out << std::setw(12) << "lw" << ' ' << "$t1 12($a0)\n";
+        out << std::setw(12) << "beq" << ' ' << "$t1 $zero label" << label << "\n";
+    }
+
+    void generate_loop_end(unsigned start_loop_label, unsigned end_loop_label, std::ostream& out) noexcept {
+        out << std::setw(12) << "b" << ' ' << "label" << start_loop_label << "\n";
+        print_label(end_loop_label, out);
+        out << std::setw(12) << "move" << ' ' << "$a0 $zero\n";
     }
 
     void generate_binary_sub(std::ostream& out) const noexcept {
@@ -46,6 +71,10 @@ public:
     }
 
     void generate_int_constant(int x, std::ostream& out) const noexcept;
+
+    void generate_bool_constant(bool x, std::ostream& out) const noexcept;
+
+    void generate_empty_string_constant(std::ostream& out) const noexcept;
 
     void generate_parent_init(std::string_view parent, std::ostream& out) const noexcept;
 
@@ -81,15 +110,21 @@ public:
         out << std::setw(12) << "la" << ' ' << "$a0 bool_const0\n\n";
     }
 
+    void generate_zeros(std::ostream& out) noexcept {
+        out << std::setw(12) << "move" << ' ' << "$a0 $zero\n\n";
+    }
+
     void generate_not(std::ostream& out) noexcept;
 
     void set_current_class(std::string_view current_class) noexcept {
         current_class_name = current_class;
     }
 
-    void generate_self_object(std::ostream& out) noexcept;
+    void load_self_object(std::ostream& out) noexcept;
 
-    void generate_field_object(unsigned offset, std::ostream& out) noexcept;
+    void load_field_object(unsigned offset, std::ostream& out) noexcept;
+
+    void load_stack_object(unsigned offset, std::ostream& out) noexcept;
 
     void generate_equal(unsigned label, std::ostream& out) const noexcept;
 

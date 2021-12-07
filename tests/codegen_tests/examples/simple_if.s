@@ -235,6 +235,14 @@ str_constMain:
        .word -1
 str_const0:
        .word 3
+       .word 5
+       .word String_dispTab
+       .word int_const0
+       .byte 0
+
+       .word -1
+str_const1:
+       .word 3
        .word 8
        .word String_dispTab
        .word int_const14
@@ -295,7 +303,7 @@ Main.main:
           lw $t1 12($a0)
         beqz $t1 label0
 
-          la $a0 str_const0
+          la $a0 str_const1
           sw $a0 0($sp)
        addiu $sp $sp -4
         move $a0 $s0

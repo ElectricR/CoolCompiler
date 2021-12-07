@@ -75,9 +75,15 @@ TEST_F(CodegenTestFixture, NestedIf) {
     ASSERT_EQ(gen_result.str(), answer.str());
 }
 
-TEST_F(CodegenTestFixture, Not) {
-    parse("./tests/codegen_tests/examples/not.cl");
-    read_answer("./tests/codegen_tests/examples/not.s");
+TEST_F(CodegenTestFixture, SimpleNot) {
+    parse("./tests/codegen_tests/examples/simple_not.cl");
+    read_answer("./tests/codegen_tests/examples/simple_not.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, NestedNot) {
+    parse("./tests/codegen_tests/examples/nested_not.cl");
+    read_answer("./tests/codegen_tests/examples/nested_not.s");
     ASSERT_EQ(gen_result.str(), answer.str());
 }
 
@@ -108,5 +114,65 @@ TEST_F(CodegenTestFixture, SimpleEqualStrings) {
 TEST_F(CodegenTestFixture, EqualWithIf) {
     parse("./tests/codegen_tests/examples/equal_with_if.cl");
     read_answer("./tests/codegen_tests/examples/equal_with_if.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, InfiniteLoop) {
+    parse("./tests/codegen_tests/examples/infinite_loop.cl");
+    read_answer("./tests/codegen_tests/examples/infinite_loop.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, ComplexLoop) {
+    parse("./tests/codegen_tests/examples/complex_loop.cl");
+    read_answer("./tests/codegen_tests/examples/complex_loop.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, SimpleLetInt) {
+    parse("./tests/codegen_tests/examples/simple_let_int.cl");
+    read_answer("./tests/codegen_tests/examples/simple_let_int.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, SimpleLetBool) {
+    parse("./tests/codegen_tests/examples/simple_let_bool.cl");
+    read_answer("./tests/codegen_tests/examples/simple_let_bool.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, SimpleLetStr) {
+    parse("./tests/codegen_tests/examples/simple_let_str.cl");
+    read_answer("./tests/codegen_tests/examples/simple_let_str.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, SimpleLetIo) {
+    parse("./tests/codegen_tests/examples/simple_let_io.cl");
+    read_answer("./tests/codegen_tests/examples/simple_let_io.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, LetWithShadowing) {
+    parse("./tests/codegen_tests/examples/let_with_shadowing.cl");
+    read_answer("./tests/codegen_tests/examples/let_with_shadowing.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, HelloWorldWithLet) {
+    parse("./tests/codegen_tests/examples/hello_world_with_let.cl");
+    read_answer("./tests/codegen_tests/examples/hello_world_with_let.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, MultipleLets) {
+    parse("./tests/codegen_tests/examples/multiple_lets.cl");
+    read_answer("./tests/codegen_tests/examples/multiple_lets.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, MultipleLetsWithField) {
+    parse("./tests/codegen_tests/examples/multiple_lets_with_field.cl");
+    read_answer("./tests/codegen_tests/examples/multiple_lets_with_field.s");
     ASSERT_EQ(gen_result.str(), answer.str());
 }

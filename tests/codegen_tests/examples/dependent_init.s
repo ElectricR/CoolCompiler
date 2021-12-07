@@ -240,6 +240,14 @@ str_const0:
        .word 3
        .word 5
        .word String_dispTab
+       .word int_const0
+       .byte 0
+
+       .word -1
+str_const1:
+       .word 3
+       .word 5
+       .word String_dispTab
        .word int_const1
       .ascii "\n"
        .byte 0
@@ -293,6 +301,7 @@ Main_init:
          jal IO_init
           la $a0 int_const6
           sw $a0 12($s0)
+
           lw $a0 12($s0)
 
           sw $a0 0($sp)
@@ -307,6 +316,7 @@ Main_init:
           sw $t1 12($a0)
 
           sw $a0 16($s0)
+
           lw $a0 16($s0)
 
           sw $a0 0($sp)
@@ -321,6 +331,7 @@ Main_init:
           sw $t1 12($a0)
 
           sw $a0 20($s0)
+
         move $a0 $s0
 
           lw $fp 12($sp)
@@ -337,7 +348,7 @@ Main.main:
        addiu $fp $sp 4
         move $s0 $a0
 
-          la $a0 str_const0
+          la $a0 str_const1
           sw $a0 0($sp)
        addiu $sp $sp -4
           lw $a0 12($s0)
