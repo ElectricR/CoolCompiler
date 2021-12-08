@@ -116,7 +116,7 @@ void TextGen::generate_le(unsigned label, std::ostream& out) const noexcept {
     out << std::setw(12) << "lw" << ' ' << "$t1 12($t1)\n";
     out << std::setw(12) << "la" << ' ' << "$a0 bool_const1\n";
     out << std::setw(12) << "ble" << ' ' << "$t1 $t2 label" << label << "\n";
-    out << std::setw(12) << "la" << ' ' << "$a1 bool_const0\n";
+    out << std::setw(12) << "la" << ' ' << "$a0 bool_const0\n";
 }
 
 void TextGen::generate_less(unsigned label, std::ostream& out) const noexcept {
@@ -127,7 +127,7 @@ void TextGen::generate_less(unsigned label, std::ostream& out) const noexcept {
     out << std::setw(12) << "lw" << ' ' << "$t1 12($t1)\n";
     out << std::setw(12) << "la" << ' ' << "$a0 bool_const1\n";
     out << std::setw(12) << "blt" << ' ' << "$t1 $t2 label" << label << "\n";
-    out << std::setw(12) << "la" << ' ' << "$a1 bool_const0\n";
+    out << std::setw(12) << "la" << ' ' << "$a0 bool_const0\n";
 }
 
 void TextGen::generate_binary_op(

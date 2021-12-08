@@ -245,6 +245,15 @@ str_const0:
        .word int_const0
        .byte 0
 
+       .word -1
+str_const1:
+       .word 3
+       .word 5
+       .word String_dispTab
+       .word int_const1
+      .ascii "\n"
+       .byte 0
+
 heap_start:
        .word 0
 
@@ -294,19 +303,103 @@ Main.main:
        addiu $fp $sp 4
         move $s0 $a0
 
+          la $a0 int_const3
+          sw $a0 0($sp)
+       addiu $sp $sp -4
           la $a0 int_const1
           sw $a0 0($sp)
        addiu $sp $sp -4
-          la $a0 int_const2
-        move $t2 $a0
-          lw $t1 4($sp)
-       addiu $sp $sp 4
-          lw $t2 12($t2)
-          lw $t1 12($t1)
+        move $a0 $s0
+
+        move $t0 $a0
           la $a0 bool_const1
-         ble $t1 $t2 label0
+        beqz $t0 label0
           la $a0 bool_const0
 label0:
+         bne $a0 $zero label1
+          la $a0 str_const_path
+          li $t1 5
+         jal _dispatch_abort
+label1:
+          lw $t1 8($a0)
+          lw $t1 4($t1)
+        jalr $t1
+
+         bne $a0 $zero label2
+          la $a0 str_const_path
+          li $t1 5
+         jal _dispatch_abort
+label2:
+          lw $t1 8($a0)
+          lw $t1 20($t1)
+        jalr $t1
+
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+          la $a0 int_const1
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+          la $a0 int_const4
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+          la $a0 Object_protObj
+         jal Object.copy
+         jal Object_init
+
+         bne $a0 $zero label3
+          la $a0 str_const_path
+          li $t1 4
+         jal _dispatch_abort
+label3:
+          lw $t1 8($a0)
+          lw $t1 4($t1)
+        jalr $t1
+
+         bne $a0 $zero label4
+          la $a0 str_const_path
+          li $t1 4
+         jal _dispatch_abort
+label4:
+          lw $t1 8($a0)
+          lw $t1 20($t1)
+        jalr $t1
+
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+        move $a0 $s0
+
+         bne $a0 $zero label5
+          la $a0 str_const_path
+          li $t1 4
+         jal _dispatch_abort
+label5:
+          lw $t1 8($a0)
+          lw $t1 12($t1)
+        jalr $t1
+
+         bne $a0 $zero label6
+          la $a0 str_const_path
+          li $t1 4
+         jal _dispatch_abort
+label6:
+          lw $t1 8($a0)
+          lw $t1 12($t1)
+        jalr $t1
+
+          la $a0 str_const1
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+        move $a0 $s0
+
+         bne $a0 $zero label7
+          la $a0 str_const_path
+          li $t1 6
+         jal _dispatch_abort
+label7:
+          lw $t1 8($a0)
+          lw $t1 12($t1)
+        jalr $t1
+
           lw $fp 12($sp)
           lw $s0 8($sp)
           lw $ra 4($sp)

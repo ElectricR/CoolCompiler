@@ -268,3 +268,9 @@ TEST_F(CodegenTestFixture, BadCase) {
     read_answer("./tests/codegen_tests/examples/bad_case.s");
     ASSERT_EQ(gen_result.str(), answer.str());
 }
+
+TEST_F(CodegenTestFixture, Cool) {
+    parse("./tests/codegen_tests/examples/cool.cl");
+    read_answer("./tests/codegen_tests/examples/cool.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}

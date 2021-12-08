@@ -277,6 +277,24 @@ str_const2:
       .ascii "Should not happen\n"
        .byte 0
 
+       .word -1
+str_const3:
+       .word 3
+       .word 9
+       .word String_dispTab
+       .word int_const18
+      .ascii "Should not happen\n"
+       .byte 0
+
+       .word -1
+str_const4:
+       .word 3
+       .word 8
+       .word String_dispTab
+       .word int_const14
+      .ascii "Should happen\n"
+       .byte 0
+
 heap_start:
        .word 0
 
@@ -337,7 +355,7 @@ Main.main:
           lw $t1 12($t1)
           la $a0 bool_const1
          blt $t1 $t2 label0
-          la $a1 bool_const0
+          la $a0 bool_const0
 label0:
           lw $t1 12($a0)
         beqz $t1 label1
@@ -373,6 +391,53 @@ label4:
         jalr $t1
 
 label2:
+          la $a0 int_const2
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+          la $a0 int_const1
+        move $t2 $a0
+          lw $t1 4($sp)
+       addiu $sp $sp 4
+          lw $t2 12($t2)
+          lw $t1 12($t1)
+          la $a0 bool_const1
+         blt $t1 $t2 label5
+          la $a0 bool_const0
+label5:
+          lw $t1 12($a0)
+        beqz $t1 label6
+
+          la $a0 str_const3
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+        move $a0 $s0
+
+         bne $a0 $zero label8
+          la $a0 str_const_path
+          li $t1 9
+         jal _dispatch_abort
+label8:
+          lw $t1 8($a0)
+          lw $t1 12($t1)
+        jalr $t1
+
+           b label7
+label6:
+          la $a0 str_const4
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+        move $a0 $s0
+
+         bne $a0 $zero label9
+          la $a0 str_const_path
+          li $t1 11
+         jal _dispatch_abort
+label9:
+          lw $t1 8($a0)
+          lw $t1 12($t1)
+        jalr $t1
+
+label7:
           lw $fp 12($sp)
           lw $s0 8($sp)
           lw $ra 4($sp)

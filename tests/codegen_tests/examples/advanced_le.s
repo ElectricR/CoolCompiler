@@ -337,7 +337,7 @@ Main.main:
           lw $t1 12($t1)
           la $a0 bool_const1
          ble $t1 $t2 label0
-          la $a1 bool_const0
+          la $a0 bool_const0
 label0:
           lw $t1 12($a0)
         beqz $t1 label1
