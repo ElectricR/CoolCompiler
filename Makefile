@@ -23,6 +23,9 @@ codegen_test: build
 	./misc_smoke_test
 	./text_smoke_test
 	./codegen_test
+	./codegen examples/atoi.cl examples/stack_machine.cl
+	mv a.s examples/stack_machine.s
+	make stack_test
 
 build: googletest compile_commands.json
 	cmake -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 
