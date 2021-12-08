@@ -6,7 +6,7 @@ class StackTest(unittest.TestCase):
     pattern = "SPIM Version 6.5 of January 4, 2003\nCopyright 1990-2003 by James R. Larus (larus@cs.wisc.edu).\nAll Rights Reserved.\nSee the file README for a full copyright notice.\nLoaded: ../lib/trap.handler\n{0}COOL program successfully executed\n"
 
     def check(self, in_value, answer):
-        p = subprocess.Popen(["spim", "examples/stack_machine.s"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        p = subprocess.Popen(["reference/bin/spim", "examples/stack_machine.s"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         out = p.communicate(input=in_value)[0]
         self.assertEqual(out.decode("UTF-8"), self.pattern.format(answer))
 
