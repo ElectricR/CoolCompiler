@@ -127,7 +127,8 @@ void Codegen::generate_nametab(
         [](auto& class_) -> std::string_view { return class_.type_id; });
     std::unordered_map<unsigned, std::string_view> tags;
     for (auto& class_name : class_names) {
-        tags.emplace(prototype_data_gen.get_prototype_ids(class_name).first, class_name);
+        tags.emplace(
+            prototype_data_gen.get_prototype_ids(class_name).first, class_name);
     }
     misc_data_gen.generate_nametab(tags, out);
 }

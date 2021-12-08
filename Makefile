@@ -1,6 +1,4 @@
 all: build
-	./codegen nao.cl
-	cat a.s
 
 test: codegen_test
 
