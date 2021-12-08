@@ -60,6 +60,12 @@ clean:
 	-rm parser_smoke_test
 	-rm semant_smoke_test
 	-rm datagen_smoke_test
+	-rm constants_smoke_test
+	-rm misc_smoke_test
+	-rm disptable_smoke_test
+	-rm prototype_smoke_test
+	-rm text_smoke_test
+	-rm codegen_test
 	-rm build -r
 
 .PHONY: build clean lexer_test parser_test format
