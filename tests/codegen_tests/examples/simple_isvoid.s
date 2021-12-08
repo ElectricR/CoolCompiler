@@ -91,6 +91,10 @@ Main_dispTab:
        .word Object.abort
        .word Object.type_name
        .word Object.copy
+       .word IO.out_string
+       .word IO.out_int
+       .word IO.in_string
+       .word IO.in_int
        .word Main.main
 
 class_objTab:
@@ -151,6 +155,20 @@ int_const6:
        .word 4
        .word Int_dispTab
        .word 6
+
+       .word -1
+int_const14:
+       .word 1
+       .word 4
+       .word Int_dispTab
+       .word 14
+
+       .word -1
+int_const18:
+       .word 1
+       .word 4
+       .word Int_dispTab
+       .word 18
 
        .word -1
 bool_const0:
@@ -239,10 +257,19 @@ str_const0:
        .word -1
 str_const1:
        .word 3
-       .word 5
+       .word 9
        .word String_dispTab
-       .word int_const1
-      .ascii "\n"
+       .word int_const18
+      .ascii "Should not happen\n"
+       .byte 0
+
+       .word -1
+str_const2:
+       .word 3
+       .word 8
+       .word String_dispTab
+       .word int_const14
+      .ascii "Should happen\n"
        .byte 0
 
 heap_start:
@@ -294,98 +321,46 @@ Main.main:
        addiu $fp $sp 4
         move $s0 $a0
 
-          la $a0 int_const6
-          sw $a0 0($sp)
-       addiu $sp $sp -4
-          lw $a0 4($sp)
+          la $a0 int_const1
+        move $t0 $a0
+          la $a0 bool_const1
+        beqz $t0 label0
+          la $a0 bool_const0
+label0:
+          lw $t1 12($a0)
+        beqz $t1 label1
 
-          sw $a0 0($sp)
-       addiu $sp $sp -4
-          la $a0 int_const2
-         jal Object.copy
-          lw $t0 4($sp)
-       addiu $sp $sp 4
-          lw $t1 12($t0)
-          lw $t2 12($a0)
-         mul $t1 $t1 $t2
-          sw $t1 12($a0)
-
-          sw $a0 0($sp)
-       addiu $sp $sp -4
-          lw $a0 4($sp)
-
-          sw $a0 0($sp)
-       addiu $sp $sp -4
-          la $a0 int_const2
-         jal Object.copy
-          lw $t0 4($sp)
-       addiu $sp $sp 4
-          lw $t1 12($t0)
-          lw $t2 12($a0)
-         mul $t1 $t1 $t2
-          sw $t1 12($a0)
-
-          sw $a0 0($sp)
-       addiu $sp $sp -4
           la $a0 str_const1
           sw $a0 0($sp)
        addiu $sp $sp -4
-          lw $a0 16($sp)
+        move $a0 $s0
 
-          sw $a0 0($sp)
-       addiu $sp $sp -4
-          lw $a0 16($sp)
-
-         jal Object.copy
-          lw $t0 4($sp)
-       addiu $sp $sp 4
-          lw $t1 12($t0)
-          lw $t2 12($a0)
-         add $t1 $t1 $t2
-          sw $t1 12($a0)
-
-          sw $a0 0($sp)
-       addiu $sp $sp -4
-          lw $a0 12($sp)
-
-         jal Object.copy
-          lw $t0 4($sp)
-       addiu $sp $sp 4
-          lw $t1 12($t0)
-          lw $t2 12($a0)
-         add $t1 $t1 $t2
-          sw $t1 12($a0)
-
-          sw $a0 0($sp)
-       addiu $sp $sp -4
-          la $a0 IO_protObj
-         jal Object.copy
-         jal IO_init
-
-         bne $a0 $zero label0
+         bne $a0 $zero label3
           la $a0 str_const_path
-          li $t1 6
+          li $t1 4
          jal _dispatch_abort
-label0:
-          lw $t1 8($a0)
-          lw $t1 16($t1)
-        jalr $t1
-
-         bne $a0 $zero label1
-          la $a0 str_const_path
-          li $t1 6
-         jal _dispatch_abort
-label1:
+label3:
           lw $t1 8($a0)
           lw $t1 12($t1)
         jalr $t1
 
-       addiu $sp $sp 4
+           b label2
+label1:
+          la $a0 str_const2
+          sw $a0 0($sp)
+       addiu $sp $sp -4
+        move $a0 $s0
 
-       addiu $sp $sp 4
+         bne $a0 $zero label4
+          la $a0 str_const_path
+          li $t1 6
+         jal _dispatch_abort
+label4:
+          lw $t1 8($a0)
+          lw $t1 12($t1)
+        jalr $t1
 
-       addiu $sp $sp 4
-
+label2:
           lw $fp 12($sp)
           lw $s0 8($sp)
           lw $ra 4($sp)

@@ -282,15 +282,16 @@ Main.main:
        addiu $fp $sp 4
         move $s0 $a0
 
-       addiu $sp $sp -8
         move $a0 $zero
 
-          sw $a0 8($sp)
+          sw $a0 0($sp)
+       addiu $sp $sp -4
           la $a0 IO_protObj
          jal Object.copy
          jal IO_init
 
-          sw $a0 4($sp)
+          sw $a0 0($sp)
+       addiu $sp $sp -4
           lw $a0 8($sp)
 
        addiu $sp $sp 8

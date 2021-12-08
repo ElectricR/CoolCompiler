@@ -12,11 +12,11 @@ void TextGen::print_prologue(std::ostream& out) noexcept {
     out << '\n';
 }
 
-void TextGen::print_epilogue(std::ostream& out) noexcept {
+void TextGen::print_epilogue(unsigned formals_size, std::ostream& out) noexcept {
     out << std::setw(12) << "lw" << ' ' << "$fp 12($sp)\n";
     out << std::setw(12) << "lw" << ' ' << "$s0 8($sp)\n";
     out << std::setw(12) << "lw" << ' ' << "$ra 4($sp)\n";
-    out << std::setw(12) << "addiu" << ' ' << "$sp $sp 12\n";
+    out << std::setw(12) << "addiu" << ' ' << "$sp $sp " << 12 + formals_size << "\n";
     out << std::setw(12) << "jr" << ' ' << "$ra\n";
     out << '\n';
 }
@@ -43,6 +43,22 @@ void TextGen::generate_not(std::ostream& out) noexcept {
     out << std::setw(12) << "beqz" << ' ' << "$t1 label" << label << '\n';
     out << std::setw(12) << "la" << ' ' << "$a0 bool_const0\n";
     out << "label" << label << ":\n";
+}
+
+void TextGen::generate_isvoid(std::ostream& out) noexcept {
+    unsigned label = label_count++;
+    out << std::setw(12) << "move" << ' ' << "$t0 $a0\n";
+    out << std::setw(12) << "la" << ' ' << "$a0 bool_const1\n";
+    out << std::setw(12) << "beqz" << ' ' << "$t0 label" << label << '\n';
+    out << std::setw(12) << "la" << ' ' << "$a0 bool_const0\n";
+    out << "label" << label << ":\n";
+}
+
+void TextGen::generate_case_start(unsigned case_start_label, unsigned line_number, std::ostream& out) const noexcept{
+    out << std::setw(12) << "bne" << ' ' << "$a0 $zero label" << case_start_label << "\n";
+    out << std::setw(12) << "la" << ' ' << "$a0 str_const_path\n";
+    out << std::setw(12) << "li" << ' ' << "$t1 " << line_number << "\n";
+    out << std::setw(12) << "jal" << ' ' << "_case_abort2\n";
 }
 
 void TextGen::load_self_object(std::ostream& out) noexcept {
@@ -78,6 +94,28 @@ void TextGen::generate_equal(unsigned label, std::ostream& out) const noexcept {
     out << std::setw(12) << "beq" << ' ' << "$t1 $t2 label" << label << "\n";
     out << std::setw(12) << "la" << ' ' << "$a1 bool_const0\n";
     out << std::setw(12) << "jal" << ' ' << "equality_test\n";
+}
+
+void TextGen::generate_le(unsigned label, std::ostream& out) const noexcept {
+    out << std::setw(12) << "move" << ' ' << "$t2 $a0\n";
+    out << std::setw(12) << "lw" << ' ' << "$t1 4($sp)\n";
+    out << std::setw(12) << "addiu" << ' ' << "$sp $sp 4\n";
+    out << std::setw(12) << "lw" << ' ' << "$t2 12($t2)\n";
+    out << std::setw(12) << "lw" << ' ' << "$t1 12($t1)\n";
+    out << std::setw(12) << "la" << ' ' << "$a0 bool_const1\n";
+    out << std::setw(12) << "ble" << ' ' << "$t1 $t2 label" << label << "\n";
+    out << std::setw(12) << "la" << ' ' << "$a1 bool_const0\n";
+}
+
+void TextGen::generate_less(unsigned label, std::ostream& out) const noexcept {
+    out << std::setw(12) << "move" << ' ' << "$t2 $a0\n";
+    out << std::setw(12) << "lw" << ' ' << "$t1 4($sp)\n";
+    out << std::setw(12) << "addiu" << ' ' << "$sp $sp 4\n";
+    out << std::setw(12) << "lw" << ' ' << "$t2 12($t2)\n";
+    out << std::setw(12) << "lw" << ' ' << "$t1 12($t1)\n";
+    out << std::setw(12) << "la" << ' ' << "$a0 bool_const1\n";
+    out << std::setw(12) << "blt" << ' ' << "$t1 $t2 label" << label << "\n";
+    out << std::setw(12) << "la" << ' ' << "$a1 bool_const0\n";
 }
 
 void TextGen::generate_binary_op(

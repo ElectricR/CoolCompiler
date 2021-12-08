@@ -16,9 +16,12 @@ public:
 
     ASTVisitor(std::ostream& in_out,
         ConstantsDataGeneneror* in_constants_data_gen,
-        DispTableDataGenerator* in_disptable_data_gen, PrototypeDataGenerator* in_prototype_data_gen, TextGen* in_text_gen)
+        DispTableDataGenerator* in_disptable_data_gen,
+        PrototypeDataGenerator* in_prototype_data_gen, StackRepresentation *in_stack_representation, TextGen* in_text_gen)
         : out(in_out), constants_data_gen(in_constants_data_gen),
-          disptable_data_gen(in_disptable_data_gen), prototype_data_gen(in_prototype_data_gen), text_gen(in_text_gen) {}
+          disptable_data_gen(in_disptable_data_gen),
+          prototype_data_gen(in_prototype_data_gen), text_gen(in_text_gen),
+    stack_representation(in_stack_representation){}
 
     void operator()(const AST::Program& program) noexcept {
         for (auto& class_ : program.classes) {
@@ -33,12 +36,21 @@ public:
         }
     }
 
-    // TODO vars
     void operator()(const AST::MethodFeature& expr) noexcept {
+        unsigned offset = 4;
+        std::unordered_map<std::string_view, unsigned> vars;
+        for (auto& formal : expr.formals) {
+            vars.emplace(formal.object_id, offset);
+            offset += 4;
+        }
+        stack_representation->register_vars(std::move(vars));
         out << current_class_name << '.' << expr.object_id << ":\n";
         text_gen->print_prologue(out);
+        stack_representation->add_padding(12);
         std::visit(*this, expr.value->value);
-        text_gen->print_epilogue(out);
+        text_gen->print_epilogue(static_cast<unsigned>(expr.formals.size()) * 4, out);
+        stack_representation->pop();
+        stack_representation->pop();
     }
 
     void operator()(const AST::FieldFeature&) noexcept {}
@@ -46,7 +58,7 @@ public:
     template <AST::Arithmetic T> void operator()(const T& op) noexcept {
         std::visit(*this, op.left_expression->value);
         text_gen->save_to_stack(out);
-        stack_representation.add_padding(4);
+        stack_representation->add_padding(4);
         std::visit(*this, op.right_expression->value);
         if constexpr (std::is_same_v<T, AST::PlusExpression>) {
             text_gen->generate_binary_add(out);
@@ -57,7 +69,7 @@ public:
         } else {
             text_gen->generate_binary_div(out);
         }
-        stack_representation.pop();
+        stack_representation->pop();
     }
 
     void operator()(const AST::DotExpression& expr) noexcept {
@@ -65,7 +77,7 @@ public:
             expr.parameter_expressions.crend(), [this](auto& arg) {
                 std::visit(*this, arg->value);
                 text_gen->save_to_stack(out);
-                stack_representation.add_padding(4);
+                stack_representation->add_padding(4);
             });
         std::visit(*this, expr.expression->value);
         if (expr.expression->type == "SELF_TYPE") {
@@ -82,7 +94,7 @@ public:
                 out);
         }
         for (size_t i = 0; i != expr.parameter_expressions.size(); ++i) {
-            stack_representation.pop();
+            stack_representation->pop();
         }
     }
 
@@ -114,40 +126,59 @@ public:
         }
     }
 
-    // TODO
-    void operator()(const AST::CaseExpression&) noexcept {}
+    void operator()(const AST::CaseExpression& case_expr) noexcept {
+        unsigned case_start_label = text_gen->reserve_label();
+        text_gen->generate_case_start(case_start_label, case_expr.line_number, out);
+        text_gen->print_label(case_start_label, out);
+    }
 
     void operator()(const AST::NewExpression& expr) noexcept {
         text_gen->generate_new(expr.type_id, out);
     }
 
-    // TODO
-    void operator()(const AST::IsVoidExpression&) noexcept {}
+    void operator()(const AST::IsVoidExpression& isvoid_expr) noexcept {
+        std::visit(*this, isvoid_expr.expression->value);
+        text_gen->generate_isvoid(out);
+    }
 
-    // TODO
-    template <AST::CompareButNotEqual T> void operator()(const T&) noexcept {}
+    template <AST::CompareButNotEqual T> void operator()(const T& cmp_expr) noexcept {
+        std::visit(*this, cmp_expr.left_expression->value);
+        text_gen->save_to_stack(out);
+        stack_representation->add_padding(4);
+        std::visit(*this, cmp_expr.right_expression->value);
+        unsigned label = text_gen->reserve_label();
+        if constexpr (std::is_same_v<AST::LessExpression, T>) {
+            text_gen->generate_less(label, out);
+        } else {
+            text_gen->generate_le(label, out);
+        }
+        stack_representation->pop();
+        text_gen->print_label(label, out);
+    }
 
     void operator()(const AST::EqualExpression& eq_expression) noexcept {
         std::visit(*this, eq_expression.left_expression->value);
         text_gen->save_to_stack(out);
-        stack_representation.add_padding(4);
+        stack_representation->add_padding(4);
         std::visit(*this, eq_expression.right_expression->value);
         unsigned label = text_gen->reserve_label();
         text_gen->generate_equal(label, out);
-        stack_representation.pop();
+        stack_representation->pop();
         text_gen->print_label(label, out);
     }
 
-    // TODO
-    void operator()(const AST::TildeExpression&) noexcept {}
+    void operator()(const AST::TildeExpression& expr) noexcept {
+        std::visit(*this, expr.expression->value);
+        text_gen->generate_negate(out);
+    }
 
     void operator()(const AST::ObjectExpression& expr) noexcept {
         if (expr.object_id == "self") {
             text_gen->load_self_object(out);
         } else {
             unsigned offset = 0;
-            if (stack_representation.contains(expr.object_id)) {
-                offset = stack_representation.get_variable(expr.object_id);
+            if (stack_representation->contains(expr.object_id)) {
+                offset = stack_representation->get_variable(expr.object_id);
                 text_gen->load_stack_object(offset, out);
             } else {
                 offset = prototype_data_gen->get_field_offset(current_class_name, expr.object_id);
@@ -180,16 +211,7 @@ public:
     }
 
     void operator()(const AST::LetExpression& let_expression) noexcept {
-        std::unordered_map<std::string_view, unsigned> vars;
-        unsigned current_offset = 4;
-        for (auto it = let_expression.let_expressions.crbegin(); it != let_expression.let_expressions.crend(); ++it) {
-            vars.emplace(it->object_id, current_offset);
-            current_offset += 4;
-        }
-        stack_representation.register_vars(std::move(vars));
-        text_gen->grow_stack(static_cast<unsigned>(let_expression.let_expressions.size()) * 4, out);
         for (auto& entry : let_expression.let_expressions) {
-            unsigned offset = stack_representation.get_variable(entry.object_id);
             if (entry.assign_expression) {
                 std::visit(*this, entry.assign_expression.value()->value);
             } else {
@@ -203,18 +225,20 @@ public:
                     text_gen->generate_zeros(out);
                 }
             }
-            text_gen->save_to_local(offset, out);
+            text_gen->save_to_local(0, out);
+            text_gen->grow_stack(4, out);
+            stack_representation->register_vars({{entry.object_id, 4}});
         }
         std::visit(*this, let_expression.expression->value);
-        stack_representation.pop();
+        stack_representation->pop();
         text_gen->reduce_stack(static_cast<unsigned>(let_expression.let_expressions.size()) * 4, out);
     }
 
     void operator()(const AST::AssignExpression& assign_expr) noexcept {
         std::visit(*this, assign_expr.expression->value);
         unsigned offset = 0;
-        if (stack_representation.contains(assign_expr.object_id)) {
-            offset = stack_representation.get_variable(assign_expr.object_id);
+        if (stack_representation->contains(assign_expr.object_id)) {
+            offset = stack_representation->get_variable(assign_expr.object_id);
             text_gen->save_to_local(offset, out);
         } else {
             offset = prototype_data_gen->get_field_offset(current_class_name, assign_expr.object_id);
@@ -233,7 +257,7 @@ private:
     MIPS32::DispTableDataGenerator* disptable_data_gen = nullptr;
     MIPS32::PrototypeDataGenerator* prototype_data_gen = nullptr;
     MIPS32::TextGen* text_gen = nullptr;
-    StackRepresentation stack_representation;
+    StackRepresentation *stack_representation;
 };
 
 } // namespace cool::codegen::MIPS32

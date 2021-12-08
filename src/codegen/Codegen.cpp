@@ -231,6 +231,7 @@ void Codegen::generate_init(std::string_view class_name) noexcept {
         }
         text_gen.generate_init_label(class_name, text);
         text_gen.print_prologue(text);
+        stack_representation.add_padding(12);
         text_gen.generate_parent_init(parent, text);
         for (auto& feature : class_map.at(class_name).features) {
             if (std::holds_alternative<AST::FieldFeature>(feature.feature)) {
@@ -241,7 +242,8 @@ void Codegen::generate_init(std::string_view class_name) noexcept {
             }
         }
         text_gen.load_self_object(text);
-        text_gen.print_epilogue(text);
+        text_gen.print_epilogue(0, text);
+        stack_representation.pop();
     }
 }
 

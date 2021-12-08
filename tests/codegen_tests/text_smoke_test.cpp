@@ -6,8 +6,9 @@ class TextGenTestFixture : public ::testing::Test {
 protected:
     std::stringstream gen_result;
     cool::codegen::MIPS32::ConstantsDataGeneneror constants_data_gen;
+    cool::codegen::MIPS32::StackRepresentation stack_repr;
     cool::codegen::MIPS32::ASTVisitor visitor{
-        gen_result, &constants_data_gen, nullptr, nullptr, nullptr};
+        gen_result, &constants_data_gen, nullptr, nullptr, &stack_repr, nullptr};
 };
 
 TEST_F(TextGenTestFixture, PlusExpression) {

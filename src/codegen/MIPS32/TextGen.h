@@ -8,7 +8,7 @@ class TextGen {
 public:
     void print_prologue(std::ostream& out) noexcept;
 
-    void print_epilogue(std::ostream& out) noexcept;
+    void print_epilogue(unsigned formals_size, std::ostream& out) noexcept;
 
     void generate_binary_add(std::ostream& out) const noexcept {
         generate_binary_op("add", out);
@@ -110,6 +110,13 @@ public:
         out << std::setw(12) << "la" << ' ' << "$a0 bool_const0\n\n";
     }
 
+    void generate_negate(std::ostream& out) noexcept {
+        out << std::setw(12) << "jal" << ' ' << "Object.copy\n";
+        out << std::setw(12) << "lw" << ' ' << "$t0 12($a0)\n";
+        out << std::setw(12) << "neg" << ' ' << "$t0 $t0\n";
+        out << std::setw(12) << "sw" << ' ' << "$t0 12($a0)\n";
+    }
+
     void generate_zeros(std::ostream& out) noexcept {
         out << std::setw(12) << "move" << ' ' << "$a0 $zero\n\n";
     }
@@ -128,6 +135,13 @@ public:
 
     void generate_equal(unsigned label, std::ostream& out) const noexcept;
 
+    void generate_le(unsigned label, std::ostream& out) const noexcept;
+
+    void generate_less(unsigned label, std::ostream& out) const noexcept;
+
+    void generate_isvoid(std::ostream& out) noexcept;
+
+    void generate_case_start(unsigned case_start_label, unsigned line_number, std::ostream& out) const noexcept;
 private:
     //
     // Takes two pointers - one on top of stack and one in $a0.

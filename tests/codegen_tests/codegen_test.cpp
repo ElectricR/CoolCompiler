@@ -182,3 +182,75 @@ TEST_F(CodegenTestFixture, LetWithAssigns) {
     read_answer("./tests/codegen_tests/examples/let_with_assigns.s");
     ASSERT_EQ(gen_result.str(), answer.str());
 }
+
+TEST_F(CodegenTestFixture, SimpleAttribute) {
+    parse("./tests/codegen_tests/examples/simple_attribute.cl");
+    read_answer("./tests/codegen_tests/examples/simple_attribute.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, AttributeUsage) {
+    parse("./tests/codegen_tests/examples/attribute_usage.cl");
+    read_answer("./tests/codegen_tests/examples/attribute_usage.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, MultipleAttributes) {
+    parse("./tests/codegen_tests/examples/multiple_attributes.cl");
+    read_answer("./tests/codegen_tests/examples/multiple_attributes.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, AttributeFieldAndLet) {
+    parse("./tests/codegen_tests/examples/attribute_field_and_let.cl");
+    read_answer("./tests/codegen_tests/examples/attribute_field_and_let.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, AttributeFieldAndLetButSame) {
+    parse("./tests/codegen_tests/examples/attribute_field_and_let_but_same.cl");
+    read_answer("./tests/codegen_tests/examples/attribute_field_and_let_but_same.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, BadFizzBuzz) {
+    parse("./tests/codegen_tests/examples/bad_fizz_buzz.cl");
+    read_answer("./tests/codegen_tests/examples/bad_fizz_buzz.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, SimpleLE) {
+    parse("./tests/codegen_tests/examples/simple_le.cl");
+    read_answer("./tests/codegen_tests/examples/simple_le.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, AdvancedLE) {
+    parse("./tests/codegen_tests/examples/advanced_le.cl");
+    read_answer("./tests/codegen_tests/examples/advanced_le.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, AdvancedLess) {
+    parse("./tests/codegen_tests/examples/advanced_less.cl");
+    read_answer("./tests/codegen_tests/examples/advanced_less.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, SimpleNegate) {
+    parse("./tests/codegen_tests/examples/simple_negate.cl");
+    read_answer("./tests/codegen_tests/examples/simple_negate.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, SimpleIsVoid) {
+    parse("./tests/codegen_tests/examples/simple_isvoid.cl");
+    read_answer("./tests/codegen_tests/examples/simple_isvoid.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, SimpleNullIsVoid) {
+    parse("./tests/codegen_tests/examples/simple_null_isvoid.cl");
+    read_answer("./tests/codegen_tests/examples/simple_null_isvoid.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
