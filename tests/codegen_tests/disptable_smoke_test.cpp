@@ -137,10 +137,8 @@ TEST_F(DisptableDataGenTestFixture, GenMain) {
     };
     disptable_data_gen.register_class_representation(
         "Object", {{}, {"abort", "type_name", "copy"}});
-    disptable_data_gen.register_class_representation(
-            "Main", std::move(Main));
-    disptable_data_gen.register_class_representation(
-            "Foo", std::move(Foo));
+    disptable_data_gen.register_class_representation("Main", std::move(Main));
+    disptable_data_gen.register_class_representation("Foo", std::move(Foo));
     disptable_data_gen.generate_disptables(gen_result);
     ASSERT_EQ(gen_result.str(), "\
 Object_dispTab:\n\
@@ -173,10 +171,8 @@ TEST_F(DisptableDataGenTestFixture, GenMainWithOverloads) {
     };
     disptable_data_gen.register_class_representation(
         "Object", {{}, {"abort", "type_name", "copy"}});
-    disptable_data_gen.register_class_representation(
-            "Main", std::move(Main));
-    disptable_data_gen.register_class_representation(
-            "Foo", std::move(Foo));
+    disptable_data_gen.register_class_representation("Main", std::move(Main));
+    disptable_data_gen.register_class_representation("Foo", std::move(Foo));
     disptable_data_gen.generate_disptables(gen_result);
     ASSERT_EQ(gen_result.str(), "\
 Object_dispTab:\n\

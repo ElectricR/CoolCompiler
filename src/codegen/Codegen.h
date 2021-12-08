@@ -72,8 +72,9 @@ private:
     MIPS32::TextGen text_gen;
     std::stringstream text;
     MIPS32::StackRepresentation stack_representation;
-    MIPS32::ASTVisitor AST_visitor{
-        text, &constants_data_gen, &disptable_data_gen, &prototype_data_gen, &stack_representation, &text_gen};
+    MIPS32::ASTVisitor AST_visitor{text, &constants_data_gen,
+        &disptable_data_gen, &prototype_data_gen, &stack_representation,
+        &text_gen};
     std::stringstream data;
     std::unordered_map<std::string_view, const AST::Class&> class_map;
 };

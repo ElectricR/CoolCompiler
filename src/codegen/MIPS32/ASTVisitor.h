@@ -3,8 +3,8 @@
 #include "codegen/MIPS32/ConstantGenerator.h"
 #include "codegen/MIPS32/DispTableGen.h"
 #include "codegen/MIPS32/PrototypeGen.h"
-#include "codegen/MIPS32/TextGen.h"
 #include "codegen/MIPS32/StackRepresentation.h"
+#include "codegen/MIPS32/TextGen.h"
 
 #include <unordered_map>
 
@@ -17,18 +17,19 @@ public:
     ASTVisitor(std::ostream& in_out,
         ConstantsDataGeneneror* in_constants_data_gen,
         DispTableDataGenerator* in_disptable_data_gen,
-        PrototypeDataGenerator* in_prototype_data_gen, StackRepresentation *in_stack_representation, TextGen* in_text_gen)
+        PrototypeDataGenerator* in_prototype_data_gen,
+        StackRepresentation* in_stack_representation, TextGen* in_text_gen)
         : out(in_out), constants_data_gen(in_constants_data_gen),
           disptable_data_gen(in_disptable_data_gen),
           prototype_data_gen(in_prototype_data_gen), text_gen(in_text_gen),
-    stack_representation(in_stack_representation){}
+          stack_representation(in_stack_representation) {}
 
     void operator()(const AST::Program& program) noexcept {
         for (auto& class_ : program.classes) {
             (*this)(class_);
         }
     }
-    
+
     void operator()(const AST::Class& class_) noexcept {
         set_current_class(class_.type_id);
         for (const auto& feature : class_.features) {
@@ -48,7 +49,8 @@ public:
         text_gen->print_prologue(out);
         stack_representation->add_padding(12);
         std::visit(*this, expr.value->value);
-        text_gen->print_epilogue(static_cast<unsigned>(expr.formals.size()) * 4, out);
+        text_gen->print_epilogue(
+            static_cast<unsigned>(expr.formals.size()) * 4, out);
         stack_representation->pop();
         stack_representation->pop();
     }
@@ -83,14 +85,14 @@ public:
         if (expr.expression->type == "SELF_TYPE") {
             text_gen->generate_method_call(expr.line_number,
                 disptable_data_gen->get_disptable()
-                    .at(current_class_name).first
-                    .at(expr.object_id),
+                    .at(current_class_name)
+                    .first.at(expr.object_id),
                 out);
         } else {
             text_gen->generate_method_call(expr.line_number,
                 disptable_data_gen->get_disptable()
-                    .at(expr.expression->type).first
-                    .at(expr.object_id),
+                    .at(expr.expression->type)
+                    .first.at(expr.object_id),
                 out);
         }
         for (size_t i = 0; i != expr.parameter_expressions.size(); ++i) {
@@ -127,9 +129,33 @@ public:
     }
 
     void operator()(const AST::CaseExpression& case_expr) noexcept {
-        unsigned case_start_label = text_gen->reserve_label();
-        text_gen->generate_case_start(case_start_label, case_expr.line_number, out);
-        text_gen->print_label(case_start_label, out);
+        std::visit(*this, case_expr.case_expression->value);
+        unsigned case_end_label = text_gen->reserve_label();
+        unsigned case_current_label = text_gen->reserve_label();
+        unsigned case_next_label = text_gen->reserve_label();
+        text_gen->generate_case_start(
+            case_current_label, case_expr.line_number, out);
+        bool printed_tag_load = false;
+        for (auto& entry : case_expr.branch_expressions) {
+            text_gen->print_label(case_current_label, out);
+            if (!printed_tag_load) {
+                text_gen->generate_tag_load(out);
+                printed_tag_load = true;
+            }
+            text_gen->generate_case_check(case_next_label,
+                prototype_data_gen->get_prototype_ids(entry.type_id), out);
+            text_gen->save_to_local(0, out);
+            text_gen->grow_stack(4, out);
+            stack_representation->register_vars({{entry.object_id, 4}});
+            std::visit(*this, entry.expression->value);
+            stack_representation->pop();
+            text_gen->reduce_stack(4, out);
+            case_current_label = case_next_label;
+            case_next_label = text_gen->reserve_label();
+            text_gen->generate_case_branch_end(case_end_label, out);
+        }
+        text_gen->generate_case_abort(case_current_label, out);
+        text_gen->print_label(case_end_label, out);
     }
 
     void operator()(const AST::NewExpression& expr) noexcept {
@@ -141,7 +167,8 @@ public:
         text_gen->generate_isvoid(out);
     }
 
-    template <AST::CompareButNotEqual T> void operator()(const T& cmp_expr) noexcept {
+    template <AST::CompareButNotEqual T>
+    void operator()(const T& cmp_expr) noexcept {
         std::visit(*this, cmp_expr.left_expression->value);
         text_gen->save_to_stack(out);
         stack_representation->add_padding(4);
@@ -181,7 +208,8 @@ public:
                 offset = stack_representation->get_variable(expr.object_id);
                 text_gen->load_stack_object(offset, out);
             } else {
-                offset = prototype_data_gen->get_field_offset(current_class_name, expr.object_id);
+                offset = prototype_data_gen->get_field_offset(
+                    current_class_name, expr.object_id);
                 text_gen->load_field_object(offset, out);
             }
         }
@@ -231,7 +259,9 @@ public:
         }
         std::visit(*this, let_expression.expression->value);
         stack_representation->pop();
-        text_gen->reduce_stack(static_cast<unsigned>(let_expression.let_expressions.size()) * 4, out);
+        text_gen->reduce_stack(
+            static_cast<unsigned>(let_expression.let_expressions.size()) * 4,
+            out);
     }
 
     void operator()(const AST::AssignExpression& assign_expr) noexcept {
@@ -241,7 +271,8 @@ public:
             offset = stack_representation->get_variable(assign_expr.object_id);
             text_gen->save_to_local(offset, out);
         } else {
-            offset = prototype_data_gen->get_field_offset(current_class_name, assign_expr.object_id);
+            offset = prototype_data_gen->get_field_offset(
+                current_class_name, assign_expr.object_id);
             text_gen->save_to_field(offset, out);
         }
     }
@@ -257,7 +288,7 @@ private:
     MIPS32::DispTableDataGenerator* disptable_data_gen = nullptr;
     MIPS32::PrototypeDataGenerator* prototype_data_gen = nullptr;
     MIPS32::TextGen* text_gen = nullptr;
-    StackRepresentation *stack_representation;
+    StackRepresentation* stack_representation;
 };
 
 } // namespace cool::codegen::MIPS32

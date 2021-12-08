@@ -4,6 +4,7 @@
 #include <ranges>
 #include <string_view>
 #include <vector>
+#include <unordered_map>
 
 namespace cool::codegen::MIPS32 {
 
@@ -20,11 +21,11 @@ public:
     void generate_objtab(std::vector<std::string_view> class_names,
         std::ostream& out) const noexcept;
 
-    void generate_nametab(const std::vector<std::string_view>& class_names,
+    void generate_nametab(const std::unordered_map<unsigned, std::string_view>& tags,
         std::ostream& out) const noexcept {
         out << "class_nameTab:\n";
-        for (auto& class_name : class_names) {
-            out << std::setw(12) << ".word" << ' ' << "str_const" << class_name
+        for (unsigned tag = 0; tag != static_cast<unsigned>(tags.size()); ++tag) {
+            out << std::setw(12) << ".word" << ' ' << "str_const" << tags.at(tag)
                 << '\n';
         };
         out << '\n';

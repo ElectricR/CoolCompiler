@@ -140,6 +140,11 @@ class_objTab:
        .word Main_init
 
 class_nameTab:
+       .word str_constObject
+       .word str_constInt
+       .word str_constBool
+       .word str_constString
+       .word str_constIO
        .word str_constFoo
        .word str_constBar
        .word str_constMain

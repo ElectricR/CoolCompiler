@@ -39,11 +39,14 @@ public:
 
     void generate_loop_check(unsigned label, std::ostream& out) noexcept {
         out << std::setw(12) << "lw" << ' ' << "$t1 12($a0)\n";
-        out << std::setw(12) << "beq" << ' ' << "$t1 $zero label" << label << "\n";
+        out << std::setw(12) << "beq" << ' ' << "$t1 $zero label" << label
+            << "\n";
     }
 
-    void generate_loop_end(unsigned start_loop_label, unsigned end_loop_label, std::ostream& out) noexcept {
-        out << std::setw(12) << "b" << ' ' << "label" << start_loop_label << "\n";
+    void generate_loop_end(unsigned start_loop_label, unsigned end_loop_label,
+        std::ostream& out) noexcept {
+        out << std::setw(12) << "b" << ' ' << "label" << start_loop_label
+            << "\n";
         print_label(end_loop_label, out);
         out << std::setw(12) << "move" << ' ' << "$a0 $zero\n";
     }
@@ -58,7 +61,8 @@ public:
         out << std::setw(12) << "jr" << ' ' << "$ra\n\n";
     }
 
-    void generate_init_label(std::string_view class_name, std::ostream& out) const noexcept {
+    void generate_init_label(
+        std::string_view class_name, std::ostream& out) const noexcept {
         out << class_name << "_init:\n";
     }
 
@@ -76,7 +80,8 @@ public:
 
     void generate_empty_string_constant(std::ostream& out) const noexcept;
 
-    void generate_parent_init(std::string_view parent, std::ostream& out) const noexcept;
+    void generate_parent_init(
+        std::string_view parent, std::ostream& out) const noexcept;
 
     void generate_method_call(
         unsigned line_number, unsigned offset, std::ostream& out) noexcept;
@@ -89,7 +94,7 @@ public:
     [[nodiscard]] unsigned reserve_label() noexcept {
         return label_count++;
     }
-    
+
     void print_label(unsigned label, std::ostream& out) noexcept;
 
     void generate_condition_check(unsigned label, std::ostream& out) noexcept;
@@ -141,7 +146,29 @@ public:
 
     void generate_isvoid(std::ostream& out) noexcept;
 
-    void generate_case_start(unsigned case_start_label, unsigned line_number, std::ostream& out) const noexcept;
+    void generate_case_start(unsigned case_start_label, unsigned line_number,
+        std::ostream& out) const noexcept;
+
+    void generate_tag_load(std::ostream& out) const noexcept {
+        out << std::setw(12) << "lw" << ' ' << "$t0 0($a0)\n\n";
+    }
+
+    void generate_case_check(unsigned case_next_label,
+        std::pair<unsigned, unsigned> tag_range,
+        std::ostream& out) const noexcept;
+
+    void generate_case_branch_end(
+        unsigned case_end_label, std::ostream& out) noexcept {
+        out << std::setw(12) << "b" << ' ' << "label" << case_end_label << "\n";
+    }
+
+    void generate_case_abort(
+        unsigned case_abort_label, std::ostream& out) noexcept {
+        out << "label" << case_abort_label << ":\n";
+        out << std::setw(12) << "jal" << ' ' << "_case_abort"
+            << "\n";
+    }
+
 private:
     //
     // Takes two pointers - one on top of stack and one in $a0.

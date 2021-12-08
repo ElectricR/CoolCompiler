@@ -53,7 +53,8 @@ TEST_F(CodegenTestFixture, HelloWorld) {
 
 TEST_F(CodegenTestFixture, HelloWorldWithInheritance) {
     parse("./tests/codegen_tests/examples/hello_world_with_inheritance.cl");
-    read_answer("./tests/codegen_tests/examples/hello_world_with_inheritance.s");
+    read_answer(
+        "./tests/codegen_tests/examples/hello_world_with_inheritance.s");
     ASSERT_EQ(gen_result.str(), answer.str());
 }
 
@@ -209,7 +210,8 @@ TEST_F(CodegenTestFixture, AttributeFieldAndLet) {
 
 TEST_F(CodegenTestFixture, AttributeFieldAndLetButSame) {
     parse("./tests/codegen_tests/examples/attribute_field_and_let_but_same.cl");
-    read_answer("./tests/codegen_tests/examples/attribute_field_and_let_but_same.s");
+    read_answer(
+        "./tests/codegen_tests/examples/attribute_field_and_let_but_same.s");
     ASSERT_EQ(gen_result.str(), answer.str());
 }
 
@@ -252,5 +254,17 @@ TEST_F(CodegenTestFixture, SimpleIsVoid) {
 TEST_F(CodegenTestFixture, SimpleNullIsVoid) {
     parse("./tests/codegen_tests/examples/simple_null_isvoid.cl");
     read_answer("./tests/codegen_tests/examples/simple_null_isvoid.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, AdvancedCase) {
+    parse("./tests/codegen_tests/examples/advanced_case.cl");
+    read_answer("./tests/codegen_tests/examples/advanced_case.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}
+
+TEST_F(CodegenTestFixture, BadCase) {
+    parse("./tests/codegen_tests/examples/bad_case.cl");
+    read_answer("./tests/codegen_tests/examples/bad_case.s");
     ASSERT_EQ(gen_result.str(), answer.str());
 }

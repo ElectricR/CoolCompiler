@@ -42,49 +42,36 @@ void Codegen::get_data_from_AST(const AST::Program& AST) noexcept {
 
 void Codegen::generate_prototypes(
     const AST::Program& AST, std::ostream& out) noexcept {
-    prototype_data_gen.generate_object_prototype(out);
-    prototype_data_gen.generate_int_prototype(out);
-    prototype_data_gen.generate_bool_prototype(out);
-    prototype_data_gen.generate_string_prototype(out);
-    prototype_data_gen.generate_io_prototype(out);
+    prototype_data_gen.register_prototype("Object", {{}, {}});
+    prototype_data_gen.register_prototype("Int", {"Object", {{"", ""}}});
+    prototype_data_gen.register_prototype("Bool", {"Object", {{"", ""}}});
+    prototype_data_gen.register_prototype(
+        "String", {"Object", {{"", "Int"}, {"", ""}}});
+    prototype_data_gen.register_prototype("IO", {"Object", {}});
     for (auto& class_ : AST.classes) {
-        auto* current_ancestor = &class_;
-        std::unordered_map<std::string_view,
-            MIPS32::ClassPrototypeRepresentation>
-            family_map;
-        while (true) {
-            auto fields_range =
-                current_ancestor->features |
-                std::ranges::views::filter([](auto& feature_variant) {
-                    return std::holds_alternative<AST::FieldFeature>(
-                        feature_variant.feature);
-                }) |
-                std::ranges::views::transform(
-                    [](auto& field_feature) -> std::pair<std::string_view, std::string_view> {
-                        return {std::get<AST::FieldFeature>(
-                            field_feature.feature)
-                            .object_id, std::get<AST::FieldFeature>(
-                            field_feature.feature)
+        auto fields_range =
+            class_.features |
+            std::ranges::views::filter([](auto& feature_variant) {
+                return std::holds_alternative<AST::FieldFeature>(
+                    feature_variant.feature);
+            }) |
+            std::ranges::views::transform(
+                [](auto& field_feature)
+                    -> std::pair<std::string_view, std::string_view> {
+                    return {std::get<AST::FieldFeature>(field_feature.feature)
+                                .object_id,
+                        std::get<AST::FieldFeature>(field_feature.feature)
                             .type_id};
-                    });
-            MIPS32::ClassPrototypeRepresentation cl = {
-                current_ancestor->inherits,
-                {fields_range.begin(), fields_range.end()}};
-            if (current_ancestor->inherits && std::unordered_set<std::string_view>{
-                    "Object", "Int", "Bool", "String", "IO"}
-                    .contains(current_ancestor->inherits.value())) {
-                cl.inherits.reset();
-            }
-            family_map.emplace(current_ancestor->type_id, std::move(cl));
-            if (!cl.inherits) {
-                break;
-            }
-            current_ancestor =
-                &class_map.at(current_ancestor->inherits.value());
+                });
+        MIPS32::ClassPrototypeRepresentation cl = {
+            class_.inherits, {fields_range.begin(), fields_range.end()}};
+        if (!cl.inherits) {
+            cl.inherits = "Object";
         }
 
-        prototype_data_gen.generate_prototype(family_map, class_.type_id, data);
+        prototype_data_gen.register_prototype(class_.type_id, std::move(cl));
     }
+    prototype_data_gen.generate_prototypes(out);
 }
 
 void Codegen::generate_disptables(
@@ -133,11 +120,16 @@ void Codegen::generate_objtab(
 
 void Codegen::generate_nametab(
     const AST::Program& AST, std::ostream& out) const noexcept {
-    std::vector<std::string_view> class_names;
+    std::vector<std::string_view> class_names = {
+        "Object", "Int", "Bool", "String", "IO"};
     std::transform(AST.classes.cbegin(), AST.classes.cend(),
         std::back_inserter(class_names),
         [](auto& class_) -> std::string_view { return class_.type_id; });
-    misc_data_gen.generate_nametab(class_names, out);
+    std::unordered_map<unsigned, std::string_view> tags;
+    for (auto& class_name : class_names) {
+        tags.emplace(prototype_data_gen.get_prototype_ids(class_name).first, class_name);
+    }
+    misc_data_gen.generate_nametab(tags, out);
 }
 
 void Codegen::generate_constants(std::ostream& out) const noexcept {
@@ -211,8 +203,10 @@ void Codegen::generate_default_inits() noexcept {
             break;
         }
         class_name = class_map.at(class_name).inherits.value();
-        if (std::unordered_set<std::string_view>{"Object", "Int", "Bool", "String", "IO"}.contains(class_name)) {
-                break;
+        if (std::unordered_set<std::string_view>{
+                "Object", "Int", "Bool", "String", "IO"}
+                .contains(class_name)) {
+            break;
         }
     }
     return is_empty;
@@ -236,8 +230,15 @@ void Codegen::generate_init(std::string_view class_name) noexcept {
         for (auto& feature : class_map.at(class_name).features) {
             if (std::holds_alternative<AST::FieldFeature>(feature.feature)) {
                 if (std::get<AST::FieldFeature>(feature.feature).value) {
-                    std::visit(AST_visitor, std::get<AST::FieldFeature>(feature.feature).value.value()->value);
-                    text_gen.save_to_field(prototype_data_gen.get_field_offset(class_name, std::get<AST::FieldFeature>(feature.feature).object_id), text);
+                    std::visit(AST_visitor,
+                        std::get<AST::FieldFeature>(feature.feature)
+                            .value.value()
+                            ->value);
+                    text_gen.save_to_field(
+                        prototype_data_gen.get_field_offset(class_name,
+                            std::get<AST::FieldFeature>(feature.feature)
+                                .object_id),
+                        text);
                 }
             }
         }

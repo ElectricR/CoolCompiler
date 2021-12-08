@@ -3,30 +3,54 @@
 
 namespace cool::codegen::MIPS32 {
 
+void PrototypeDataGenerator::generate_prototypes(std::ostream& out) noexcept {
+    calculate_ids();
+    for (auto& class_name : registered) {
+        generate_prototype(class_name, out);
+    }
+}
+
+void PrototypeDataGenerator::calculate_ids() noexcept {
+    calculate_id("Object");
+}
+
+void PrototypeDataGenerator::calculate_id(
+    std::string_view class_name) noexcept {
+    ids[class_name] = {current_id++, 0};
+    for (auto& child : children[class_name]) {
+        calculate_id(child);
+    }
+    if (!children[class_name].empty()) {
+        ids[class_name].second = ids[children[class_name].back()].second;
+    } else {
+        ids[class_name].second = ids[class_name].first;
+    }
+}
+
 void PrototypeDataGenerator::generate_prototype(
-    const std::unordered_map<std::string_view, ClassPrototypeRepresentation>&
-        family_map,
     std::string_view class_name, std::ostream& out) noexcept {
 
     std::vector<std::pair<std::string_view, std::string_view>> fields;
     const ClassPrototypeRepresentation* curr_class =
-        &family_map.at(class_name);
+        &representations.at(class_name);
     while (true) {
         for (auto&& field : get_class_fields(*curr_class)) {
             fields.emplace_back(std::move(field));
         }
         if (curr_class->inherits) {
-            curr_class = &family_map.at(curr_class->inherits.value());
+            curr_class = &representations.at(curr_class->inherits.value());
         } else {
             break;
         }
     }
     std::reverse(fields.begin(), fields.end());
     generate_prototype_data(class_name,
-        static_cast<unsigned>(fields.size()) + 3, fields, out, current_id++);
+        static_cast<unsigned>(fields.size()) + 3, fields, out,
+        ids.at(class_name).first);
 }
 
-[[nodiscard]] unsigned PrototypeDataGenerator::get_field_offset(std::string_view class_name, std::string_view field_name) const noexcept {
+[[nodiscard]] unsigned PrototypeDataGenerator::get_field_offset(
+    std::string_view class_name, std::string_view field_name) const noexcept {
     return field_offsets.at(class_name).at(field_name);
 }
 
@@ -49,34 +73,10 @@ PrototypeDataGenerator::get_class_fields(const ClassPrototypeRepresentation&
     return fields;
 }
 
-void PrototypeDataGenerator::generate_object_prototype(
-    std::ostream& out) noexcept {
-    generate_prototype_data("Object", 3, {}, out, 0);
-}
-
-void PrototypeDataGenerator::generate_int_prototype(
-    std::ostream& out) noexcept {
-    generate_prototype_data("Int", 4, {{"", "0"}}, out, 1);
-}
-
-void PrototypeDataGenerator::generate_bool_prototype(
-    std::ostream& out) noexcept {
-    generate_prototype_data("Bool", 4, {{"", "0"}}, out, 2);
-}
-
-void PrototypeDataGenerator::generate_string_prototype(
-    std::ostream& out) noexcept {
-    generate_prototype_data("String", 5, {{"", "int_const0"}, {"", "0"}}, out, 3);
-}
-
-void PrototypeDataGenerator::generate_io_prototype(std::ostream& out) noexcept {
-    generate_prototype_data("IO", 3, {}, out, 4);
-}
-
 void PrototypeDataGenerator::generate_prototype_data(
     std::string_view class_name, unsigned class_size,
-    const std::vector<std::pair<std::string_view, std::string_view>>& fields, std::ostream& out,
-    unsigned id) noexcept {
+    const std::vector<std::pair<std::string_view, std::string_view>>& fields,
+    std::ostream& out, unsigned id) noexcept {
 
     unsigned curr_offset = 12;
     out << std::setw(12) << ".word" << ' ' << -1 << '\n';

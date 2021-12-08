@@ -83,25 +83,3 @@ class_objTab:\n\
        .word Main_init\n\n\
 ");
 }
-
-TEST_F(MiscGenTestFixture, NameTabGen) {
-    misc_data_gen.generate_nametab(
-        {
-            "Object",
-            "Int",
-            "Bool",
-            "String",
-            "IO",
-            "Main",
-        },
-        gen_result);
-    ASSERT_EQ(gen_result.str(), "\
-class_nameTab:\n\
-       .word str_constObject\n\
-       .word str_constInt\n\
-       .word str_constBool\n\
-       .word str_constString\n\
-       .word str_constIO\n\
-       .word str_constMain\n\n\
-");
-}
