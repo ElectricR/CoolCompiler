@@ -1,6 +1,7 @@
 #pragma once
 #include <iomanip>
 #include <sstream>
+#include <optional>
 
 namespace cool::codegen::MIPS32 {
 
@@ -84,7 +85,7 @@ public:
         std::string_view parent, std::ostream& out) const noexcept;
 
     void generate_method_call(
-        unsigned line_number, unsigned offset, std::ostream& out) noexcept;
+        unsigned line_number, unsigned offset, std::optional<std::string_view> cast, std::ostream& out) noexcept;
 
     void generate_string_constant(unsigned x, std::ostream& out) const noexcept;
 

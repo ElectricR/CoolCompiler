@@ -274,3 +274,9 @@ TEST_F(CodegenTestFixture, Cool) {
     read_answer("./tests/codegen_tests/examples/cool.s");
     ASSERT_EQ(gen_result.str(), answer.str());
 }
+
+TEST_F(CodegenTestFixture, DispatchOverrideStatic) {
+    parse("./tests/codegen_tests/examples/dispatch_override_static.cl");
+    read_answer("./tests/codegen_tests/examples/dispatch_override_static.s");
+    ASSERT_EQ(gen_result.str(), answer.str());
+}

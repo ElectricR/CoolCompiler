@@ -86,13 +86,13 @@ public:
             text_gen->generate_method_call(expr.line_number,
                 disptable_data_gen->get_disptable()
                     .at(current_class_name)
-                    .first.at(expr.object_id),
+                    .first.at(expr.object_id), expr.type_id,
                 out);
         } else {
             text_gen->generate_method_call(expr.line_number,
                 disptable_data_gen->get_disptable()
                     .at(expr.expression->type)
-                    .first.at(expr.object_id),
+                    .first.at(expr.object_id), expr.type_id,
                 out);
         }
         for (size_t i = 0; i != expr.parameter_expressions.size(); ++i) {

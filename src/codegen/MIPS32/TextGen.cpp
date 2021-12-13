@@ -24,14 +24,18 @@ void TextGen::print_epilogue(
 }
 
 void TextGen::generate_method_call(
-    unsigned line_number, unsigned offset, std::ostream& out) noexcept {
+    unsigned line_number, unsigned offset, std::optional<std::string_view> cast, std::ostream& out) noexcept {
     unsigned label = label_count++;
     out << std::setw(12) << "bne" << ' ' << "$a0 $zero label" << label << '\n';
     out << std::setw(12) << "la" << ' ' << "$a0 str_const_path\n";
     out << std::setw(12) << "li" << ' ' << "$t1 " << line_number << "\n";
     out << std::setw(12) << "jal" << ' ' << "_dispatch_abort\n";
     out << "label" << label << ":\n";
-    out << std::setw(12) << "lw" << ' ' << "$t1 8($a0)\n";
+    if (cast) {
+        out << std::setw(12) << "la" << ' ' << "$t1 " << cast.value() << "_dispTab\n";
+    } else {
+        out << std::setw(12) << "lw" << ' ' << "$t1 8($a0)\n";
+    }
     out << std::setw(12) << "lw" << ' ' << "$t1 " << offset << "($t1)\n";
     out << std::setw(12) << "jalr" << ' ' << "$t1\n";
     out << '\n';
